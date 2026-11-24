@@ -1,6 +1,6 @@
 #!/bin/bash
 # profile.sh [--rounds R] [SCENE ARGS...]: where the main thread's time goes in one scene, the
-# Rust reference against the Odin app (-o:speed), on the same library build. Default scene:
+# Rust reference against the Go app, on the same library build. Default scene:
 # the counter with a click on every frame (GK_CLICK=40,32,61,1), the one frame-cost scene that
 # sat at its limit.
 #
@@ -25,20 +25,18 @@ scene=$1; shift
 export GK_CLICK=${GK_CLICK-40,32,61,1}
 sym=${GK_SYMBOLS_DIR:-$repo/dist/symbols}
 cc=${GK_CC:-cc}
-odin=${ODIN:-odin}
 base=${GK_SCRATCH:-${TMPDIR:-/tmp}/gk-gates}
 out=$base/profile; rm -rf "$out"; mkdir -p "$out/lib/ship" "$out/bin" "$out/runs"
 [ -f "$sym/libgpuikit.so" ] && [ -f "$sym/ref-$scene" ] || { echo "profile.sh: no unstripped library and ref-$scene in $sym"; exit 2; }
 cp "$sym/libgpuikit.so" "$sym/ref-$scene" "$out/lib/ship/"
 "$cc" -shared -fPIC -O2 -o "$out/sampler.so" "$repo/tools/profile/sampler.c"
-"$odin" build "$repo/examples/odin/$scene" -o:speed -define:GK_SHARED=true -collection:gpuikit="$repo/odin" \
-  "-extra-linker-flags:-L$out/lib/ship -Wl,-rpath,\$ORIGIN/../lib/ship" -out:"$out/bin/$scene-odin-speed"
+GK_LIB=$out/lib/ship OUT=$out/bin "$repo/examples/go/build.sh" "$scene"
 export GK_FRAMES=${GK_FRAMES:-60,600} LD_LIBRARY_PATH=$out/lib/ship
 "$here/display.sh" --hz 60 bash -c '
   out=$1; scene=$2; rounds=$3; shift 3
   for r in $(seq "$rounds"); do
-    for b in rust odin; do
-      exe=$out/lib/ship/ref-$scene; [ $b = odin ] && exe=$out/bin/$scene-odin-speed
+    for b in rust go; do
+      exe=$out/lib/ship/ref-$scene; [ $b = go ] && exe=$out/bin/$scene-go
       GK_LABEL=$b GK_STATS=$out/runs/$b-$r.csv LD_PRELOAD=$out/sampler.so GK_PROF_OUT=$out/runs/$b-$r \
         "$exe" "$@" | grep "^gk-meter" | sed "s/^/round=$r /" >> "$out/meter.txt"
     done
@@ -47,16 +45,16 @@ export GK_FRAMES=${GK_FRAMES:-60,600} LD_LIBRARY_PATH=$out/lib/ship
 # one run of each binary.
 "$here/display.sh" --hz 60 bash -c '
   out=$1; scene=$2; shift 2
-  for b in rust odin; do
-    exe=$out/lib/ship/ref-$scene; [ $b = odin ] && exe=$out/bin/$scene-odin-speed
+  for b in rust go; do
+    exe=$out/lib/ship/ref-$scene; [ $b = go ] && exe=$out/bin/$scene-go
     GK_LABEL=$b GK_STATS=$out/runs/$b-strace.csv strace -c -o "$out/runs/$b-strace.txt" "$exe" "$@" > /dev/null
   done' _ "$out" "$scene" "$@"
 pre() { local s=""; for r in $(seq "$rounds"); do s="$s${s:+,}$out/runs/$1-$r"; done; echo "$s"; }
 {
-  echo "profile of $scene $* (GK_CLICK=$GK_CLICK), $rounds rounds of $GK_FRAMES frames each, Rust reference and Odin -o:speed on the same library"
+  echo "profile of $scene $* (GK_CLICK=$GK_CLICK), $rounds rounds of $GK_FRAMES frames each, Rust reference and Go on the same library"
   cat "$out/meter.txt"
   echo
-  python3 "$repo/tools/profile/symbolize.py" --skip 2.5 --top 45 rust="$(pre rust)" odin="$(pre odin)"
-  for b in rust odin; do echo; echo "system calls of the main thread, $b, one run of $GK_FRAMES frames:"; head -25 "$out/runs/$b-strace.txt"; done
+  python3 "$repo/tools/profile/symbolize.py" --skip 2.5 --top 45 rust="$(pre rust)" go="$(pre go)"
+  for b in rust go; do echo; echo "system calls of the main thread, $b, one run of $GK_FRAMES frames:"; head -25 "$out/runs/$b-strace.txt"; done
 } > "$out/report.txt"
 cat "$out/report.txt"

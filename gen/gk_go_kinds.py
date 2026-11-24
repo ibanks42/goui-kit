@@ -1,10 +1,10 @@
 """gk_go_kinds: the Go emitter's rules for the generator's descriptor kinds beyond the core ones
-(docs/GO.md; the Odin side is gk_values, gk_lists, gk_comp6, gk_items, gk_editor and gk_app's
-odin_type / odin_put). gk_go.Go calls the three hooks first (gtype, put, rd: None when the kind is
+(docs/GO.md; the kinds themselves are gk_values', gk_lists', gk_comp6's, gk_items', gk_editor's
+and gk_app's). gk_go.Go calls the three hooks first (gtype, put, rd: None when the kind is
 not one of these) and emit_files once every item was written, before the types.
 
-Every writer here writes the bytes the Odin writer writes (most by reflection there, by hand in
-the runtime here: go/gk/rt_gen_*.go). What the hooks need from the runtime:
+Every writer here writes the bytes the Rust decoder reads (by hand in the runtime:
+go/gk/rt_gen_*.go). What the hooks need from the runtime:
 
 - values: CivilDate/CivilTime/CivilDateTime/Weekday, Transformation, TimedTransformation, Font,
   Fallible[T], Cell[T], Decorate, MarkdownPlugin(Any), EntityID, QuestionnaireRules,
@@ -17,8 +17,8 @@ import re
 
 from gk_model import ada
 
-# Library values (`["libval", rust path, odin name]`) the Go runtime declares (rt_gen_values.go):
-# Odin name -> (Go type, has a put function, has a rd function).
+# Library values (`["libval", rust path, stem]`) the Go runtime declares (rt_gen_values.go):
+# stem -> (Go type, has a put function, has a rd function).
 LIBVALS = {"Lsp_Position": ("LspPosition", True, True), "Completion_Item": ("CompletionItem", True, True),
            "Code_Block": ("CodeBlock", True, True), "Search_Item": ("SearchItem", True, True),
            "Arc_Data": ("ArcData", False, True), "Stack_Series": ("StackSeries", False, True),
@@ -228,7 +228,7 @@ def rd(go, d, out=True):
 
 def denum_held(go, e, puts):
     """A held value of an enum with data the app gives (`BlockNodeHeld`, PROTOCOLS.md 9.30): a
-    library object's handle, one more variant of the enum's interface (gk_editor.odin_denum)."""
+    library object's handle, one more variant of the enum's interface."""
     import gk_editor  # noqa: PLC0415
     if not e.get("held") or e["out"]:
         return
@@ -254,7 +254,7 @@ def _as_items(d):
 
 def _inline_plugin_kind(go):
     """The kind of an inline data plugin's row (PROTOCOLS.md 9.23): the node and the inherited
-    typography (Odin's Markdown_Inline, read with gk.row_context), as gk.Items's function
+    typography, as gk.Items's function
     func(cx, gk.MarkdownNodeRead, gk.InlineRenderContext) gk.Element. A block plugin's row is the
     MarkdownNodeRead kind a closure of the kit already calls."""
     keys = {}

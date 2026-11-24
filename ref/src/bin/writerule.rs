@@ -2,7 +2,7 @@
 //! write lands"; docs/PROTOCOLS.md section 3). Before every frame the app writes the frame's
 //! number into an input's state; a second view echoes the input's value. In Rust the write is
 //! on screen in the frame it was made in: the input and the echo show the same number in every
-//! image. The Odin twin (examples/odin/writerule) makes the write from a per-frame handler and
+//! image. The Go twin (examples/go/writerule) makes the write from a per-frame handler and
 //! must produce the same images, frame for frame (gates/pixels.sh writerule).
 //!
 //! The echo view is never notified by the app: it is built again only because it read the

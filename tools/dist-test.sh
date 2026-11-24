@@ -1,27 +1,24 @@
 #!/bin/bash
-# dist-test.sh DOWNLOAD [odin] [go]: what an app developer does first, from an unpacked download
+# dist-test.sh DOWNLOAD [go]: what an app developer does first, from an unpacked download
 # (dist/gpuikit-VERSION-PLATFORM), on any of the three platforms: build the hello example with
-# the download's own examples/build.sh and examples/go/build.sh, then run that program in a real
-# window for 30 frames (GK_FRAMES=5,30: the library draws them and exits; Linux without a display
-# runs it under xvfb-run). Default: both languages. Needs odin (ODIN, or on PATH) and go with a C
-# compiler on PATH. Writes DOWNLOAD/../test-PLATFORM/ and exits non-zero on the first failure.
+# the download's own examples/go/build.sh, then run that program in a real window for 30 frames
+# (GK_FRAMES=5,30: the library draws them and exits; Linux without a display runs it under
+# xvfb-run). Needs go with a C compiler on PATH. Writes DOWNLOAD/../test-PLATFORM/ and exits non-zero on the first failure.
 # macOS (the universal download): first the library's slices (lipo: exactly arm64 and x86_64);
 # then hello for this Mac's architecture as above, and again for the other one (Apple silicon:
-# x86_64, odin -target:darwin_amd64 and GOARCH=amd64 CC='clang -arch x86_64'; Intel: arm64),
-# each binary checked to be that architecture alone (a program left from the native build cannot
-# pass for it: the build scripts remove it first). The other architecture's hello runs the same
+# x86_64, GOARCH=amd64 CC='clang -arch x86_64'; Intel: arm64), each binary checked to be that
+# architecture alone. The other architecture's hello runs the same
 # way when this Mac can run it (x86_64 on Apple silicon with Rosetta 2); otherwise it is built
 # and linked against the universal library only, and the log says so. GK_OTHER_ARCH=0 skips the
 # other architecture.
 set -euo pipefail
-dl=$(cd "${1:?usage: dist-test.sh DOWNLOAD [odin] [go]}" && pwd); shift
-[ $# -gt 0 ] || set -- odin go
+dl=$(cd "${1:?usage: dist-test.sh DOWNLOAD [go]}" && pwd); shift
+[ $# -gt 0 ] || set -- go
 case "$(uname -s)" in
   MINGW*|MSYS*|CYGWIN*) os=windows; ext=.exe ;;
   Darwin) os=macos; ext=.bin ;;
   *) os=linux; ext=.bin ;;
 esac
-if [ -n "${ODIN:-}" ]; then d=$(dirname "$ODIN"); [ $os != windows ] || d=$(cygpath -u "$d"); PATH=$d:$PATH; fi
 out=$(dirname "$dl")/test-$(basename "$dl" | sed 's/^gpuikit-[^-]*-//')
 rm -rf "$out"; mkdir -p "$out"
 # A two-minute limit without timeout(1), which macOS lacks; and without a helper program between,
@@ -37,10 +34,8 @@ fi
 run() { # NAME BINARY: runs the program as built, in a window, for 30 frames
   local name=$1 bin=$2 dir=$out/$1 rc=0
   mkdir -p "$dir"
-  # From a copy in its own folder, the way it is shipped: one file (an Odin program on Windows
-  # also takes the manifest the build script put beside it).
+  # From a copy in its own folder, the way it is shipped: one file.
   cp "$bin" "$dir/"
-  [ ! -f "$bin.manifest" ] || cp "$bin.manifest" "$dir/"
   (cd "$dir" && GK_FRAMES=5,30 limit ${xvfb[@]+"${xvfb[@]}"} "./$(basename "$bin")") > "$dir/log" 2>&1 || rc=$?
   tail -5 "$dir/log"
   if [ $rc != 0 ]; then echo "dist-test: FAIL $name: exit $rc (log $dir/log)"; return 1; fi
@@ -56,8 +51,8 @@ if [ $os = macos ]; then
   done
   here=$(uname -m)
   case $here in
-    arm64) other=x86_64; odin_other=darwin_amd64; go_other=amd64 ;;
-    x86_64) other=arm64; odin_other=darwin_arm64; go_other=arm64 ;;
+    arm64) other=x86_64; go_other=amd64 ;;
+    x86_64) other=arm64; go_other=arm64 ;;
     *) echo "dist-test: FAIL unknown Mac architecture $here"; exit 1 ;;
   esac
   [ "${GK_OTHER_ARCH:-1}" = 1 ] || other=
@@ -77,18 +72,6 @@ arch_of() { # BINARY ARCH: the binary is that one architecture alone
 }
 for lang in "$@"; do
   case $lang in
-    odin) start=$(date +%s); "$dl/examples/build.sh" hello
-      echo "dist-test: odin hello built in $(( $(date +%s) - start )) s, $(( $(wc -c < "$dl/examples/hello$ext") / 1000000 )) MB, one file"
-      [ $os != macos ] || arch_of "$dl/examples/hello$ext" "$here"
-      run odin "$dl/examples/hello$ext"
-      if [ -n "$other" ]; then
-        start=$(date +%s); "$dl/examples/build.sh" hello "-target:$odin_other"
-        echo "dist-test: odin hello for $other built in $(( $(date +%s) - start )) s"
-        arch_of "$dl/examples/hello$ext" "$other"
-        if [ -n "$other_runs" ]; then
-          run "odin-$other" "$dl/examples/hello$ext"
-        else echo "dist-test: LINKED odin-$other: hello for $other links against the universal library (not run here)"; fi
-      fi ;;
     go) start=$(date +%s); "$dl/examples/go/build.sh" hello
       echo "dist-test: go hello built in $(( $(date +%s) - start )) s, $(( $(wc -c < "$dl/examples/go/hello$ext") / 1000000 )) MB, one file"
       [ $os != macos ] || arch_of "$dl/examples/go/hello$ext" "$here"
@@ -101,6 +84,6 @@ for lang in "$@"; do
           run "go-$other" "$dl/examples/go/hello$ext"
         else echo "dist-test: LINKED go-$other: hello for $other links against the universal library (not run here)"; fi
       fi ;;
-    *) echo "dist-test.sh: odin or go" >&2; exit 2 ;;
+    *) echo "dist-test.sh: go is the only language" >&2; exit 2 ;;
   esac
 done

@@ -1,5 +1,4 @@
-// The lists and editor families' modes of docs/PROTOCOLS.md 9.16 to 9.19, the port of
-// core/tests/lists2/round4.odin:
+// The lists and editor families' modes of docs/PROTOCOLS.md 9.16 to 9.19:
 //
 //	ctx-token   an input's token drawn by a row of the app's (an element closure over a context):
 //	            the row reads the token's context, and is described again when it is selected
@@ -43,7 +42,7 @@ func init() {
 	}
 }
 
-// rng prints a range as Odin's %v does: Range{lo = 6, hi = 11}.
+// rng prints a range in the form the checks expect: Range{lo = 6, hi = 11}.
 func rng(r gk.Range) string { return fmt.Sprintf("Range{lo = %d, hi = %d}", r.Lo, r.Hi) }
 
 // Go: an item function is handed the token's context, not its row: the input has one token, row 0.
@@ -84,15 +83,15 @@ func r4Init(a *App, cx *gk.Cx) {
 		_ = a.in1.ReplaceRangeWithToken(cx, gk.Range{Lo: 6, Hi: 11}, gk.NewInlineToken("t1", "world").WithLabel("World"))
 		r4.tokens = gk.Items(cx, a.r4TokenRow)
 	case "lend", "bad-lend":
-		a.ed = gk.NewEditorState(cx).Language("odin").DefaultValue("main :: proc() {}\n").Build()
+		a.ed = gk.NewEditorState(cx).Language("demo").DefaultValue("main :: proc() {}\n").Build()
 	case "highlight":
-		r4.hl = gk.NewHighlighter(cx, a.r4Styles, a.r4Folds, "odin")
-		a.ed = gk.NewEditorState(cx).Language("odin").DefaultValue("main :: proc() {\n\n}\n").Build()
+		r4.hl = gk.NewHighlighter(cx, a.r4Styles, a.r4Folds, "demo")
+		a.ed = gk.NewEditorState(cx).Language("demo").DefaultValue("main :: proc() {\n\n}\n").Build()
 		a.ed.SetHighlighterFactory(cx, r4.hl.Src)
 	case "languages":
-		r4.prov = gk.NewLanguageProvider(cx, []gk.LanguageAlias{{Alias: "od", Name: "odin"}}, a.r4Syntax)
+		r4.prov = gk.NewLanguageProvider(cx, []gk.LanguageAlias{{Alias: "od", Name: "demo"}}, a.r4Syntax)
 		gk.BaseSetLanguageProvider(cx, r4.prov)
-		a.ed = gk.NewEditorState(cx).Language("odin").DefaultValue("x := \n").Build()
+		a.ed = gk.NewEditorState(cx).Language("demo").DefaultValue("x := \n").Build()
 	case "small":
 		a.tree = gk.NewTreeState(cx).Build()
 		gk.SetTreeItems(cx, a.tree, treeNodes(300))

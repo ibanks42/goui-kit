@@ -2,7 +2,7 @@
 # sourced by core/tests/go/run.sh, which defines build and run. The app is core/tests/go/input:
 # the three instantiations of InputBaseState<M> (InputState, EditorState, TextareaState, made by
 # the generator's `[instantiate] states` rule), OtpState, and every handler shape the family's
-# elements take, driven by gk-meter scripts offscreen. Odin twin: core/tests/run-input.sh.
+# elements take, driven by gk-meter scripts offscreen.
 build input-go input
 
 # Events of an InputState: a change per typed key and enter (focus and blur are not raised
@@ -44,7 +44,7 @@ GK_PROTO_BIN=input-go run paste 0 'input paste n=1 entries=1 text="ab"' 'input c
 GK_PROTO_BIN=input-go run released-editor 2 'input released-editor released' \
   'a view shows a .*InputBaseState<.*EditorMode>.* through a handle that cannot be used'
 # A view function may not run an update that returns a value.
-# Go: "a view function" (Odin "a view procedure"), and the app's line in main.go.
+# Go: "a view function", and the app's line in main.go.
 GK_PROTO_BIN=input-go run call-in-view 2 'a view function may not change kit state' 'at .*input/main.go:[0-9]+'
 # The editor's providers over a row source (section 9.6): a typed trigger character asks for
 # completions as a queued event with a request id; the app's answer fills the menu of the

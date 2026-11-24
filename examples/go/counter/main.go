@@ -1,5 +1,5 @@
-// counter: a small app in Go, the same app as ref/src/bin/counter.rs and
-// examples/odin/counter: a kit Button, a Label with the count, an Input echoed into a second
+// counter: a small app in Go, the same app as ref/src/bin/counter.rs:
+// a kit Button, a Label with the count, an Input echoed into a second
 // Label, and a list of 10,000 rows, in three views inside a root view.
 //
 //	counter-go                 a real window

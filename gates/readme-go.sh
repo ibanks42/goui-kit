@@ -1,7 +1,6 @@
 #!/bin/bash
-# readme-go.sh: the Go example in README.md is the example that builds (the Go twin of
-# gates/readme.sh). Every line of README.md's ```go block must be a line of
-# examples/go/hello/main.go (the block is cut from it); that app is built against the ship
+# readme-go.sh: the Go example in README.md is the example that builds. Every line of
+# README.md's ```go block must be a line of examples/go/hello/main.go (the block is cut from it); that app is built against the ship
 # library and run for a few frames in a private compositor (gates/display.sh).
 # Prints one line "GATE readme example-go ...".
 #   gates/readme-go.sh

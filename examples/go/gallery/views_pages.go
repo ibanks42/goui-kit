@@ -1,5 +1,5 @@
-// The views family's gallery pages, the Go twin of ref/src/bin/gallery/views_pages.rs (and of
-// examples/odin/gallery/views_pages.odin), call for call: a sidebar whose items are groups of
+// The views family's gallery pages, the Go twin of ref/src/bin/gallery/views_pages.rs,
+// call for call: a sidebar whose items are groups of
 // the kit's menus (SidebarGroup<SidebarMenu> and Sidebar<SidebarGroup<SidebarMenu>>), one group
 // collapsed; a context menu whose submenu item has an icon (PopupMenu::submenu_with_icon); a
 // context menu of items made as values (PopupMenuItem).

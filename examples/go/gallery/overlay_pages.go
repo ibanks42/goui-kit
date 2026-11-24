@@ -1,5 +1,5 @@
-// The overlays family's gallery pages, the Go twin of ref/src/bin/gallery/overlay_pages.rs (and
-// of examples/odin/gallery/overlay_pages.odin), call for call (docs/PROTOCOLS.md section 11.6): a
+// The overlays family's gallery pages, the Go twin of ref/src/bin/gallery/overlay_pages.rs,
+// call for call (docs/PROTOCOLS.md section 11.6): a
 // dialog, an alert and two sheets opened by a handler with a view-built function (gk.NewBuilt),
 // a dropdown button and a context menu with a submenu whose menus are described values. The
 // page's script opens each (pages.txt). Then docks: panels, a split at a node read back from its
@@ -34,7 +34,7 @@ type overlayPages struct {
 	frameV, tabsV gk.View
 }
 
-// placementNames are the dock placements as Odin's %v prints them (the Odin twin's label).
+// placementNames are the dock placements by their variant names (the page's label).
 var placementNames = [...]string{"Center", "Left", "Bottom", "Right"}
 
 type chromeState struct {
@@ -160,7 +160,7 @@ func dockTextPanel(body string) gk.View {
 func overlayDockInit(a *App, cx *gk.Cx) {
 	p := &a.overlay
 	p.dock = gk.NewDockAreaSkinned(cx, "main")
-	files := gk.NewPanel(cx, dockTextPanel("src/main.odin"), gk.PanelData{Name: "files", Title: "Files"})
+	files := gk.NewPanel(cx, dockTextPanel("src/main.demo"), gk.PanelData{Name: "files", Title: "Files"})
 	editor := gk.NewPanel(cx, dockTextPanel("package main"), gk.PanelData{Name: "editor", Title: "Editor"})
 	outline := gk.NewPanel(cx, dockTextPanel("main :: proc()"), gk.PanelData{Name: "outline", Title: "Outline"})
 	p.dock.SetCenter(cx, gk.NewDockLayoutTabs().Panel(files).Panel(editor))
@@ -209,12 +209,12 @@ func dockPage(d gk.DockArea) gk.Element {
 	return gk.Div().W(gk.Px(600)).H(gk.Px(300)).Child(gk.DockView(d))
 }
 
-// dockR3Init is the Odin twin's dock_r3_init: the skin dock, then the split, hooks and restore
+// dockR3Init makes the skin dock, then the split, hooks and restore
 // docks.
 func dockR3Init(a *App, cx *gk.Cx) {
 	p := &a.overlay
 	p.skin = gk.NewDockAreaSkinned(cx, "skin")
-	one := gk.NewPanel(cx, dockTextPanel("src/main.odin"), gk.PanelData{Name: "files", Title: "Files"})
+	one := gk.NewPanel(cx, dockTextPanel("src/main.demo"), gk.PanelData{Name: "files", Title: "Files"})
 	p.skin.SetCenter(cx, gk.NewDockLayoutTabs().Panel(one))
 	gk.SetDockSkinPanelStyle(cx, p.skin, gk.PanelStyleTabBar) // a tab bar even for one panel
 	gk.SetDockSkinCloseButtonVisible(cx, p.skin, false)
@@ -227,7 +227,7 @@ func dockR3Init(a *App, cx *gk.Cx) {
 func dockSplitInit(a *App, cx *gk.Cx) {
 	p := &a.overlay
 	p.split = gk.NewDockAreaSkinned(cx, "split")
-	files := gk.NewPanel(cx, dockTextPanel("src/main.odin"), gk.PanelData{Name: "files", Title: "Files"})
+	files := gk.NewPanel(cx, dockTextPanel("src/main.demo"), gk.PanelData{Name: "files", Title: "Files"})
 	editor := gk.NewPanel(cx, dockTextPanel("package main"), gk.PanelData{Name: "editor", Title: "Editor"})
 	outline := gk.NewPanel(cx, dockTextPanel("main :: proc()"), gk.PanelData{Name: "outline", Title: "Outline"})
 	p.split.SetCenter(cx, gk.NewDockLayoutTabs().Panel(files).Panel(editor).Panel(outline))
@@ -241,7 +241,7 @@ func dockSplitInit(a *App, cx *gk.Cx) {
 func restorePanel(cx *gk.Cx, b gk.PanelBuild) {
 	switch b.Name {
 	case "files":
-		gk.PanelFill(cx, b.Panel, dockTextPanel("src/main.odin"), gk.PanelData{Name: "files", Title: "Files"})
+		gk.PanelFill(cx, b.Panel, dockTextPanel("src/main.demo"), gk.PanelData{Name: "files", Title: "Files"})
 	case "editor":
 		gk.PanelFill(cx, b.Panel, dockTextPanel("package main"), gk.PanelData{Name: "editor", Title: "Editor"})
 	case "outline":
@@ -310,7 +310,7 @@ func dockRendererInit(a *App, cx *gk.Cx) {
 	p.tabsV = gk.NewView(nil, func(cx *gk.Cx) gk.Element { return gk.HFlex(s.WFull).Child(gk.Label("tabs of the app")) })
 	r := gk.NewDockRenderer(cx, gk.DockHooks(gk.HookFrame, gk.HookDock, gk.HookTabBar), a.renderAsked)
 	p.render = gk.NewDockArea(cx, "rendered", gk.Option[int]{}).WithRenderer(r).Build()
-	files := gk.NewPanel(cx, dockTextPanel("src/main.odin"), gk.PanelData{Name: "files", Title: "Files"})
+	files := gk.NewPanel(cx, dockTextPanel("src/main.demo"), gk.PanelData{Name: "files", Title: "Files"})
 	outline := gk.NewPanel(cx, dockTextPanel("main :: proc()"), gk.PanelData{Name: "outline", Title: "Outline"})
 	p.render.SetCenter(cx, gk.NewDockLayoutTabs().Panel(files))
 	p.render.SetDock(cx, gk.DockPlacementLeft, gk.NewDockLayoutTabs().Panel(outline))

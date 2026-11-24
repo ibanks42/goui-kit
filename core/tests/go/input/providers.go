@@ -1,5 +1,4 @@
-// The providers mode: the editor's providers (Odin's kit_input.odin: editor_providers,
-// Provider_Event, Completion_Response, Hover_Response) on the styled code editor.
+// The providers mode: the editor's providers on the styled code editor.
 package main
 
 import (

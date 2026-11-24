@@ -11,7 +11,7 @@ func init() {
 	modes["c6-background"] = &mode{click: once(background)}
 }
 
-// kindName is Odin's name of a background's kind, which the checks print.
+// kindName is the name of a background's kind that the checks print.
 func kindName(k gk.BackgroundKind) string {
 	switch k {
 	case gk.BackgroundKindSolid:

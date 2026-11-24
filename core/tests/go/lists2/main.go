@@ -11,7 +11,7 @@
 //	         | ctx-token | lend | highlight | languages | bad-lend | small   (round4.go)
 //
 // Most modes are in modes.go and round4.go, which register their init, step and view from init().
-// Odin's bad-ctx (gk.row_context for a row no closure drew) has no Go twin: an item function is
+// There is no bad-ctx mode (a row's context read for a row no closure drew): an item function is
 // handed its context's values (gk.Items), so there is no read of a context to misuse.
 package main
 
@@ -79,7 +79,7 @@ func key(section, row int) uint64 {
 	return uint64(section)<<32 | uint64(uint32(row))
 }
 
-// strs prints strings as Odin's %v does: ["a", "b"].
+// strs prints strings in the form the checks expect: ["a", "b"].
 func strs(vs []string) string {
 	q := make([]string, len(vs))
 	for i, v := range vs {

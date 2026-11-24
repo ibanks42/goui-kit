@@ -1,30 +1,27 @@
 #!/bin/bash
-# gallery.sh [go|odin] [--record]: the gallery pixel gate. Runs the Rust reference gallery twice and
-# the candidate gallery once (go: examples/go/gallery, bin/gallery-go; odin, the default for now:
-# examples/odin/gallery, bin/gallery-odin), offscreen (gpui's HeadlessAppContext with the real wgpu
-# renderer; no display), under one generated script that walks every page of ref/gallery/pages.txt
-# and every step of each page, and compares the PNGs byte for byte, page by page. Reference and
-# candidate are rendered in the same run on the same machine and driver; the second reference run
-# shows which pages are comparable at all. Prints one line per page and
-# "GATE gallery[-go] pixels ...". A page that gates/verified.json lists as identical for that
-# front end must still be identical (the ratchet); --record rewrites the front end's entry from a
-# passing run, after a page was added to its app. For Go, the pages of
-# gates/gallery-go-pending.txt (waiting for a Go binding) are reported as pending, not failed.
-#   gates/gallery.sh go        make gallery-go
-#   gates/gallery.sh           (Odin) make gallery
+# gallery.sh [go] [--record]: the gallery pixel gate. Runs the Rust reference gallery twice and the
+# Go gallery (examples/go/gallery, bin/gallery-go) once, offscreen (gpui's HeadlessAppContext with
+# the real wgpu renderer; no display), under one generated script that walks every page of
+# ref/gallery/pages.txt and every step of each page, and compares the PNGs byte for byte, page by
+# page. Reference and candidate are rendered in the same run on the same machine and driver; the
+# second reference run shows which pages are comparable at all. Prints one line per page and
+# "GATE gallery-go pixels ...". A page that gates/verified.json lists as identical must still be
+# identical (the ratchet); --record rewrites its entry from a passing run, after a page was added
+# to the app. The pages of gates/gallery-go-pending.txt (waiting for a Go binding) are reported as
+# pending, not failed. The argument go (the only candidate) may be given.
+#   gates/gallery.sh           make gallery
 # Needs GK_REF/ref-gallery (default: lib root/diag), the diag library and bin/gallery-go (built here
-# when missing or older than its sources; GK_GALLERY_BUILD=0 never builds) or bin/gallery-odin.
-# Results: gates/out/gallery[-go]/{rust,rust2,go|odin}/*.png, result.json.
+# when missing or older than its sources; GK_GALLERY_BUILD=0 never builds).
+# Results: gates/out/gallery-go/{rust,rust2,go}/*.png, result.json.
 here=$(cd "$(dirname "$0")" && pwd); repo=$(dirname "$here")
-cand=odin
-case "${1:-}" in go|odin) cand=$1; shift ;; esac
+cand=go
+[ "${1:-}" = go ] && shift
 pages=$repo/ref/gallery/pages.txt
-out=$here/out/gallery; pending=()
-[ $cand = go ] && { out=$here/out/gallery-go; pending=(--pending "$here/gallery-go-pending.txt"); }
+out=$here/out/gallery-go; pending=(--pending "$here/gallery-go-pending.txt")
 lib=${GK_LIB_ROOT:-$repo/lib}/diag
 ref=${GK_REF:-$lib}/ref-gallery; [ -x "$ref" ] || ref=$lib/ref-gallery
 exe=${GK_BIN:-$repo/bin}/gallery-$cand
-if [ $cand = go ] && [ "${GK_GALLERY_BUILD:-1}" = 1 ] &&
+if [ "${GK_GALLERY_BUILD:-1}" = 1 ] &&
    { [ ! -x "$exe" ] || [ -n "$(find "$repo/examples/go/gallery" "$repo/go/gk" -newer "$exe" -name '*.go' -print -quit)" ]; }; then
   echo "gallery: building $exe"
   GK_LIB=${GK_LIB_ROOT:-$repo/lib}/ship OUT=$(dirname "$exe") "$repo/examples/go/build.sh" gallery ||

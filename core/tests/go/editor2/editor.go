@@ -35,7 +35,7 @@ func init() {
 		a.hist.Retain(cx, []string{"b", "d", "x"})
 		es := a.hist.Entries(cx)
 		cur, _ := a.hist.Current(cx).Get()
-		fmt.Printf("editor2 history entries=%s current=%q\n", odinStrings(es), cur)
+		fmt.Printf("editor2 history entries=%s current=%q\n", stringsText(es), cur)
 	}, script: "frame\n" + stepScript}
 	modes["conflict"] = &mode{step: conflictStep, script: "frame\n" + stepScript}
 	modes["fold"] = &mode{init: foldInit, view: func(a *App, cx *gk.Cx) gk.Element {
@@ -77,7 +77,7 @@ func conflictStep(a *App, cx *gk.Cx) {
 }
 
 // Go: an item function is handed the folded line, not its row: the row printed is the line's
-// (one fold, row 0 in Odin as well as line 0).
+// (one fold, line 0).
 func (a *App) foldRow(cx *gk.Cx, line int) gk.Element {
 	ed.foldRows++
 	fmt.Printf("editor2 fold row=%d line=%d\n", line, line)
@@ -126,8 +126,8 @@ func (a *App) styleFor(cx *gk.Cx, name string) gk.Option[gk.HighlightStyle] {
 
 func styleInit(a *App, cx *gk.Cx) {
 	ed.styles = gk.NewAsk(cx, a.styleFor)
-	ed.hl = gk.NewHighlighter(cx, a.keywordRuns, nil, "odin")
-	a.ed = gk.NewEditorState(cx).Language("odin").DefaultValue("main :: proc() {}\n").Build()
+	ed.hl = gk.NewHighlighter(cx, a.keywordRuns, nil, "demo")
+	a.ed = gk.NewEditorState(cx).Language("demo").DefaultValue("main :: proc() {}\n").Build()
 	a.ed.SetHighlighterFactory(cx, ed.hl.Src)
 	a.ed.SetEditorStyle(cx, gk.InputEditorStyle{
 		Foreground: theme.Foreground, MutedForeground: theme.MutedForeground,

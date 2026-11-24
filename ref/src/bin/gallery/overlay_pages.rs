@@ -1,8 +1,8 @@
 //! The overlays family's gallery pages (docs/PROTOCOLS.md section 11.6): a dialog, an alert, a
 //! sheet at the right and at the left, a dropdown menu and a context menu with a submenu, each
 //! opened by the page's script (a click on the page's button, or a right click), written the way
-//! a Rust GPUI-kit app writes them, with closures. The Odin twin is
-//! examples/odin/gallery/overlay_pages.odin, whose dialogs are views (gk.built) and whose menus
+//! a Rust GPUI-kit app writes them, with closures. The Go twin is
+//! examples/go/gallery/overlay_pages.go, whose dialogs are views (gk.NewBuilt) and whose menus
 //! are described values; the pages' lines are in ref/gallery/pages.txt.
 use gpui_kit::component::button::Button;
 use gpui_kit::component::dialog::DialogEntrance;
@@ -108,7 +108,7 @@ pub fn page(id: &str, window: &mut Window, cx: &mut App) -> Option<AnyElement> {
     })
 }
 
-/// A dock panel that shows one line of text: what the Odin page's panels are (an Odin view each).
+/// A dock panel that shows one line of text.
 struct TextPanel {
     name: &'static str,
     title: &'static str,
@@ -153,7 +153,7 @@ fn dock(window: &mut Window, cx: &mut App) -> Entity<DockArea> {
     }
     let (area, _skin) = DockSkin::dock_area("main", None, window, cx);
     let mut panel = |name, title, body| cx.new(|cx| TextPanel { name, title, body, focus: cx.focus_handle() });
-    let files = panel("files", "Files", "src/main.odin");
+    let files = panel("files", "Files", "src/main.demo");
     let editor = panel("editor", "Editor", "package main");
     let outline = panel("outline", "Outline", "main :: proc()");
     area.update(cx, |a, cx| {
@@ -164,7 +164,7 @@ fn dock(window: &mut Window, cx: &mut App) -> Entity<DockArea> {
     area
 }
 
-/// docs/PROTOCOLS.md 11.8: what the Odin pages dock-split, dock-hooks and dock-restore do,
+/// docs/PROTOCOLS.md 11.8: what the pages dock-split, dock-hooks and dock-restore do,
 /// the way a Rust app does it.
 mod r3 {
     use super::TextPanel;
@@ -204,7 +204,7 @@ mod r3 {
     pub fn split(window: &mut Window, cx: &mut App) -> Entity<DockArea> {
         once("split", window, cx, |window, cx| {
             let (area, _skin) = DockSkin::dock_area("split", None, window, cx);
-            let files = text(cx, "files", "Files", "src/main.odin");
+            let files = text(cx, "files", "Files", "src/main.demo");
             let editor = text(cx, "editor", "Editor", "package main");
             let outline = text(cx, "outline", "Outline", "main :: proc()");
             let (eid, oid) = (editor.entity_id().into(), outline.entity_id().into());
@@ -276,7 +276,7 @@ mod r3 {
         static BOUND: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
     }
 
-    /// ctrl-s for MenuKbd, as the Odin gallery binds it at start (only the page menu-kbd names it).
+    /// ctrl-s for MenuKbd, bound at start (only the page menu-kbd names it).
     pub fn bind_once(cx: &mut App) {
         if !BOUND.with(|b| b.replace(true)) {
             cx.bind_keys([gpui_kit::KeyBinding::new("ctrl-s", super::MenuKbd, None)]);
@@ -286,7 +286,7 @@ mod r3 {
     pub fn skinned(window: &mut Window, cx: &mut App) -> Entity<DockArea> {
         once("skin", window, cx, |window, cx| {
             let (area, skin) = DockSkin::dock_area("skin", None, window, cx);
-            let files = text(cx, "files", "Files", "src/main.odin");
+            let files = text(cx, "files", "Files", "src/main.demo");
             area.update(cx, |a, cx| a.set_center(DockLayout::tabs().panel(files), window, cx));
             skin.set_panel_style(gpui_kit::component::dock::PanelStyle::TabBar, cx);
             skin.set_close_button_visible(false, cx);
@@ -297,7 +297,7 @@ mod r3 {
     pub fn restored(window: &mut Window, cx: &mut App) -> Entity<DockArea> {
         once("restored", window, cx, |window, cx| {
             for (name, title, body) in
-                [("files", "Files", "src/main.odin"), ("editor", "Editor", "package main"), ("outline", "Outline", "main :: proc()")]
+                [("files", "Files", "src/main.demo"), ("editor", "Editor", "package main"), ("outline", "Outline", "main :: proc()")]
             {
                 register_panel(cx, name, move |_, _, cx| Arc::new(text(cx, name, title, body)) as Arc<dyn PanelView>);
             }
@@ -371,7 +371,7 @@ mod r4 {
         if let Some(d) = DOCK.with(|d| d.borrow().clone()) {
             return d;
         }
-        let files = text(cx, "files", "Files", "src/main.odin");
+        let files = text(cx, "files", "Files", "src/main.demo");
         let outline = text(cx, "outline", "Outline", "main :: proc()");
         let area = cx.new(|cx| DockArea::new("rendered", None, window, cx).with_renderer(Rc::new(Chrome)));
         area.update(cx, |a, cx| {

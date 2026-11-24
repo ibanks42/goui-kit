@@ -94,8 +94,8 @@ func init() {
 	}, script: "click 100 72\ntype 123456\nframe\n" + stepScript}
 }
 
-// odinRanges prints ranges as Odin's %v does: [Range{lo = 0, hi = 5}, ...].
-func odinRanges(rs []gk.Range) string {
+// rangesText prints ranges in the form the checks expect: [Range{lo = 0, hi = 5}, ...].
+func rangesText(rs []gk.Range) string {
 	parts := make([]string, len(rs))
 	for i, r := range rs {
 		parts[i] = fmt.Sprintf("Range{lo = %d, hi = %d}", r.Lo, r.Hi)
@@ -103,8 +103,8 @@ func odinRanges(rs []gk.Range) string {
 	return "[" + strings.Join(parts, ", ") + "]"
 }
 
-// odinStrings prints strings as Odin's %v does: ["b", "d"].
-func odinStrings(ss []string) string {
+// stringsText prints strings in the form the checks expect: ["b", "d"].
+func stringsText(ss []string) string {
 	parts := make([]string, len(ss))
 	for i, x := range ss {
 		parts[i] = fmt.Sprintf("%q", x)
@@ -138,14 +138,14 @@ func decorationsStep(a *App, cx *gk.Cx) {
 		// a call's object is temporary (until the next frame): kept across the steps
 		a.coll = a.ed.CreateDecorationsCollection(cx, first)
 		gk.Retain(cx, a.coll)
-		fmt.Printf("editor2 decorations made ranges=%s\n", odinRanges(a.coll.GetRanges(cx)))
+		fmt.Printf("editor2 decorations made ranges=%s\n", rangesText(a.coll.GetRanges(cx)))
 		more := []gk.TextDecoration{{Range: gk.Range{Lo: 6, Hi: 11}, Style: gk.HighlightStyle{BackgroundColor: gk.Some(theme.Accent)}}}
 		a.coll.Append(cx, more)
 	case 2:
-		fmt.Printf("editor2 decorations appended ranges=%s\n", odinRanges(a.coll.GetRanges(cx)))
+		fmt.Printf("editor2 decorations appended ranges=%s\n", rangesText(a.coll.GetRanges(cx)))
 		a.coll.Clear(cx)
 	case 3:
-		fmt.Printf("editor2 decorations cleared ranges=%s\n", odinRanges(a.coll.GetRanges(cx)))
+		fmt.Printf("editor2 decorations cleared ranges=%s\n", rangesText(a.coll.GetRanges(cx)))
 	}
 }
 

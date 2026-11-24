@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """symbolize.py: what tools/profile/sampler.c recorded, by function, for two or more groups of
-runs (e.g. the Rust reference and the Odin app), as main-thread CPU microseconds per frame.
+runs (e.g. the Rust reference and the Go app), as main-thread CPU microseconds per frame.
 
   symbolize.py [--period-us 50] [--skip 2.0] [--hz 60] [--top 40] NAME=PREFIX[,PREFIX...] ...
 
@@ -115,8 +115,8 @@ def main(argv):
     def category(dso, sym):
         if dso.startswith("[anonymous") or "gallium" in dso or "LLVM" in dso or "libGL" in dso or "libEGL" in dso or "nvidia" in dso or "vulkan" in dso:
             return "software rendering (llvmpipe, its JIT code, GL)"
-        if sym.startswith(("gpuikit::", "<gpuikit::")) or dso.endswith("-odin-speed") or dso.endswith("-odin"):
-            return "the binding: decoders, runtime, the Odin app"
+        if sym.startswith(("gpuikit::", "<gpuikit::")) or dso.endswith("-go"):
+            return "the binding: decoders, runtime, the Go app"
         if "gk_meter" in sym:
             return "the meter (both)"
         if re.search(r"gpui_component|gpui_base|gpui_kit", sym):

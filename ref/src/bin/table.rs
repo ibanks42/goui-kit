@@ -1,7 +1,7 @@
 //! ref-table: the Rust reference of the `table` scene and the gallery's table pages' twin: the
 //! kit's DataTable over a TableDelegate written in Rust, `rows` rows of `cols` columns, each
 //! cell a Label with "row:col". The frame-cost gate scrolls it before every frame with
-//! GK_SCROLL (gates/fps.sh table); the Odin twin is examples/odin/table, whose cells are views
+//! GK_SCROLL (gates/fps.sh table); the Go twin is examples/go/table, whose cells are views
 //! over a row source (docs/PROTOCOLS.md section 9.5).
 //!
 //!   ref-table [rows] [cols]      (default 100000 6)
@@ -13,7 +13,7 @@ use gpui_kit::{
 };
 
 /// The rows, as an app would keep them: here only their count, the text is made from the
-/// position when a cell is drawn (the Odin twin makes it when a cell is described).
+/// position when a cell is drawn.
 struct Cells {
     rows: usize,
     columns: Vec<Column>,

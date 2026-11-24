@@ -197,7 +197,7 @@ func (a *App) releaseChild(cx *gk.Cx) {
 
 // --- menus and URLs -----------------------------------------------------------------------------
 
-// osName prints an OsAction as Odin's %v does (the variant's name).
+// osName prints an OsAction as the checks expect (the variant's name).
 func osName(o gk.OsAction) string {
 	names := []string{"None", "Cut", "Copy", "Paste", "Select_All", "Undo", "Redo"}
 	if int(o) < len(names) {
@@ -248,8 +248,8 @@ func (a *App) readBar(cx *gk.Cx) {
 
 // --- gpui's element leftovers (PROTOCOLS.md 13.31) ---------------------------------------
 
-// joinOdin prints a slice as Odin's %v does: [2, 0, 1].
-func joinOdin[T any](xs []T) string {
+// joinText prints a slice in the form the checks expect: [2, 0, 1].
+func joinText[T any](xs []T) string {
 	parts := make([]string, len(xs))
 	for i, x := range xs {
 		parts[i] = fmt.Sprint(x)
@@ -270,7 +270,7 @@ func (a *App) elements(cx *gk.Cx) {
 	none := gk.TestDragPayload(cx, gk.ExternalDragPayload{})
 	fmt.Printf("platform drag payload none n=%d\n", len(none))
 	order := gk.TestPrepaintOrder(cx, []int{2, 0, 1})
-	fmt.Printf("platform prepaint order=%s\n", joinOdin(order))
+	fmt.Printf("platform prepaint order=%s\n", joinText(order))
 	red := gk.NewRenderImage(cx, gk.PixelImage{Width: 2, Height: 1, RGBA: []byte{255, 0, 0, 255, 0, 0, 255, 255}})
 	w, h, first, id := gk.TestRenderImage(cx, red, false)
 	cw, ch, cfirst, cid := gk.TestRenderImage(cx, red, true)

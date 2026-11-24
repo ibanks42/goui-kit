@@ -1,14 +1,14 @@
 # run-overlay.sh: the protocol tests (docs/PROTOCOLS.md section 11.6), sourced by
 # core/tests/go/run.sh, which defines build and run. The app is core/tests/go/overlay: dialogs, an
-# alert and a sheet opened with view-built functions, a questionnaire, offscreen. Odin twin:
-# core/tests/run-overlay.sh. Go has no String for the kit's enums: the app prints Odin's names
+# alert and a sheet opened with view-built functions, a questionnaire, offscreen.
+# Go has no String for the kit's enums: the app prints the names the checks expect
 # (Added, Left, Tab_Bar, ...) itself.
 build overlay-go overlay
 
 # A dialog opened from a handler: its function is described before the kit first builds it;
 # described again while open (the count bumped): escape runs OnCancel from the second
-# description's tape (seen=1); opened again on the same view (Go: the Built the app kept; Odin's
-# gk.built gives the same handle for the same procedure and state); closed by the app.
+# description's tape (seen=1); opened again on the same view (Go: the Built the app kept);
+# closed by the app.
 GK_PROTO_BIN=overlay-go run dialog 0 \
   'overlay dialog opened' 'overlay dialog described n=1 count=0' 'overlay dialog active=true' \
   'overlay dialog described n=2 count=1' 'overlay dialog cancel n=1 seen=1 count=1' \
@@ -48,7 +48,7 @@ GK_PROTO_BIN=overlay-go run dock 0 'overlay dock made' 'overlay panel 0 event Ad
 # A real window on a display (gates/display.sh, here its private Xvfb): the size the app gave
 # comes back through gk.GetWindowInfo, and the X server holds the title the app gave and the one it
 # set later (xwininfo while the app runs; GPUI reads titles back on macOS only). Go: the window's
-# title is "Go on the kit" (Odin's "Odin on the kit").
+# title is "Go on the kit".
 cat > "$bin/overlay-display-go" <<SH
 #!/bin/bash
 exec "$repo/gates/display.sh" bash -c '"\$0" & p=\$!; sleep 0.6; xwininfo -root -tree | grep -E "Go on the kit|Renamed" | sed "s/^/overlay x11 before /"; sleep 1.0; xwininfo -root -tree | grep -E "Go on the kit|Renamed" | sed "s/^/overlay x11 after /"; wait \$p' "$bin/overlay-go"
@@ -73,7 +73,7 @@ GK_PROTO_BIN=overlay-go run dock-bad-node 2 'node id 987654321 was never handed 
 # PanelBuild request per panel, queued, answered with gk.PanelFill), dumped again the same; a pane
 # tree written out and read back (its two panels built through the registry again), and
 # PanelRegistry::build_panel for a known and an unknown name: 5 PanelBuild requests in all.
-GK_PROTO_BIN=overlay-go run dock-layout 0 'overlay layout saved .*first:panel.\{"file":"a.odin"\}' \
+GK_PROTO_BIN=overlay-go run dock-layout 0 'overlay layout saved .*first:panel.\{"file":"a.demo"\}' \
   'overlay layout loaded failed=false' 'overlay layout build first n=1 dock=true' \
   'overlay layout build second n=2 dock=true' 'overlay layout again same=true described=[1-9][0-9]*,[1-9][0-9]*' \
   'overlay layout tree to_state=.*first.*second.* from_state_panels=2' 'overlay layout build_panel known=true unknown=false' \

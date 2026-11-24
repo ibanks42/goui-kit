@@ -7,7 +7,7 @@ import os
 import sys
 
 here = os.path.dirname(os.path.abspath(__file__))
-sample = open(os.path.join(here, "..", "examples", "odin", "reader", "sample-feed.md")).read()
+sample = open(os.path.join(here, "..", "examples", "go", "reader", "sample-feed.md")).read()
 out, n = sys.argv[1], int(sys.argv[2]) if len(sys.argv) > 2 else 3000
 SOURCES = ["Field Notes", "Systems Weekly", "Kitchen Table", "Desk Setup", "Project Log", "Night Train"]
 TOPICS = ["gardens", "compilers", "rivers", "bicycles", "maps", "teapots", "radios", "lighthouses",

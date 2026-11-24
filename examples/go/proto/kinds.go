@@ -1,7 +1,7 @@
 // kinds: the protocol tests of the generator's descriptor kinds beyond the core ones
 // (gen/gk_go_kinds.py): calendar values both ways, value cells, results that may fail, item
-// functions, asks, transformations and gpui's element leftovers. The Odin twins are in
-// core/tests/values, items and lists2; gates/go-proto.sh checks the lines.
+// functions, asks, transformations and gpui's element leftovers. gates/go-proto.sh checks the
+// lines.
 //
 //	GK_PROTO=kinds-values | kinds-bad-date | kinds-bad-expr | kinds-items | kinds-label | kinds-tree | kinds-wrong-kind |
 //	         kinds-elements

@@ -3,7 +3,7 @@
 # write-rule case, whose every image must show a per-frame handler's write in the frame it
 # was made in). Runs the app offscreen (gpui's
 # HeadlessAppContext with the real wgpu renderer; no display, no compositor) as the Rust
-# reference and as the Odin app under the same gk-meter script, with the diag library, and
+# reference and as the Go app under the same gk-meter script, with the diag library, and
 # compares the PNGs byte for byte. Reference and candidate are always rendered in the same
 # run, on the same machine and driver. Prints one line starting with "GATE pixels".
 #   gates/pixels.sh
@@ -17,8 +17,8 @@ ref=${GK_REF:-$lib}/ref-$app
 export LD_LIBRARY_PATH=$lib
 unset WAYLAND_DISPLAY DISPLAY
 fail=0; same=0; total=0
-# GK_PIXEL_CANDS: the front ends compared with Rust (default odin; gates/go.sh passes go).
-cands=${GK_PIXEL_CANDS:-odin}
+# GK_PIXEL_CANDS: the front ends compared with Rust (default go, as gates/go.sh passes).
+cands=${GK_PIXEL_CANDS:-go}
 for b in rust $cands; do
   rm -rf "$out/$b"; mkdir -p "$out/$b"; cd "$out/$b"
   case "$b" in

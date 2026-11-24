@@ -1,7 +1,6 @@
 package gk
 
-// The hand-written values and platform families, ported from odin/gk/rt_values.odin and
-// odin/gk/rt_platform.odin (docs/PROTOCOLS.md 11.17, 11.30, 13.20, 13.31): drag and drop, an
+// The hand-written values and platform families (docs/PROTOCOLS.md 11.17, 11.30, 13.20, 13.31): drag and drop, an
 // element's tooltip, image sources as bytes and pixels, the menu bar. The library side is
 // core/src/values.rs and core/src/platform.rs; the generated builders (OnDrag, OnDrop, DragOver,
 // CanDrop, Tooltip, gk.Img's sources) call the put functions here.

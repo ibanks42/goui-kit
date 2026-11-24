@@ -58,7 +58,7 @@ func init() {
 	roots["nav"] = navRoot
 }
 
-// dockPlacementName prints a DockPlacement as Odin's %v does (the variant's name).
+// dockPlacementName prints a DockPlacement as the checks expect (the variant's name).
 func dockPlacementName(p gk.DockPlacement) string {
 	names := []string{"Center", "Left", "Bottom", "Right"}
 	if int(p) < len(names) {
@@ -67,8 +67,8 @@ func dockPlacementName(p gk.DockPlacement) string {
 	return fmt.Sprint(uint16(p))
 }
 
-// joinOdin prints a slice as Odin's %v does: [200, 440].
-func joinOdin[T any](xs []T) string {
+// joinText prints a slice in the form the checks expect: [200, 440].
+func joinText[T any](xs []T) string {
 	parts := make([]string, len(xs))
 	for i, x := range xs {
 		parts[i] = fmt.Sprint(x)
@@ -115,7 +115,7 @@ func dockIDsSplit(a *App, cx *gk.Cx) {
 	a.dock.SetZoomedIn(cx, n2)
 }
 
-// panelStyleName prints a PanelStyle as Odin's %v does (the variant's name).
+// panelStyleName prints a PanelStyle as the checks expect (the variant's name).
 func panelStyleName(p gk.PanelStyle) string {
 	switch p {
 	case gk.PanelStyleAuto:
@@ -140,7 +140,7 @@ func dockIDsZoom(a *App, cx *gk.Cx) {
 	if st, ok := saved.Center.Info.(gk.PanelInfoStack); ok {
 		sizes = st.Sizes
 	}
-	fmt.Printf("overlay done mode=dock-ids children=%d sizes=%s\n", len(saved.Center.Children), joinOdin(sizes))
+	fmt.Printf("overlay done mode=dock-ids children=%d sizes=%s\n", len(saved.Center.Children), joinText(sizes))
 }
 
 func badNode(a *App, cx *gk.Cx) {
@@ -184,7 +184,7 @@ func printState(st gk.PanelState) string {
 }
 
 func layoutSave(a *App, cx *gk.Cx) {
-	gk.SetPanel(cx, a.panels[0], gk.PanelData{Name: "first", Title: "first", Info: `{"file":"a.odin"}`})
+	gk.SetPanel(cx, a.panels[0], gk.PanelData{Name: "first", Title: "first", Info: `{"file":"a.demo"}`})
 }
 
 func layoutLoad(a *App, cx *gk.Cx) {
@@ -329,7 +329,7 @@ func renderDone(a *App, cx *gk.Cx) {
 
 // --- PROTOCOLS.md 11.10: the toast manager on the library clock ---------------------------
 
-// toastStatusName prints a ToastTransitionStatus as Odin's %v does (the variant's name).
+// toastStatusName prints a ToastTransitionStatus as the checks expect (the variant's name).
 func toastStatusName(t gk.ToastTransitionStatus) string {
 	names := []string{"Starting", "Present", "Ending"}
 	if int(t) < len(names) {
@@ -338,8 +338,8 @@ func toastStatusName(t gk.ToastTransitionStatus) string {
 	return fmt.Sprint(uint16(t))
 }
 
-// optOdin prints an optional value as Odin's %v of a Maybe does (nil, or the value).
-func optOdin[T any](o gk.Option[T]) string {
+// optText prints an optional value as the checks expect (nil, or the value).
+func optText[T any](o gk.Option[T]) string {
 	v, ok := o.Get()
 	if !ok {
 		return "nil"
@@ -353,11 +353,11 @@ func toastRun(a *App, cx *gk.Cx) {
 	ov.toasts.Push(cx, 1, 100, gk.ToastOptions{Timeout: gk.Some(300 * time.Millisecond)}, t0)
 	ov.toasts.Push(cx, 2, 200, gk.ToastOptions{}, t0)
 	replaced := ov.toasts.Push(cx, 2, 201, gk.ToastOptions{}, t0)
-	fmt.Printf("overlay toast len=%d replaced=%s get2=%s\n", ov.toasts.Len(cx), optOdin(replaced), optOdin(ov.toasts.Get(cx, 2)))
+	fmt.Printf("overlay toast len=%d replaced=%s get2=%s\n", ov.toasts.Len(cx), optText(replaced), optText(ov.toasts.Get(cx, 2)))
 	adv := ov.toasts.Advance(cx, t0+150*time.Millisecond, false)
-	fmt.Printf("overlay toast presented=%s changed=%v\n", joinOdin(adv.Presented), adv.Changed)
+	fmt.Printf("overlay toast presented=%s changed=%v\n", joinText(adv.Presented), adv.Changed)
 	adv = ov.toasts.Advance(cx, t0+500*time.Millisecond, false)
-	fmt.Printf("overlay toast ending=%s\n", joinOdin(adv.Ending))
+	fmt.Printf("overlay toast ending=%s\n", joinText(adv.Ending))
 	adv = ov.toasts.Advance(cx, t0+600*time.Millisecond, false)
 	var removed gk.TupleUint64Uint64
 	if len(adv.Removed) > 0 {
@@ -375,7 +375,7 @@ func toastRun(a *App, cx *gk.Cx) {
 	all := ov.toasts.Iter(cx)
 	gone := ov.toasts.DismissAll(cx, t0+700*time.Millisecond)
 	later := gk.ClockNow(cx)
-	fmt.Printf("overlay done mode=toast iter=%d dismissed_all=%s clock_moves=%v\n", len(all), joinOdin(gone), later >= t0)
+	fmt.Printf("overlay done mode=toast iter=%d dismissed_all=%s clock_moves=%v\n", len(all), joinText(gone), later >= t0)
 }
 
 // --- PROTOCOLS.md 11.15: value calls ----------------------------------------------------------

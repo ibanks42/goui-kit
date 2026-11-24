@@ -1,6 +1,6 @@
 //! The charts' gallery pages (docs/PROTOCOLS.md section 12): every chart of the kit over a small
 //! fixed data set, written the way a Rust GPUI-kit app writes them, with its own row types and
-//! closures. The Odin twin is examples/odin/gallery/chart_pages.odin, whose charts take the
+//! closures. The Go twin is examples/go/gallery/chart_pages.go, whose charts take the
 //! app's rows as a data table and name columns and templates where these closures stand; the
 //! pages' lines are in ref/gallery/pages.txt. Every chart draws without its appear motion
 //! (`appear(false)`): the motion runs on a clock, which two runs do not share.
@@ -128,7 +128,6 @@ struct Pt {
 }
 
 /// A plot a Rust app writes by hand: a Plot impl that paints an axis, a grid and four shapes.
-/// The Odin page describes the same parts with gk.plot.
 struct Shapes {
     pts: Vec<Pt>,
 }
@@ -301,7 +300,7 @@ pub fn page(id: &str, cx: &App) -> Option<AnyElement> {
                     .name("Visits")
                     .y_axis(true)
                     .y_tick_count(3)
-                    .y_tick_format(|v| format!("{v:.0}")) // "{:,.0}" in Odin: no value reaches 1,000
+                    .y_tick_format(|v| format!("{v:.0}")) // "{:,.0}" in Go: no value reaches 1,000
                     .tick_margin(2),
             ),
             card(
@@ -524,7 +523,7 @@ pub fn page(id: &str, cx: &App) -> Option<AnyElement> {
         ),
         "plot-custom" => card(Shapes { pts: pts(cx) }),
         // The components family, docs/PROTOCOLS.md 12.16: closures over a row that return
-        // a list; the Odin page gives the same lists per row.
+        // a list.
         "comp6-sankey-labels" => {
             let (nodes, links) = flows(cx);
             let muted = cx.theme().muted_foreground;
@@ -550,8 +549,8 @@ pub fn page(id: &str, cx: &App) -> Option<AnyElement> {
                 .fill_gradient(|d, _, _| [linear_color_stop(d.color, 0.), linear_color_stop(hsla(0.6, 0.5, 0.9, 1.), 1.)]),
         ),
         "comp6-bar-labels" => card(LabeledBars { months: months(cx) }),
-        // A generic element over its children's type (Sidebar<E: SidebarItem>), instantiated in
-        // Odin for SidebarMenu.
+        // A generic element over its children's type (Sidebar<E: SidebarItem>), instantiated
+        // for SidebarMenu.
         "generic-sidebar" => div()
             .w(px(240.))
             .h(px(300.))
@@ -575,7 +574,7 @@ pub fn page(id: &str, cx: &App) -> Option<AnyElement> {
 }
 
 /// comp6-bar-labels: bars, each with its value above it, as a Rust app's Plot writes them; the label
-/// is placed from the row (the Odin page computes the same origins: docs/PROTOCOLS.md 12.16).
+/// is placed from the row (docs/PROTOCOLS.md 12.16).
 struct LabeledBars {
     months: Vec<Month>,
 }

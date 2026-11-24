@@ -7,8 +7,8 @@ Called from the shared model and emitters at a few hook points, so the rules liv
   `open_sheet`): the descriptor `build` of an element op becomes `viewbuild` in a call op
   (`view_built`, from `Model.call_bad`). The op carries the u64 handle of a view whose root is
   a node of type T; the library applies that root's ops to the T upstream hands in, each time
-  upstream calls the closure (`crate::overlay::ViewBuild`). Odin: `gk.built(cx, state, proc)`,
-  a `gk.Built(T)`.
+  upstream calls the closure (`crate::overlay::ViewBuild`). Go: `gk.NewBuilt(cx, state, fn)`,
+  a `gk.Built[T]`.
 - build closures with the entity's context (11.6): `Fn(PopupMenu, &mut Window,
   &mut Context<PopupMenu>) -> PopupMenu` in an element op (dropdown and context menus) is a
   `build` closure like `Fn(X, &mut Window, &mut App) -> X` (`context_build`, from
@@ -16,7 +16,7 @@ Called from the shared model and emitters at a few hook points, so the rules liv
 - described values (11.6): an entity type upstream builds itself and hands to such a closure
   (`PopupMenu`) is a value node of its own (`[node] types` in api/overrides.toml), whose ops are
   its `self -> Self` methods. It has no public constructor: `after_classify` gives it one that
-  only Odin uses to start the node (the library never builds one alone; not counted).
+  only the app uses to start the node (the library never builds one alone; not counted).
   `PopupMenu::submenu` needs the menu's own context; the library's `overlay::submenu` builds the
   child with `PopupMenu::build` and attaches it with `item(PopupMenuItem::submenu(..))`, which
   upstream wires to its parent when the menu draws.
@@ -117,7 +117,7 @@ def after_classify(m):
         if node["name"] not in described_values(m) or node["element"]:
             continue
         if not any(i["status"] in ("bound", "bridged") for i in node["ctors"]):
-            # Odin starts the node with it; the library applies the node's ops to the value
+            # The app starts the node with it; the library applies the node's ops to the value
             # upstream hands in and never builds one alone. Not an upstream function: no row.
             node["ctors"].append({"row": None, "owner": node["path"], "name": "new", "trait": None,
                                   "sig": "(described value)", "id": node["path"] + "::(described)", "kind": "ctor",
@@ -231,14 +231,6 @@ def rust_dec(rs, d):
                    % (nums, node["name"], ps, node["fn"]))
 
 
-def odin_type(od, d):
-    return f"Built({od.m.nodes[d[1]]['odin']})"
-
-
-def odin_put(od, d, v):
-    return [f"put_built(o, {v}, loc)"]
-
-
 # ---------------------------------------------------------------- fallible calls
 
 
@@ -280,9 +272,9 @@ def describe(m):
 
 # ---------------------------------------------------------------- dock panels (PROTOCOLS.md 11.7)
 
-# The library's one Panel: an Odin view behind a state handle (core/src/dock.rs GkPanel).
+# The library's one Panel: an app view behind a state handle (core/src/dock.rs GkPanel).
 PANEL_RUST = "crate::dock::GkPanel"
-PANEL_NAME = "DockPanel"  # Odin: gk.Dock_Panel
+PANEL_NAME = "DockPanel"  # Go: gk.DockPanel
 # Trait methods GkPanel serves (its own impl from the data the app pushed, or upstream's blanket
 # PanelView impl over Entity<GkPanel>): counted bridged.
 PANEL_TRAITS = ("gpui_kit::base::dock::Panel::", "gpui_kit::base::dock::PanelView::",
@@ -323,10 +315,6 @@ def rust_panel_view(rs, d):
     return f"crate::dock::{f}(r.u64())?" if rs.call else f"crate::dock::{f}_shown(r.u64())"
 
 
-def odin_panel_type(od, d):
-    return od.otype(["entity", PANEL_RUST, PANEL_NAME])
-
-
 def mark_panel_traits(m):
     for it in m.items:
         if it["id"].startswith(PANEL_TRAITS) and it["status"] in ("todo", "norule"):
@@ -343,12 +331,12 @@ def mark_panel_traits(m):
 #   node_id   gpui-base's NodeId: a u64 on the wire. NodeId has no public constructor, so the library
 #             keeps every id it handed out (crate::dock::node_id) and refuses one it never did;
 #   panel_id  PanelId: its u64 (PanelId::from_u64 / as_u64);
-#   view      gpui's AnyView (and `impl Into<AnyView>`): an app view's handle, gk.View in Odin. Taken
+#   view      gpui's AnyView (and `impl Into<AnyView>`): an app view's handle, gk.View in Go. Taken
 #             in a call op the view is drawn in the turn's window and marked dirty; read back, a
 #             view of the app is its handle and any other view 0;
 #   panel     Arc<dyn PanelView> read back: the gk.Dock_Panel it was made from (0 for the kit's
 #             own placeholders);
-#   ms        std::time::Duration read back: i64 nanoseconds (Odin time.Duration);
+#   ms        std::time::Duration read back: i64 nanoseconds (Go time.Duration);
 #   entity    Entity<T> read back, T a state type: a state handle, the same handle for the same
 #             entity while it lives (crate::dock::entity_handle).
 
@@ -410,14 +398,12 @@ def resolved(m, ctx, t, out):
 
 
 # A saved layout (DockArea::dump and load): plain values with hand-written codecs in core/src/dock.rs
-# (PanelState is recursive, PanelInfo holds JSON), Odin structs in rt_dock.odin read and written by
-# reflection.
+# (PanelState is recursive, PanelInfo holds JSON), Go structs and codecs in go/gk/rt_dock.go.
 LAYOUT_VALUES = {"DockAreaState": "area_state", "PanelState": "panel_state", "PanelInfo": "panel_info"}
-LAYOUT_ODIN = {"area_state": "Dock_Area_State", "panel_state": "Panel_State", "panel_info": "Panel_Info"}
 LAYOUT_RUST = {"area_state": "gpui_kit::base::dock::DockAreaState", "panel_state": "gpui_kit::base::dock::PanelState",
                "panel_info": "gpui_kit::base::dock::PanelInfo"}
 
-# Functions the library's own calls serve (core/src/dock.rs; odin/gk/rt_dock.odin): the registry,
+# Functions the library's own calls serve (core/src/dock.rs; go/gk/rt_dock.go): the registry,
 # the build context and the two persistence traits, implemented once by the library.
 LIBRARY_CALLS = {
     "gpui_kit::base::dock::register_panel": "gk.register_panel (call PANEL_REGISTER): a request to the app per panel",
@@ -526,51 +512,17 @@ def rust_dock_put(ret, expr):
     return None
 
 
-def odin_dock_type(od, d, out=False):
-    w = d[1]
-    if w == "node_id":
-        return "Node_Id"
-    if w == "panel_id":
-        return "Dock_Panel_Id"
-    if w == "view":
-        return "View"
-    if w == "panel":
-        return od.otype(["entity", PANEL_RUST, PANEL_NAME])
-    if w == "ms":
-        return "time.Duration"
-    if w == "entity":
-        return od.m.states[d[3]]["odin"]
-    if w in LAYOUT_ODIN:
-        return LAYOUT_ODIN[w]
-    if w in ROUND4_ODIN:
-        return ROUND4_ODIN[w][0]
-    raise KeyError(w)
-
-
-def odin_dock_put(od, d, v):
-    w = d[1]
-    if w in ("node_id", "panel_id"):
-        return [f"put_u64(o, u64({v}))"]
-    if w == "view":
-        return [f"put_u64(o, {v}.h)"]
-    if w in LAYOUT_ODIN:
-        return [f"{{ lv := {v}; put_value(o, &lv, type_info_of({LAYOUT_ODIN[w]})) }}"]
-    if w in ROUND4_ODIN:
-        return [ROUND4_ODIN[w][1].format(v=v)]
-    raise KeyError(f"dock {w} is only read back")
-
-
 # ---------------------------------------------------------------- PROTOCOLS.md 11.9 onward
 #
 # Dock renderers (11.9): `Rc<dyn DockAreaRenderer>` and `Rc<dyn TabGroupRenderer>` given to the kit
 # are one library renderer (crate::dock::GkRenderer, implementing both traits) behind an object
-# handle, `gk.Dock_Renderer` in Odin. Its hooks answer from app views the app gave per (hook, key)
+# handle, `gk.DockRenderer` in Go. Its hooks answer from app views the app gave per (hook, key)
 # between frames, asked by a queued Dock_Render request when a key has no answer for the context it
 # is drawn with; the trait methods count bridged. The contexts the kit hands the hooks
 # (DockContext, TabGroupContext) reach the app inside the request: a library hand-out (below).
 #
 # The library clock (11.10): std::time::Instant both ways is a duration since the library's clock
-# began (crate::overlay::instant), `time.Duration` in Odin, `gk.clock_now(cx)` the clock's reading.
+# began (crate::overlay::instant), `time.Duration` in Go, `gk.ClockNow(cx)` the clock's reading.
 
 ROUND4_NAMES = ("Instant", "ArcData", "StackSeries")
 
@@ -605,7 +557,7 @@ def resolved4(m, ctx, t, out, name):
 
 
 # Kit values over rows of the app's data read back as library values (Wire in core/src/data.rs,
-# Odin structs in rt_data.odin): a row is its index in the rows the app passed.
+# Go structs in go/gk/rt_data.go): a row is its index in the rows the app passed.
 LIBRARY_READS = {
     "ArcData": ("gpui_kit::base::plot::shape::ArcData<'_, crate::data::Datum>", "Arc_Data"),
     "StackSeries": ("gpui_kit::base::plot::shape::StackSeries<crate::data::Datum>", "Stack_Series"),
@@ -624,11 +576,6 @@ def _dec_instant(rs, d, inner):
 
 ROUND4_DEC = {"renderer": _dec_renderer, "instant": _dec_instant}
 ROUND4_PUT = {"instant": lambda expr: f"crate::overlay::put_instant(&{expr}, &mut out)"}
-# Odin: (type, writer with {v})
-ROUND4_ODIN = {
-    "renderer": ("Dock_Renderer", "put_u64(o, {v}.h)"),
-    "instant": ("time.Duration", "put_i64(o, i64({v}))"),
-}
 
 
 # Functions the library's calls of PROTOCOLS.md 11.9 onward serve: the event's reads are the fields of its payload.
@@ -886,7 +833,7 @@ def value_read(m, node, it, crate, fn, ctx):
     it.update(kind="ambient", status="bound", reason="", crate=crate, borrowed_ret=False, ret=ret,
               args=[{"name": "value", "desc": ["node", node["key"]]}] + args,
               callee=f"(|value: {tp}{tail}| <{tp}>::{it['name']}(&value{tail}))",
-              odin_base=f"{'' if crate == 'gpui_component' else 'base_'}{snake(node['name'])}_{it['name']}",
+              stem_base=f"{'' if crate == 'gpui_component' else 'base_'}{snake(node['name'])}_{it['name']}",
               detail="a value call (PROTOCOLS.md 11.15)")
     if not hasattr(m, "ambient"):
         m.ambient = []

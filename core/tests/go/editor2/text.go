@@ -1,4 +1,4 @@
-// plugin, tooltip and surface: the Markdown text bridges (Odin's kit_editor_text.odin): data plugins
+// plugin, tooltip and surface: the Markdown text bridges: data plugins
 // (gk.MarkdownPlugin) whose rows are item functions (gk.Items over the node, and over the node and
 // the inherited typography inline), a link's tooltip, a block surface, and the library's counts
 // (gk.TestEditorText).
@@ -53,7 +53,7 @@ func init() {
 }
 
 // Go: an item function is handed its values, not its row: the rows are numbered here in the order
-// they are first described (Odin prints the source's row).
+// they are first described.
 func rowOf(rows map[string]int, key string) int {
 	n, ok := rows[key]
 	if !ok {

@@ -4,8 +4,8 @@
 # Two kinds of work:
 #   - Rust: the library (core/) and the Rust reference apps (ref/). `make lib` builds them with
 #     cargo into the usual target/ folder and copies the results to lib/.
-#   - Everything else: the generator (Python), the Odin package, the Go module, the examples
-#     and the tests. These need Odin, Go and a library in lib/ (from `make lib` or a download).
+#   - Everything else: the generator (Python), the Go module, the examples and the tests. These
+#     need Go and a library in lib/ (from `make lib` or a download).
 #
 # The gates draw frames offscreen and in a private display, so they run on Linux.
 
@@ -17,18 +17,15 @@ SCENE ?= panels 60 64 2
 # Logs of the long runs.
 LOGS  ?= gates/out/logs
 
-.PHONY: help odin gen status coverage lib lib-release dist cross check-windows examples \
+.PHONY: help gen status coverage lib lib-release dist cross check-windows \
         gates gates-quick proto docs fps pixels gallery gallery-go memory misuse counter rebuild \
         go-test go-proto-all go-apps go-static go-fps clean
 
 help:
-	@echo "Setup"
-	@echo "  make odin           download the Odin release this project is tested with (tools/install-odin.sh)"
-	@echo ""
 	@echo "Generate (Python only, a few seconds)"
 	@echo "  make gen            regenerate the bindings from the extracted API in api/rustdoc: the Rust"
-	@echo "                     decoders (core/src/gen), the Odin package (odin/gk/gen_*), the Go package"
-	@echo "                     (go/gk/gen_*), the opcode tables, the coverage table and docs/STATUS.md"
+	@echo "                     decoders (core/src/gen), the Go package (go/gk/gen_*), the opcode tables,"
+	@echo "                     the coverage table and docs/STATUS.md"
 	@echo "  make status         rewrite the coverage table in docs/STATUS.md from api/coverage.json"
 	@echo "  make coverage       check that coverage of the upstream API has not gone down"
 	@echo ""
@@ -42,29 +39,25 @@ help:
 	@echo "  make check-windows  type-check the library for Windows from Linux (needs cargo-xwin)"
 	@echo ""
 	@echo "Test (Linux; need lib/ from make lib)"
-	@echo "  make examples       build the Odin examples into bin/"
 	@echo "  make gates          every check, with one summary table (about 25 minutes)"
 	@echo "  make gates-quick    the shorter set to run after each change (a few minutes)"
-	@echo "  make proto          the runtime's protocol tests (about 20 seconds)"
-	@echo "  make docs           every snippet in the guides builds and both tutorials run"
-	@echo "  make cross          compile both front ends for macOS and Windows from Linux (under a minute)"
+	@echo "  make proto          the runtime's protocol tests (make go-proto-all)"
+	@echo "  make docs           every snippet in the guides builds and the tutorial runs"
+	@echo "  make cross          compile the Go front end for macOS and Windows from Linux (under a minute)"
 	@echo "  make pixels | gallery | misuse | counter | rebuild | memory    one check each"
-	@echo "  make gallery-go     the gallery pixel gate for Go: every page against the Rust reference"
+	@echo "  make gallery-go     the same as make gallery: every page against the Rust reference"
 	@echo "  make fps            one frame-cost run: HZ=$(HZ) SCENE='$(SCENE)'"
 	@echo "  make go-test        the Go front end: examples, protocol tests, misuse cases, pixels"
 	@echo "  make go-proto-all   every protocol test in Go: examples/go/proto and the families (core/tests/go)"
 	@echo "  make go-apps        the Go apps and tutorial: notes against Rust, the others against themselves"
-	@echo "  make go-static      the Go and Odin apps built as an app is: static, only the component families used"
+	@echo "  make go-static      the Go apps built as an app is: static, only the component families used"
 	@echo "  make go-fps         frame cost of Go against Rust (about ten minutes)"
 	@echo ""
 	@echo "  make clean          delete bin/ and gates/out/ (keeps lib/ and target/)"
 
-odin:
-	tools/install-odin.sh
-
 # Everything generated, in one command, from the committed extract (api/rustdoc). Fails when an
 # upstream signature meets no generator rule. rustc then judges the Rust side in `make lib`
-# (or, quicker, gen/round.sh: cargo check with errors charged to items), the Odin compiler in
+# (or, quicker, gen/round.sh: cargo check with errors charged to items), the Go compiler in
 # `make gates`.
 gen:
 	python3 core/wire/gen.py
@@ -99,10 +92,6 @@ check-windows:
 cross:
 	gates/cross.sh
 
-examples:
-	examples/odin/build.sh panels counter negative gallery writerule hello table notes
-	OPT=-o:speed SUFFIX=-speed examples/odin/build.sh panels counter gallery table
-
 gates:
 	@mkdir -p $(LOGS)
 	gates/all.sh > $(LOGS)/gates.log 2>&1; rc=$$?; cat gates/out/summary.md; echo "log: $(LOGS)/gates.log"; exit $$rc
@@ -112,35 +101,34 @@ gates-quick:
 	gates/all.sh quick > $(LOGS)/gates.log 2>&1; rc=$$?; cat gates/out/summary.md; echo "log: $(LOGS)/gates.log"; exit $$rc
 
 # The runtime's own tests: one per protocol of docs/PROTOCOLS.md, offscreen.
-proto:
-	core/tests/run.sh
+proto: go-proto-all
 
 docs:
-	gates/docs.sh
+	gates/docs-go.sh
 
 fps:
 	gates/fps.sh --hz $(HZ) $(SCENE)
 
 pixels:
-	gates/pixels.sh
+	gates/go.sh pixels
 
 gallery:
 	gates/gallery.sh
 
 gallery-go:
-	gates/gallery.sh go
+	gates/gallery.sh
 
 memory:
 	gates/memory.sh
 
 misuse:
-	gates/misuse.sh
+	gates/go-misuse.sh
 
 counter:
 	gates/counter.sh
 
 rebuild:
-	gates/rebuild.sh
+	gates/go-rebuild.sh
 
 go-test:
 	gates/go.sh build hello proto misuse pixels rebuild

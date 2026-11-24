@@ -2,7 +2,7 @@
 // on upstream GPUI).
 //
 // The library is prebuilt Rust behind seven C functions and one callback (docs/DESIGN.md
-// section 5), the same library and the same interface the Odin package uses. All app code runs
+// section 5). All app code runs
 // in turns: one callback on the UI thread, between frames. A view is a function that describes
 // its elements; the library replays the description into real GPUI-kit elements when GPUI
 // builds that view, and not otherwise.
@@ -71,19 +71,8 @@ func lastError() string {
 	if p == nil {
 		return ""
 	}
-	return goNames.Replace(C.GoStringN(p, C.int(n)))
+	return C.GoStringN(p, C.int(n))
 }
-
-// goNames turns the few Odin calls the library's messages name into the Go calls (docs/GO.md
-// section 2's rules); a longer name that starts like a shorter one is listed first and kept.
-var goNames = strings.NewReplacer(
-	"gk.action_of", "gk.action_of",
-	"gk.action", "gk.NewAction",
-	"gk.built", "gk.NewBuilt",
-	"gk.dock_area_skinned", "gk.NewDockAreaSkinned",
-	"gk.open_window", "gk.OpenWindow",
-	"gk.div()", "gk.Div()",
-)
 
 // call makes one gk_call. The request is Go memory lent for the call (it holds no Go pointers);
 // the result is the library's and valid until the next gk_call, so it is copied out at once.

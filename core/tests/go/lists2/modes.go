@@ -1,14 +1,14 @@
 // The lists2 modes of docs/PROTOCOLS.md 9.9 to 9.15 and 11.25 that need more than main.go's names:
 //
 //	combobox       ComboboxState.Selection
-//	will-change    gk.SearchWillChange, gk.SearchRules (Odin's kit_select.odin)
-//	table, drive   the table's and tree's row sources (Odin's kit_rows.odin), the table's texts
+//	will-change    gk.SearchWillChange, gk.SearchRules
+//	table, drive   the table's and tree's row sources, the table's texts
 //	               and looks (gk.SetTableTexts, gk.SetTableRowLabels, gk.SetTableLook)
 //	expr, bad-expr InputStateBuilder.StepBy, NumberStepByValue's expression
 //	diff           gk.DiffFileParseCount's gk.Fallible[int]
 //	display-map    gk.Font, gk.NewDisplayMap, DisplayMap.SetFont
-//	providers      the editor's providers (Odin's kit_input.odin) on gk.CodeEditor
-//	kept           gk.TestKeptCount (Odin's test_kept_count)
+//	providers      the editor's providers on gk.CodeEditor
+//	kept           gk.TestKeptCount
 //	ask            gk.Ask, gk.NewAsk, gk.CodeBlock, gk.TestAsks
 package main
 
@@ -29,7 +29,7 @@ func init() {
 	}
 	modeView["ask"] = func(a *App, cx *gk.Cx) gk.Element {
 		return gk.Div().W(gk.Px(400)).Child(
-			gk.BaseTextViewMarkdown("md", "```odin\nproc x\n```\n\n![pic](pic.png)\n").
+			gk.BaseTextViewMarkdown("md", "```demo\nproc x\n```\n\n![pic](pic.png)\n").
 				CodeBlockHighlighter(askState.hl).ImageSource(askState.img))
 	}
 	modeView["providers"] = func(a *App, cx *gk.Cx) gk.Element {
@@ -107,7 +107,7 @@ func (a *App) providerEvent(cx *gk.Cx, e gk.ProviderEvent) {
 		gk.AnswerHover(cx, a.prov, e.ID, gk.Option[string]{})
 	case gk.ProviderDefinitions:
 		name = "definitions"
-		defs := []gk.Definition{{URI: "file:///a.odin", Target: gk.TextRange{EndChar: 5}, Selection: gk.TextRange{EndChar: 5}}}
+		defs := []gk.Definition{{URI: "file:///a.demo", Target: gk.TextRange{EndChar: 5}, Selection: gk.TextRange{EndChar: 5}}}
 		gk.AnswerDefinitions(cx, a.prov, e.ID, defs)
 	case gk.ProviderColors:
 		name = "colors"

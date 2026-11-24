@@ -1,7 +1,7 @@
 # run-app.sh: the protocol tests (docs/PROTOCOLS.md section 11), sourced by
 # core/tests/go/run.sh, which defines build and run. The app is core/tests/go/app: actions and key
 # bindings dispatched to Go handlers, timers between frames, several windows, the clipboard,
-# driven by gk-meter scripts offscreen. Odin twin: core/tests/run-app.sh.
+# driven by gk-meter scripts offscreen.
 build app-go app
 
 # Key bindings dispatch app actions to an element's OnAction (on the focus path, in its key
@@ -50,8 +50,8 @@ GK_PROTO_BIN=app-go run ambient 0 'app ambient view blue=' 'ambient base_step_va
 # test hook: offscreen there is no close button). The quit hook runs once as the offscreen app shuts
 # down, a released one never. Reduced motion read, set and cleared, also in a view. A window opened
 # with an icon (a PNG) and an app id; an icon that is not a PNG stops with the message.
-# Go: a should-close handler always answers (func(cx) bool), so Odin's handler without an answer (which
-# lets the window close) is one that answers yes: "a second handler" for "a handler without an answer".
+# Go: a should-close handler always answers (func(cx) bool), so the handler that lets the window
+# close is one that answers yes: "a second handler" for "a handler without an answer".
 GK_PROTO_BIN=app-go run close-veto 0 'app asked may close n=1 answer=false' 'app asked may close n=2 answer=true' \
   'app asked by a second handler n=3' \
   'app should close first=false second=true third=true fourth=true asked=3 windows=1'

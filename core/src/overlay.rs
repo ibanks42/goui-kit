@@ -2,7 +2,7 @@
 //!
 //! A closure upstream keeps and calls later, `Fn(T, &mut Window, &mut App) -> T + 'static`,
 //! handed over by a call op (`WindowExt::open_dialog`, `open_sheet`): the op carries the handle
-//! of an app view whose procedure describes a T (`gk.built(cx, state, proc)` in Odin). Each time
+//! of an app view whose procedure describes a T (`gk.NewBuilt(cx, state, fn)` in Go). Each time
 //! upstream calls the closure, the view's current tape is read and its root node's ops are
 //! applied to the T upstream hands in (`ViewBuild::apply`). Reading the view's entity while
 //! upstream draws makes the drawing view depend on it, so the dialog draws again when the view
@@ -50,7 +50,7 @@ impl ViewBuild {
     pub fn apply<T>(&self, v: T, window: &mut Window, cx: &mut App, f: fn(&mut Dx, T, u32) -> T) -> T {
         let entity = match rt::with(|s| s.view(self.view)) {
             Ok(e) => e,
-            Err(GkErr(_, msg)) => genapi::released_shown(&msg, &format!("{} (the view gk.built made)", self.name)),
+            Err(GkErr(_, msg)) => genapi::released_shown(&msg, &format!("{} (the view gk.NewBuilt made)", self.name)),
         };
         let Some(tape) = entity.read(cx).tape.clone() else {
             return v;
@@ -59,9 +59,8 @@ impl ViewBuild {
         genapi::with_root(&tape, view, window, cx, |dx, ty, first| {
             if !types.is_empty() && !types.contains(&ty) {
                 eprintln!(
-                    "gk: the procedure given to gk.built for a {name} returned a node of type {ty}, not a {name}: \
-                     it must return the value it describes, e.g. gk.{}()->..",
-                    snake(name)
+                    "gk: the function given to gk.NewBuilt for a {name} returned a node of type {ty}, not a {name}: \
+                     it must return the value it describes, e.g. gk.{name}()..."
                 );
                 std::process::exit(2);
             }
@@ -70,18 +69,7 @@ impl ViewBuild {
     }
 }
 
-fn snake(name: &str) -> String {
-    let mut out = String::new();
-    for (i, ch) in name.chars().enumerate() {
-        if ch.is_uppercase() && i > 0 {
-            out.push('_');
-        }
-        out.extend(ch.to_lowercase());
-    }
-    out
-}
-
-/// The constructor of a described value (`PopupMenu`): Odin starts the node with it, and the
+/// The constructor of a described value (`PopupMenu`): the app starts the node with it, and the
 /// library only ever applies the node's ops to the value upstream hands in.
 pub fn described<T>() -> T {
     genapi::released_shown(
@@ -243,7 +231,7 @@ pub fn call(op: u16, _r: &mut R, c: &mut genapi::Call) -> Option<GkResult<()>> {
 // ------------------------------------------------------------------ the library clock (PROTOCOLS.md 11.10)
 //
 // `std::time::Instant` has no number of its own: both ways it is the time since the library's clock
-// began (the first time anything asked), as i64 nanoseconds (Odin `time.Duration`). The toast
+// began (the first time anything asked), as i64 nanoseconds (Go `time.Duration`). The toast
 // manager's `push`, `dismiss`, `advance` take the app's reading of it (gk.clock_now).
 
 static EPOCH: std::sync::OnceLock<std::time::Instant> = std::sync::OnceLock::new();

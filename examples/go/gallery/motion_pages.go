@@ -1,6 +1,5 @@
 // The platform and motion families' gallery pages, the Go twin of
-// examples/odin/gallery/motion_pages.odin and of ref/src/bin/gallery/motion_pages.rs, call for
-// call (docs/PROTOCOLS.md 13.30): gpui's with_animation and a chain of animations with the kit's
+// ref/src/bin/gallery/motion_pages.rs, call for call (docs/PROTOCOLS.md 13.30): gpui's with_animation and a chain of animations with the kit's
 // easing curves, the kit's EffectTransition, and the kit's motion values (transition, spring,
 // keyframes, presence, a TransitionState kept with the page's data) sampled while the library
 // draws, the focus trap, and gpui's element leftovers (PROTOCOLS.md 13.31: drop targets, image
@@ -64,7 +63,6 @@ var elemPNG = []byte{
 
 const elemPNGPath = "gk-elem.png"
 
-// The states in the order of the Odin twin's motion_pages_init.
 func motionPagesInit(a *App, cx *gk.Cx) {
 	mp := &a.motion
 	frames := []gk.KeyframeF32{{Offset: 0, Value: 40, Easing: gk.EasingLinear}, {Offset: 0.5, Value: 200, Easing: gk.EasingLinear},

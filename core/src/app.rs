@@ -51,7 +51,7 @@ impl Action for GkAction {
         "gk::Action"
     }
     fn build(_value: gpui_kit::private::serde_json::Value) -> gpui_kit::Result<Box<dyn Action>> {
-        Err(gpui_kit::private::anyhow::anyhow!("an app action of the binding is made with gk.action, not from a keymap file"))
+        Err(gpui_kit::private::anyhow::anyhow!("an app action of the binding is made with gk.NewAction, not from a keymap file"))
     }
 }
 
@@ -93,7 +93,7 @@ pub fn boxed(id: u32) -> GkResult<Box<dyn Action>> {
         match a.get(((id & !BUILTIN) as usize).wrapping_sub(1)) {
             Some(Entry { builtin: Some(b), .. }) if id & BUILTIN != 0 => Ok(b.boxed_clone()),
             Some(Entry { builtin: None, .. }) if id & BUILTIN == 0 => Ok(Box::new(GkAction { id }) as Box<dyn Action>),
-            _ => err(ERR_STALE_HANDLE, format!("action {id:#x} names no action this library made (make actions with gk.action)")),
+            _ => err(ERR_STALE_HANDLE, format!("action {id:#x} names no action this library made (make actions with gk.NewAction)")),
         }
     })
 }

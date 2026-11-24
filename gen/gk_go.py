@@ -1,8 +1,8 @@
 """gk_go: writes the generated half of the Go package (go/gk/gen_*.go and the token packages
-s, theme and palette) from the same model the Odin emitter reads (docs/GO.md).
+s, theme and palette) from the generator's model (docs/GO.md).
 
-It runs after gk_odin.Odin.emit, whose names (node["odin"], it["odin"], ...) it turns into Go
-names by the rules of docs/GO.md section 2, so the two packages stay side by side. Generated Go
+It runs after gk_names.Names, whose stems (node["stem"], it["stem"], ...) it turns into Go
+names by the rules of docs/GO.md section 2. Generated Go
 calls only the runtime's emitter interface (go/gk/rt_emit.go). An item whose parameter or result
 is a descriptor this emitter does not map yet is left out of the package and listed, with the
 descriptor, in gen/out/go-report.md; nothing is left out silently.
@@ -11,7 +11,7 @@ import os
 import re
 import gk_doc
 import gk_go_kinds  # the descriptor kinds beyond the core ones (gen/gk_go_kinds.py)
-import gk_go_bridges  # Odin's hand-written bridges as ported to Go (docs/GO.md, gen/gk_go_bridges.py)
+import gk_go_bridges  # the hand-written bridges of the Go runtime (docs/GO.md, gen/gk_go_bridges.py)
 import gk_values
 
 from gk_model import INT_WIRE, SHORT, ada, is_fill, snake
@@ -34,10 +34,10 @@ GO_INT = {"u8": "uint8", "u16": "uint16", "u32": "uint32", "u64": "uint64", "i8"
           "i32": "int32", "i64": "int64", "usize": "int", "isize": "int"}
 
 
-# Library values (`["libval", rust path, odin name]`, gk_lists.libval) the Go runtime declares, with
-# their put and rd functions (go/gk/rt_platform.go): Odin name -> Go type.
+# Library values (`["libval", rust path, stem]`, gk_lists.libval) the Go runtime declares, with
+# their put and rd functions (go/gk/rt_platform.go): stem -> Go type.
 GO_LIBVALS = {"Drag_Value": "DragValue"}
-# Plot parts of the binding's own (go/gk/rt_data.go; gk_odin.PLOT_OWN_PARTS; PROTOCOLS.md 12.17).
+# Plot parts of the binding's own (go/gk/rt_data.go; PROTOCOLS.md 12.17).
 GO_PLOT_OWN_PARTS = ("PlotPath", "PlotQuad")
 
 
@@ -46,7 +46,7 @@ class Unsup(Exception):
 
 
 def camel(name):
-    """Odin snake_case or Ada_Case -> exported Go CamelCase (docs/GO.md section 2)."""
+    """A stem in snake_case or Ada_Case -> exported Go CamelCase (docs/GO.md section 2)."""
     name = name.rstrip("_")
     parts = [p for p in name.split("_") if p]
     out = ""
@@ -75,8 +75,8 @@ def pname(name):
 
 
 class Go:
-    def __init__(self, m, od, outdir):
-        self.m, self.od, self.out = m, od, outdir
+    def __init__(self, m, outdir):
+        self.m, self.out = m, outdir
         self.docs = self.doc_names = None  # gk_doc.Docs and its link resolver (gkgen.py sets them)
         self.names = {}
         self.collisions = []
@@ -125,20 +125,20 @@ class Go:
         bound = lambda i: i["status"] in ("bound", "bridged")  # noqa: E731
         for key in sorted(m.nodes, key=lambda k: (order[m.nodes[k]["crate"]], k)):
             node = m.nodes[key]
-            if "odin" in node:
-                node["go"] = self.claim(camel(node["odin"]) + ("El" if node["element"] else ""), node["crate"], key)
+            if "stem" in node:
+                node["go"] = self.claim(camel(node["stem"]) + ("El" if node["element"] else ""), node["crate"], key)
         for table in (m.enums, m.denums, m.records):
             for rt in sorted(table, key=lambda k: (order[table[k]["crate"]], k)):
                 t = table[rt]
-                t["go"] = self.claim(camel(t["odin"]), t["crate"], rt)
+                t["go"] = self.claim(camel(t["stem"]), t["crate"], rt)
         for key in sorted(m.states, key=lambda k: (order[m.states[k]["crate"]], k)):
             st = m.states[key]
-            if "odin" in st:
-                st["go"] = self.claim(camel(st["odin"]), st["crate"], "state " + key)
+            if "stem" in st:
+                st["go"] = self.claim(camel(st["stem"]), st["crate"], "state " + key)
         for rt in sorted(m.intos):
             s = m.intos[rt]
-            if "odin" in s:
-                s["go"] = self.claim(camel(s["odin"]), "gpui_kit", "into " + rt)
+            if "stem" in s:
+                s["go"] = self.claim(camel(s["stem"]), "gpui_kit", "into " + rt)
         # enum values and variant structs
         for rt in sorted(m.enums):
             e = m.enums[rt]
@@ -156,21 +156,21 @@ class Go:
         for key in sorted(m.nodes, key=lambda k: (order[m.nodes[k]["crate"]], k)):
             node = m.nodes[key]
             for it in sorted(node["ctors"], key=lambda i: i["id"]):
-                if not bound(it) or it["kind"] == "convert" or "odin" not in it:
+                if not bound(it) or it["kind"] == "convert" or "stem" not in it:
                     continue
-                base = camel(it["odin"]) if node["element"] else "New" + camel(it["odin"])
+                base = camel(it["stem"]) if node["element"] else "New" + camel(it["stem"])
                 it["go"] = self.claim(base, it["crate"], it["id"])
         for key in sorted(m.states, key=lambda k: (order[m.states[k]["crate"]], k)):
             st = m.states[key]
             for it in sorted(st.get("ctors", []), key=lambda i: i["id"]):
-                if it["status"] == "bridged" and "odin" in it:
-                    it["go"] = self.claim("New" + camel(it["odin"]), st["crate"], it["id"])
+                if it["status"] == "bridged" and "stem" in it:
+                    it["go"] = self.claim("New" + camel(it["stem"]), st["crate"], it["id"])
             for it in sorted(st.get("globals", []) + st.get("statics", []), key=lambda i: i["id"]):
-                if it["status"] == "bridged" and "odin" in it:
-                    it["go"] = self.claim(camel(it["odin"]), st["crate"], it["id"])
+                if it["status"] == "bridged" and "stem" in it:
+                    it["go"] = self.claim(camel(it["stem"]), st["crate"], it["id"])
         for rt in sorted(m.records):
             rc = m.records[rt]
-            if rc.get("short_odin"):
+            if rc.get("short_stem"):
                 rc["short_go"] = self.claim(camel(rc["shorthand"]), rc["crate"], "shorthand " + rt)
 
     # ------------------------------------------------------------ types
@@ -278,8 +278,8 @@ class Go:
             if "go" not in node:
                 raise Unsup(f"viewbuild of {d[1]} without a Go type")
             return f"Built[{node['go']}]"  # a view-built closure (PROTOCOLS.md 11.6, rt_built.go)
-        # The port of Odin's hand-written values and platform families (PROTOCOLS.md
-        # 11.17, 13.20, 13.31; go/gk/rt_platform.go).
+        # The hand-written values and platform families (PROTOCOLS.md 11.17, 13.20, 13.31;
+        # go/gk/rt_platform.go).
         if k == "libval" and d[2] in GO_LIBVALS:
             return GO_LIBVALS[d[2]]
         if k == "dragview":
@@ -612,7 +612,7 @@ class Go:
     def emit(self):
         m = self.m
         bound = lambda i: i["status"] in ("bound", "bridged")  # noqa: E731
-        # ---- nodes, per upstream module (as the Odin package)
+        # ---- nodes, per upstream module
         groups = {}
         for key in sorted(m.nodes):
             node = m.nodes[key]
@@ -733,7 +733,7 @@ class Go:
                 self.add(*lines)
         for tk in node["tables"]:
             t = next(t for t in m.traits.values() if t["key"] == tk)
-            if "odin" not in t:
+            if "stem" not in t:
                 continue
             tl = camel(t["low"])
             if t["name"] == "Styled" and "Style" not in seen:
@@ -906,9 +906,9 @@ class Go:
     # ------------------------------------------------------------ plot parts
 
     def plot_parts(self):
-        """gen_plot.go: the PlotPart interface over every value type that paints itself (the Odin
-        emitter's Plot_Part union), and the binding's own parts. gk.Plot and gk.PlotWith (rt_data.go)
-        stand for the kit's Plot trait, so its items and each part's paint are mapped."""
+        """gen_plot.go: the PlotPart interface over every value type that paints itself, and the
+        binding's own parts. gk.Plot and gk.PlotWith (rt_data.go) stand for the kit's Plot trait,
+        so its items and each part's paint are mapped."""
         m = self.m
         bound = lambda i: i["status"] in ("bound", "bridged")  # noqa: E731
         nodes = sorted((n for n in m.nodes.values() if n.get("paint") and n["paint"]["status"] == "bridged"
@@ -934,13 +934,13 @@ class Go:
 
     def ambient(self):
         import gk_app  # noqa: PLC0415
-        items = sorted([i for i in gk_app.bound(self.m) if "odin" in i], key=lambda i: i["odin"])
+        items = sorted([i for i in gk_app.bound(self.m) if "stem" in i], key=lambda i: i["stem"])
         self.open("gen_ambient.go", "Calls of the ambient context: free functions of the kit and methods of Window "
                   "(PROTOCOLS.md 11.5). Each runs at once, with the turn's window and app.")
         self.in_call = True
         try:
             for it in items:
-                it["go"] = self.claim(camel(it["odin"]), it["crate"], it["id"])
+                it["go"] = self.claim(camel(it["stem"]), it["crate"], it["id"])
 
                 def amb(it=it):
                     ps = self.params(it, ["cx *Cx"])
@@ -1232,7 +1232,7 @@ class Go:
     # ------------------------------------------------------------ report
 
     def report(self, path, family):
-        """Go against Odin per family: bound or bridged in Odin, generated in Go; and what is left."""
+        """Per family: bound or bridged in the model, generated in Go; and what is left."""
         m = self.m
         rows = {}
         bound = lambda i: i["status"] in ("bound", "bridged")  # noqa: E731
@@ -1251,8 +1251,8 @@ class Go:
                 r[2] += 1
                 why.setdefault(it["id"], gk_go_bridges.covered(self, it, self.mapped))
         tot = [sum(r[i] for r in rows.values()) for i in range(3)]
-        out = ["# Go coverage against Odin", "", f"Generated by gen/gk_go.py. Odin: bound or bridged; Go: generated into go/gk.", "",
-               "| family | Odin | Go | not yet in Go |", "|---|---:|---:|---:|"]
+        out = ["# Go coverage", "", f"Generated by gen/gk_go.py. Bound: bound or bridged in the model; Go: generated into go/gk.", "",
+               "| family | bound | Go | not yet in Go |", "|---|---:|---:|---:|"]
         for fam in sorted(rows):
             r = rows[fam]
             out.append(f"| {fam} | {r[0]:,} | {r[1]:,} | {r[2]:,} |")

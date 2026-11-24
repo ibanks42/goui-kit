@@ -79,7 +79,7 @@ impl Ask {
     pub fn take(src: u64) -> Ask {
         let cache = ASKS.lock().unwrap().as_ref().and_then(|m| m.get(&src).cloned());
         if cache.is_none() && src != 0 {
-            eprintln!("gk: a data closure was given a handle {src:#x} gk.ask did not make; it answers nothing");
+            eprintln!("gk: a data closure was given a handle {src:#x} gk.NewAsk did not make; it answers nothing");
         }
         Ask { src, cache }
     }

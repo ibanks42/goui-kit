@@ -350,8 +350,8 @@ pub fn row_element(src: u64, d: &Datum, window: &mut gpui_kit::Window, cx: &mut 
 
 // ------------------------------------------------------------------ PROTOCOLS.md 12.15
 //
-// Kit values over rows read back: a row is its index in the rows the app passed (Odin's Arc_Data,
-// Stack_Series and Stack_Point in rt_data.odin, read by reflection).
+// Kit values over rows read back: a row is its index in the rows the app passed (ArcData,
+// StackSeries and StackPoint in go/gk/rt_data.go).
 
 use crate::genapi::Wire;
 use gpui_kit::base::plot::shape::{ArcData, StackSeries};

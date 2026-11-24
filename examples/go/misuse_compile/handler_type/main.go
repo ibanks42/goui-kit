@@ -1,5 +1,5 @@
-// A handler of the wrong kind: a switch's OnClick hands a bool, not a ClickEvent (Odin stops
-// at gk.on's line at run time; Go does not compile).
+// A handler of the wrong kind: a switch's OnClick hands a bool, not a ClickEvent (Go does
+// not compile).
 package main
 
 import "gpuikit.dev/gk"

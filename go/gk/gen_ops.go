@@ -2,7 +2,7 @@
 
 package gk
 
-const apiHash uint64 = 0x9dae644fcd677065
+const apiHash uint64 = 0xf54e37f0b1226dc5
 
 const abiMajor = 0
 const abiMinor = 5

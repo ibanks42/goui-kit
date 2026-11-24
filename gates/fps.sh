@@ -1,12 +1,11 @@
 #!/bin/bash
 # fps.sh [--hz N] [--rounds R] [--zero-crossings] SCENE [ARGS...]: the frame-cost gate.
-# R interleaved rounds (default 10) of the Rust reference, the Odin app at -o:minimal, the
-# Odin app at -o:speed and the Rust reference again (the Rust-against-Rust pair is the
-# noise), one process at a time, in one private compositor session whose output refreshes
+# R interleaved rounds (default 10) of the Rust reference, the Go app and the Rust reference
+# again (the Rust-against-Rust pair is the noise), one process at a time, in one private compositor session whose output refreshes
 # at N Hz (default 60; see display.sh; 1000 is the most gamescope gives). Prints the table
 # and one line starting with "GATE fps". Exit 0 = pass.
 #   gates/fps.sh --hz 240 panels 60 64 2
-# Pass (docs/DESIGN.md section 18): the -o:speed Odin app's median and p95 main-thread CPU
+# Pass (docs/DESIGN.md section 18): the Go app's median and p95 main-thread CPU
 # per frame are within 3 % of Rust's plus the measured Rust-against-Rust difference (both
 # as the median over rounds of the ratio inside each round; a round whose two Rust runs
 # differ by more than 5 % was disturbed by another job and is left out, and a run with
@@ -16,9 +15,9 @@
 # and with --zero-crossings no callback into the app happens on any measured frame.
 # A run that shows no frames is killed and repeated, up to three times, and counted in
 # stalls.txt: under gamescope a run can fail to receive any frame callback (seen once in
-# about 240 runs, on the Rust reference). More stalls in the Odin app than in Rust (plus
+# about 240 runs, on the Rust reference). More stalls in the Go app than in Rust (plus
 # one) fails the gate.
-# VARIANT=ship|diag; BINS overrides the list (default "rust odin odin-speed rust2"); GK_NAME
+# VARIANT=ship|diag; BINS overrides the list (default "rust go rust2"); GK_NAME
 # names the run when the scene alone does not (the counter with GK_CLICK=x,y,frame,1 is the
 # click-on-every-frame scene: one EVENT turn and one re-described view per frame).
 here=$(cd "$(dirname "$0")" && pwd)
@@ -37,7 +36,7 @@ measure() { # FIRST LAST: rounds FIRST..LAST, appended to rounds.txt
   "$here/display.sh" --hz "$hz" bash -c '
     here=$1; out=$2; first=$3; last=$4; shift 4
     for r in $(seq "$first" "$last"); do
-      for b in ${BINS:-rust odin odin-speed rust2}; do
+      for b in ${BINS:-rust go rust2}; do
         for try in 1 2 3; do
           line=$(GK_LABEL=$b GK_STATS=$out/$b-$r.csv "$here/one.sh" "${b%2}" "$VARIANT" "$@" | grep "^gk-meter")
           [ -n "$line" ] && { echo "round=$r $line" >> "$out/rounds.txt"; break; }

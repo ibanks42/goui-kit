@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""docs-snippets.py DOC...: every Odin and Go snippet of the guides is code that compiles.
+"""docs-snippets.py DOC...: every Go snippet of the guides is code that compiles.
 
-Each ```odin or ```go block of a guide must follow a line `<!-- from: PATH -->` naming a program
-(gates/docs.sh builds and runs every one of them). The block is that file's text: in order, with
+Each ```go block of a guide must follow a line `<!-- from: PATH -->` naming a program
+(gates/docs-go.sh builds and runs every one of them). The block is that file's text: in order, with
 lines `// ...` standing for lines left out (a block need not start at the top). Exact lines, tabs
 and all, so a snippet cannot drift from the program it was cut from. Prints one line per guide;
 exit 1 on the first snippet that is not in its program.
@@ -45,7 +45,7 @@ def check(doc):
     blocks, bad = 0, []
     i = 0
     while i < len(text):
-        if text[i].strip() in ("```odin", "```go"):
+        if text[i].strip() == "```go":
             lang = text[i].strip()[3:]
             src = None
             for back in (1, 2):
@@ -77,9 +77,8 @@ def check(doc):
 
 def check_spans(doc):
     """A guide with `<!-- spans: PATH -->` names a program in which every inline code span that is
-    a call must appear as text: in Odin a span that starts with gk., a. or -> and has a parenthesis,
-    in Go (the program is a .go file) one that starts with gk., a. or a method's dot (`.OnClick(`),
-    each without a `..` placeholder. The table
+    a call must appear as text: one that starts with gk., a. or a method's dot (`.OnClick(`) and
+    has a parenthesis, without a `..` placeholder. The table
     cells escape | as \\|; the generated index (after its marker) is not checked here."""
     text = open(doc).read()
     m = SPANS.search(text)
@@ -90,9 +89,8 @@ def check_spans(doc):
     bad, n = [], 0
     for span in SPAN.findall(text):
         span = span.replace("\\|", "|")
-        call = r"(gk\.|a\.|\.[A-Z])" if m.group(1).endswith(".go") else r"(gk\.|a\.|->)"
-        if not re.match(call, span) or "(" not in span or ".." in span or "…" in span:
-            continue  # not a call, or one with placeholders (`->style(..)`)
+        if not re.match(r"(gk\.|a\.|\.[A-Z])", span) or "(" not in span or ".." in span or "…" in span:
+            continue  # not a call, or one with placeholders (`.Style(..)`)
         n += 1
         if span not in prog:
             bad.append(f"{os.path.relpath(doc, REPO)}: `{span}` is not text of {m.group(1)}")

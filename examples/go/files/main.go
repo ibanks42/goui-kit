@@ -1,5 +1,5 @@
 // files: a small text viewer that uses the platform's services (docs/PROTOCOLS.md 11.30, 13.30),
-// the same app as examples/odin/files and ref/src/bin/files.rs: the menu bar (File: Open…,
+// the same app as ref/src/bin/files.rs: the menu bar (File: Open…,
 // Save as…, Quit; Help: Website), the platform's file dialogs, a prompt before quitting, opening a
 // URL, and a status line that slides and fades in when it changes. The menu bar is the platform's
 // where it has one (macOS) and the kit's AppMenuBar drawn at the top of the window everywhere.
@@ -9,7 +9,7 @@
 // Offscreen (the diag library's driver) the dialogs are not shown: the driver's script answers
 // them with `answer ..` (gates/files.script, against its Rust twin: gates/pixels.sh files).
 //
-// Needs gk.NewAppMenuBar and gk.AppMenuBarView (Odin gk.app_menu_bar, gk.app_menu_bar_view);
+// Needs gk.NewAppMenuBar and gk.AppMenuBarView;
 // until the Go package has them this program does not build (gates/go-pending.txt).
 package main
 

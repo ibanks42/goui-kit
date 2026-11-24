@@ -20,8 +20,8 @@ name = args[args.index("--name") + 1]
 zero = "--zero-crossings" in args
 d = args[-1]
 period_ns = 1e9 / hz
-BAR = float(os.environ.get("GK_BAR", "1.03"))  # the pass mark: within 3 % of pure Rust (DESIGN.md 18), for Odin and Go alike
-JUDGED = os.environ.get("GK_JUDGED", "odin-speed")  # the build an app ships with; gates/go.sh judges go
+BAR = float(os.environ.get("GK_BAR", "1.03"))  # the pass mark: within 3 % of pure Rust (DESIGN.md 18)
+JUDGED = os.environ.get("GK_JUDGED", "go")  # the build an app ships with
 
 runs = {}
 path = os.path.join(d, "rounds.txt")
@@ -47,7 +47,7 @@ def med(label, key):
     return statistics.median(float(r[key]) for r in runs[label])
 
 
-labels = [l for l in ("rust", "rust2", "odin", "odin-speed", "go") if l in runs]
+labels = [l for l in ("rust", "rust2", "go") if l in runs]
 keys = ["cpu_p50_us", "cpu_p95_us", "cpu_mean_us", "interval_p50_ms", "interval_p95_ms",
         "callbacks_per_frame", "calls_per_frame", "callback_us_per_frame",
         "decode_us_per_frame", "tapes_per_frame", "tape_bytes_per_frame", "rss_peak_kb"]
@@ -83,14 +83,14 @@ for line in open(sp) if os.path.exists(sp) else []:
 if stalls:
     print("runs that showed no frame and were repeated: " + ", ".join(f"{k} {v}" for k, v in sorted(stalls.items())))
 
-judged = JUDGED if JUDGED in runs else ("odin" if "odin" in runs else None)
+judged = JUDGED if JUDGED in runs else None
 if judged is None:
     print(f"GATE fps {name} FAIL no run of {JUDGED}, the build judged")
     sys.exit(1)
-# The verdict is paired by round: within a round the four binaries ran one after another,
+# The verdict is paired by round: within a round the binaries ran one after another,
 # so their ratio is free of whatever the machine was doing in that minute. A round in which
 # the two Rust runs differ by more than QUIET (another job was running, e.g. a build beside the gate) says nothing
-# about the Odin app and is left out; the choice looks only at Rust. Fewer than half the
+# about the Go app and is left out; the choice looks only at Rust. Fewer than half the
 # rounds (or fewer than three) left is a failed measurement, to be run again.
 QUIET = 0.05
 needed = ("rust", judged) + (("rust2",) if "rust2" in runs else ())

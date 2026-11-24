@@ -1,6 +1,6 @@
 // misuse_lists: mistakes against the lists and editor families' protocols (docs/PROTOCOLS.md
-// sections 9.9 to 9.12) that must stop with a message, never draw wrong content with exit 0. The
-// port of examples/odin/negative_lists2; run offscreen with the diag library by
+// sections 9.9 to 9.12) that must stop with a message, never draw wrong content with exit 0. Run
+// offscreen with the diag library by
 // gates/go-misuse.sh, one mode per case:
 //
 //	GK_NEG=sel-ok      a select over items, its value set and read back: correct (exit 0)

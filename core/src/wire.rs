@@ -61,7 +61,7 @@ impl<'a> R<'a> {
         f64::from_bits(self.u64())
     }
     /// A string: u32 length then UTF-8 bytes. Bytes that are not UTF-8 are a mistake of the
-    /// binding (the Odin package refuses them where the app gives them); they stop here with
+    /// binding (the Go package refuses them where the app gives them); they stop here with
     /// the message rather than arrive as something else. They used to arrive as one U+FFFD in
     /// place of the whole string.
     #[inline]

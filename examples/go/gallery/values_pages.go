@@ -1,4 +1,4 @@
-// The values family's gallery pages, the Go twin of examples/odin/gallery/values_pages.odin and of
+// The values family's gallery pages, the Go twin of
 // ref/src/bin/gallery/values_pages.rs, call for call (docs/PROTOCOLS.md sections 13.8 to 13.12):
 // the theme's mode switched by a static that takes Option<&mut Window> (Theme::change), the
 // theme's fields edited in place (a kit global's public fields, read and written), and bars placed
@@ -244,8 +244,8 @@ func comp6TooltipElement(a *App, cx *gk.Cx) gk.Element {
 	return gk.Div().ID("c6tipe").W(gk.Px(160)).H(gk.Px(40)).Bg(theme.Muted).Tooltip(tip).Child(gk.Label("Hover me"))
 }
 
-// comp6TextView: a checkbox's label and an alert's message in Markdown. Odin passes
-// Kit_Text_Text_View{text_view_markdown(..)}; Go's TextInto takes the TextViewEl itself (the
+// comp6TextView: a checkbox's label and an alert's message in Markdown.
+// Go's TextInto takes the TextViewEl itself (the
 // kit's Into<Text> for a TextView, Text::TextView).
 func comp6TextView(a *App, cx *gk.Cx) gk.Element {
 	return gk.VFlex(s.Gap3).W(gk.Px(400)).

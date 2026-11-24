@@ -1,7 +1,7 @@
-// notes: a small notes app, the Go twin of examples/odin/notes and ref/src/bin/notes.rs: the kit's
+// notes: a small notes app, the Go twin of ref/src/bin/notes.rs: the kit's
 // styled dock with two panels (a list of notes, an editor with the kit's Input), a File menu whose
 // items are actions with keyboard shortcuts, a confirmation dialog, and the theme switched
-// between light and dark. gates/pixels.sh notes runs Rust, Odin and Go under gates/notes.script
+// between light and dark. gates/pixels.sh notes runs Rust and Go under gates/notes.script
 // and compares every image byte for byte.
 //
 //	notes-go                    a real window

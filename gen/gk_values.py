@@ -1,4 +1,4 @@
-"""gk_values: the values family's generator rules (docs/PROTOCOLS.md sections 13.8 to 13.12). Called from gk_model.py, gk_rust.py and gk_odin.py at small hooks, so the rules
+"""gk_values: the values family's generator rules (docs/PROTOCOLS.md sections 13.8 to 13.12). Called from gk_model.py, gk_rust.py and gk_go.py at small hooks, so the rules
 live here and not in the shared files:
 
 - Generic library objects instantiated for an argument list (`[values] objects` in
@@ -41,8 +41,8 @@ CALL_SAFE = {"fallible", "array", "civil", "arcslice", "cell", "xform", "txform"
 # Descriptor kinds this module adds that only an element's decoder can read (a call op cannot).
 DEC_ONLY = {"viewany", "traitval", "dragview", "dragstyle"}
 # jiff's calendar values (`["civil", Name]`), plain records both ways (PROTOCOLS.md 13.13): Rust's
-# Wire and Unwire impls in core/src/values.rs; the Odin types and their checked writers
-# (`put_civil_date`: a date that does not exist stops) in odin/gk/rt_values.odin.
+# Wire and Unwire impls in core/src/values.rs; the Go types and their checked writers
+# (`putCivilDate`: a date that does not exist stops) in go/gk/rt_gen_values.go.
 # gpui types the app holds as library objects, with the kit traits whose methods they get
 # (PROTOCOLS.md 13.14).
 GPUI_OBJECTS = {"ScrollHandle": ("ScrollbarHandle",)}
@@ -79,7 +79,7 @@ def resolved(m, ctx, t, out):
     if name in CIVIL and not args and m.api.home(ctx.crate, rp["id"])[0] == "jiff":
         return ["civil", name]  # a calendar date, a time of day or a weekday (PROTOCOLS.md 13.13)
     if out and name == "Duration" and not args and m.api.home(ctx.crate, rp["id"])[0] in g.STD:
-        return ["leaf", "duration", ""]  # read back as nanoseconds, Odin's time.Duration (PROTOCOLS.md 13.13)
+        return ["leaf", "duration", ""]  # read back as nanoseconds, Go's time.Duration (PROTOCOLS.md 13.13)
     if out and name == "Entity" and len(args) == 1 and "resolved_path" in args[0]:
         try:
             art = m.rtype(ctx, args[0])
@@ -175,7 +175,7 @@ def readback(m, ctx, rp):
     """A kit value type the app builds (a node that is not an element: `QuestionnaireAnswer`,
     `QuestionnaireItemDefinition`) read back from the library: it has no public fields, so it
     cannot travel as a record. It travels as a copy behind a temporary handle, a library object of
-    its own named `X_Read` in Odin, whose methods are the type's `&self` reads (`answer->choices(cx)`,
+    its own named `XRead` in Go, whose methods are the type's `&self` reads (`answer.Choices(cx)`,
     PROTOCOLS.md 13.15). None for any other type. Only a Clone type can be copied out of a borrow."""
     g = _m()
     hc, hid, it = m.api.item(ctx.crate, rp["id"])
@@ -311,7 +311,7 @@ def nested_iterators(m):
 
 
 def handed_state_types(m):
-    """The Odin state types a result or an event hands out (registered so rd_value reads them)."""
+    """The state types a result or an event hands out (registered so rd_value reads them)."""
     out = set()
     for it in m.all_items():
         if it["status"] in ("bound", "bridged") and it.get("ret"):
@@ -319,7 +319,7 @@ def handed_state_types(m):
     for sh in m.shapes.values():
         for d in sh["args"]:
             out |= {x[1] for x in walk_tables(m, d) if x[0] == "entity"}
-    return sorted(k for k in out if "odin" in m.states.get(k, {}))
+    return sorted(k for k in out if "stem" in m.states.get(k, {}))
 
 
 def gpui_object(m, name):
@@ -375,7 +375,7 @@ def gpui_object_traits(m):
 
 def rc_object(m, ctx, wrap, inner):
     """`Rc<X>` / `Arc<X>` of a kit struct that is not generic: a library object of its own (a
-    clone of the pointer), named `X_Rc` in Odin. None when X is not such a struct."""
+    clone of the pointer), named `XRc` in Go. None when X is not such a struct."""
     g = _m()
     hc, hid, it = m.api.item(ctx.crate, inner["resolved_path"]["id"])
     if it is None or hc not in g.KIT or g.path_args(inner["resolved_path"]):
@@ -676,7 +676,7 @@ def trait_summaries(m):
 # Kit traits whose implementors are value nodes the binding instantiates (`F: AnySettingField` is
 # one of the `SettingField<T>` instances): the library's wrapper of the trait object, which upstream
 # calls in place of the field (it delegates every method), made by a generated dispatcher on the
-# node's type. Odin: a union of the instances (gen_values.odin).
+# node's type.
 TRAIT_VALUES = {"AnySettingField": ("crate::values::AnyField", "Any_Setting_Field")}
 # Payloads of an element closure that the closure's fragment does not receive (the app wrote them):
 # a settings item's render options.
@@ -692,9 +692,6 @@ VALUES_INSTANCES = [("Scrollable", "gpui_kit::Div", "ScrollableDiv")]
 # Blanket traits entered into a node's tables (the extract lists a blanket impl only in the crate
 # that declares the trait, or the impl for a gpui type is in the kit crate): (trait, node path).
 VALUES_BLANKETS = [("ScrollableElement", "gpui_kit::Div")]
-# Kit traits whose implementors are element nodes, taken as one of them (`Toolbar::child(impl Sizable
-# + IntoElement)`): the lists family's union rule (`[lists] unions`); the Odin union is generated here.
-GENERATED_UNIONS = {"Sizable": "Sizable_Element"}
 
 
 def _by_path(m, path):
@@ -739,7 +736,7 @@ RUNTIME_ITEMS = {
 }
 # Upstream functions the motion runtime calls while it draws what the app described (core/src/motion.rs,
 # PROTOCOLS.md 13.30): counted bridged, each run by a gallery page compared with Rust (motion_pages).
-_M = "core/src/motion.rs (node ANIMATED, rt_motion.odin): "
+_M = "core/src/motion.rs (node ANIMATED, rt_motion.go): "
 MOTION_ITEMS = {
     "gpui_kit::base::transition": _M + "gk.motion(.., gk.to_transition(..)): the property's value this frame",
     "gpui_kit::base::spring": _M + "gk.motion(.., gk.to_spring(..))",
@@ -778,7 +775,7 @@ def window_roots(m):
             if it["id"] != f"{path}::read" or it["status"] not in ("todo", "norule"):
                 continue
             it.update(kind="ambient", status="bound", reason="", detail="the window's own, made by the library",
-                      odin_base=f"{_snake(name)}_read",
+                      stem_base=f"{_snake(name)}_read",
                       callee=f"crate::values::window_root::<{path}>", crate=st["crate"], borrowed_ret=False,
                       args=[{"name": "window", "desc": ["ctx", "window_ref"]}, {"name": "cx", "desc": ["ctx", "app_ref"]}],
                       ret=["opt", ["entity", path, name]])
@@ -923,7 +920,7 @@ def settle_cells(m):
 
 # ---------------------------------------------------------------- generic parameters fixed (13.20)
 
-# The library's drag value (core/src/values.rs `Drag`, Odin `gk.Drag_Value`): the one type the app
+# The library's drag value (core/src/values.rs `Drag`, Go `gk.DragValue`): the one type the app
 # drags. gpui's drag methods are generic over the dragged value's type (`on_drag<T, W>`, `on_drop<T>`,
 # `drag_over<S>`, `on_drag_move<T>`); with T fixed to it, a drop is a handler whose payload is the
 # value, a drag's preview is the app's view, a drag-over style is a described style.
@@ -1274,7 +1271,7 @@ def _snake(name):
 
 def rust_field_put(rc, f):
     """A record field written out (gk_rust's record Wire impls). A colour field of a record the app
-    also writes is a gk.Color in Odin (theme u16, then h, s, l, a): it is written in that layout,
+    also writes is a gk.Color in Go (theme u16, then h, s, l, a): it is written in that layout,
     theme 0 (PROTOCOLS.md 13.20: `box_shadow` read back and given to `shadow`)."""
     ip = gk_items.field_put(rc, f)
     if ip:
@@ -1288,7 +1285,7 @@ def rust_field_put(rc, f):
 
 
 def ret_readable(m, ret):
-    """A result whose records hold a colour can be read back: the record's Odin field is a gk.Color
+    """A result whose records hold a colour can be read back: the record's Go field is a gk.Color
     when the app also writes the record (rust_field_put writes that layout then) and an Hsla when it
     only reads it (Hsla's own Wire impl), decided for both sides by the same flag."""
     for x in walk_tables(m, ret):
@@ -1309,75 +1306,11 @@ def rust_put_ret(ret, expr):
     return None
 
 
-# ---------------------------------------------------------------- Odin
-
-
-def odin_type(od, d, out):
-    if d[0] == "array":
-        return f"[{d[2]}]{od.otype(d[1], out)}"
-    if d[0] == "fallible":
-        return f"Fallible({od.otype(d[1], out)})"
-    if d[0] == "civil":
-        return CIVIL[d[1]]
-    if d[0] == "viewany":
-        return gk_comp6.odin_viewany_type(od, d)  # View, or View_Or_Tooltip (PROTOCOLS.md 11.17)
-    if d[0] == "cell":
-        return f"Cell({od.otype(d[1], False)})"
-    if d[0] == "traitval":
-        return TRAIT_VALUES[d[1]][1]
-    if d[0] == "dragview":
-        return "View"
-    if d[0] == "dragstyle":
-        return od.otype(["stylefn", d[1], d[2]], out)
-    if d[0] == "xform":
-        return "Transformation"  # rt_motion.odin
-    if d[0] == "txform":
-        return "Timed_Transformation"  # rt_motion.odin
-    raise KeyError(d[0])
-
-
-def odin_put(od, d, v, depth):
-    if d[0] == "array":
-        x = f"x{depth}"
-        return [f"for {x} in {v} {{"] + ["\t" + s for s in od.put(d[1], x, depth + 1)] + ["}"]
-    if d[0] == "civil":
-        return [f"put_{CIVIL[d[1]].lower()}(o, {v})"]
-    if d[0] == "viewany":
-        return gk_comp6.odin_viewany_put(od, d, v)  # PROTOCOLS.md 11.17
-    if d[0] == "cell":
-        return [f"put_u64(o, {v}.h)"]
-    if d[0] == "dragview":
-        return [f"put_view_arg(o, {v})"]
-    if d[0] == "dragstyle":
-        return od.put(["stylefn", d[1], d[2]], v)
-    if d[0] == "xform":
-        return [f"put_transformation(o, {v})"]
-    if d[0] == "txform":
-        return [f"put_timed_transformation(o, {v})"]
-    if d[0] == "traitval":
-        out = ["{", f"\tswitch x in {v} {{"]
-        for k in d[2]:
-            out += [f"\tcase {od.m.nodes[k]['odin']}:", "\t\tput_u32(o, take_value(x.nd))"]
-        return out + ["\tcase:", f'\t\tstop({{}}, "a zero gk.{TRAIT_VALUES[d[1]][1]} was given to a builder: it was never made (make it with its constructor before giving it)")', "\t}", "}"]
-    raise KeyError(d[0])
-
-
-def sample_val(sm, d, depth):
-    if d[0] == "array":
-        v = sm.val(d[1], depth + 1)
-        return None if v is None else f"[{d[2]}]{sm.od.otype(d[1])}{{{', '.join([v] * d[2])}}}".replace("]Color", "]gk.Color")
-    if d[0] == "civil":
-        return {"Date": "gk.Civil_Date{2026, 11, 11}", "Time": "gk.Civil_Time{9, 30, 0, 0}",
-                "DateTime": "gk.Civil_Date_Time{{2026, 11, 11}, {9, 30, 0, 0}}", "Weekday": "gk.Weekday.Mon"}[d[1]]
-    if d[0] == "xform":
-        return "gk.transform(rotate = 0.5)"
-    if d[0] == "txform":
-        return "gk.timed_rotation(2 * time.Second)"
-    return None
+# ---------------------------------------------------------------- value types
 
 
 def action_nodes(m):
-    """Value types whose type implements Action and that the app can make: `gk.action_of` takes
+    """Value types whose type implements Action and that the app can make: `gk.ActionOf` takes
     them (PROTOCOLS.md 13.11)."""
     out = []
     for key in sorted(m.nodes):
@@ -1407,7 +1340,7 @@ def rust_mod(rs, m):
 
 def animatable(m):
     """Element nodes an animation may wrap (PROTOCOLS.md 13.30): styled, with a constructor the
-    binding makes, and a name in the Odin package. With those that are also a parent and a gpui
+    binding makes, and a name in the package. With those that are also a parent and a gpui
     Element (focus_trap's bounds)."""
     out, trap = [], []
     for key in sorted(m.nodes):
@@ -1461,32 +1394,6 @@ def rust_traitvals(m):
                 lines.append(f"        {' | '.join(map(str, nums))} => Some({wrapper}::new(build_{node['fn']}(dx, n)?)),")
         lines += ["        _ => None,", "    }", "}", ""]
     return lines
-
-
-def odin_unions(od):
-    """The Odin unions of TRAIT_VALUES (gen_values.odin): one variant per value node implementing the
-    trait; and of GENERATED_UNIONS, one variant per element node implementing the trait (the same
-    keys as the lists family's rule, gk_lists.bounded_out)."""
-    out = gk_comp6.odin_decls(od)  # the component types (PROTOCOLS.md 11.17, 11.20)
-    anim, trap = animatable(od.m)
-    for oname, keys, what in (("Animatable_Element", anim, "a styled element an animation may wrap"),
-                              ("Focus_Trap_Element", trap, "an element focus_trap may wrap: a parent, styled, a gpui Element")):
-        names = [od.m.nodes[k]["odin"] for k, _ in keys if "odin" in od.m.nodes[k]]
-        if names:
-            out += [f"// {oname} is {what} (PROTOCOLS.md 13.30, rt_motion.odin).",
-                    f"{oname} :: union {{{', '.join(names)}}}", ""]
-    for name, oname in sorted(GENERATED_UNIONS.items()):
-        keys = sorted(k for k, nd in od.m.nodes.items() if nd["element"] and nd["inst"] is None
-                      and name in od.m.info(nd["crate"], nd["id"])["traits"] and "odin" in nd)
-        if keys:
-            out += [f"// {oname} is one of the elements implementing the kit's {name} (PROTOCOLS.md 13.20).",
-                    f"{oname} :: union {{{', '.join(od.m.nodes[k]['odin'] for k in keys)}}}", ""]
-    for name, (_, oname) in sorted(TRAIT_VALUES.items()):
-        keys = [k for k in trait_nodes(od.m, name) if "odin" in od.m.nodes[k]]
-        if keys:
-            out += [f"// {oname} is one of the value nodes implementing the kit's {name} (PROTOCOLS.md 13.19).",
-                    f"{oname} :: union {{{', '.join(od.m.nodes[k]['odin'] for k in keys)}}}", ""]
-    return out
 
 
 def describe(m):

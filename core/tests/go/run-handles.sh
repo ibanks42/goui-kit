@@ -1,7 +1,6 @@
 # run-handles.sh: the protocol tests (docs/PROTOCOLS.md section 13), sourced by
 # core/tests/go/run.sh, which defines build and run. The app is core/tests/go/handles: library
 # objects that are not entities behind handles of kind OBJ, driven by a gk-meter script offscreen.
-# Odin twin: core/tests/run-handles.sh.
 build handles-go handles
 
 # Owned objects: made (kept), read, written (buffered; the next read sees it), released.
@@ -21,7 +20,7 @@ GK_PROTO_BIN=handles-go run obj-temps 0 \
   'handles kept placeholder="type here"' \
   'handles done mode=obj-temps clicks=4'
 # Misuse: a temporary handle used after its frame stops with the message and the line (exit 2).
-# Go: the app's line is main.go's (the library's message still names Odin's gk.retain).
+# Go: the app's line is main.go's (the library's message may name gk.retain or gk.Retain).
 GK_PROTO_BIN=handles-go run obj-stale-temp 2 'handles reading the swept temporary' \
   'was released .*temporary: it lives until the next frame begins unless gk.[Rr]etain keeps it' 'at .*handles/main.go:[0-9]+'
 # The kit's theme global: one interned handle for both accessors, reads in place, in a view too.
@@ -41,7 +40,7 @@ GK_PROTO_BIN=handles-go run obj-values 0 \
   'handles tree entry 0 id=src depth=0 folder=true' 'handles tree entry 1 id=src/a.rs depth=1 folder=false' \
   'handles tree entries=4' 'handles grid area id=one col=1 row=[0-9]+ col_span=3' 'handles grid area id=two '
 # Misuse: a value kept past the turn that made it stops where it is given (exit 2).
-# Go: "the function that made it" may stand for Odin's "the procedure".
+# Go: the message may say "the function that made it" or "the procedure".
 GK_PROTO_BIN=handles-go run obj-stale-value 2 'handles giving a value of an earlier turn' 'a kit value was used after the (procedure|function) that made it returned'
 # A table's columns given as the kit's own Column values (each a value made outside a view), then
 # replaced on the table state.

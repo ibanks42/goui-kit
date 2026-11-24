@@ -1,7 +1,6 @@
 package gk
 
-// Dock panels as Go views (docs/PROTOCOLS.md section 11.7), ported from the first part
-// of odin/gk/rt_dock.odin. A panel is an ordinary view the app made with gk.NewView, put in a dock by the
+// Dock panels as Go views (docs/PROTOCOLS.md section 11.7). A panel is an ordinary view the app made with gk.NewView, put in a dock by the
 // generated DockArea and DockLayout methods:
 //
 //	files := gk.NewPanel(cx, gk.NewView(nil, a.filesView), gk.PanelData{Name: "files", Title: "Files"})
@@ -13,7 +12,7 @@ package gk
 // data the app gave (gk.SetPanel changes it). What the dock tells a panel (active, zoomed, added
 // to a tab group, removed) reaches the app's handler (gk.PanelEvents) as a PanelEvent, after the
 // dock's update. Saved layouts, the pane tree, the skin's settings, renderers and toggles follow
-// below (the rest of odin/gk/rt_dock.odin).
+// below.
 
 // PanelData is what the dock reads of a panel. The flags are upstream's defaults when false.
 type PanelData struct {
@@ -102,7 +101,7 @@ func PanelEvents(f func(cx *Cx, e PanelEvent)) PanelOption {
 	return func(o *panelOpts) { o.events = f }
 }
 
-// handle makes a panel something gk.Release takes (Odin's gk.release frees a Dock_Panel).
+// handle makes a panel something gk.Release takes.
 func (p DockPanel) handle() uint64 { return p.h }
 
 // NewPanel makes a dock panel that draws v. In a handler or init (it needs the window).

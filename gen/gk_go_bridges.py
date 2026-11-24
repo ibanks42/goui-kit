@@ -1,24 +1,21 @@
-"""gk_go_bridges: the Go emitter's side of Odin's hand-written bridges (odin/gk/rt_*.odin,
-odin/gk/kit_*.odin) and the protocols behind them, kept apart from gk_go.py's descriptor rules.
+"""gk_go_bridges: the Go emitter's side of the runtime's hand-written bridges (go/gk/rt_*.go) and
+the protocols behind them, kept apart from gk_go.py's descriptor rules.
 
 Three things live here:
 
 - the `["dock", what, ..]` descriptor family (PROTOCOLS.md 11.8): node and panel ids, views,
   panels, durations, entity handles, saved layouts and renderers, read and written by the
   hand-written Go codecs of go/gk/rt_dock.go;
-- `PORTED`: the items Odin counts bound or bridged through a hand-written bridge or a library
+- `PORTED`: the items the model counts bound or bridged through a hand-written bridge or a library
   shim, each with the Go runtime names that serve it. An item counts as ported only when every
   one of those names is declared by a hand-written file of go/gk (rt_*.go, kit_*.go), so the
   report cannot claim a bridge the runtime lacks;
 - what the report derives from items already generated: a trait's own row (its instances on
   each element type), a summary row (its instantiated objects), a projected read (the reads it
   was split into);
-- `UNBOUND`: items Odin's status counts bridged although nothing can call them (no decoder the
+- `UNBOUND`: items the model counts bridged although nothing can call them (no decoder the
   library dispatches to), reported with that reason instead of a missing Go name.
 """
-
-from gk_model import ada
-
 
 # ---------------------------------------------------------------- the dock family (11.8)
 
@@ -83,19 +80,19 @@ def rd(go, d, out=True):
     raise Unsup(f"dock {w} read back")
 
 
-# ---------------------------------------------------------------- what Odin counts but nothing binds
+# ---------------------------------------------------------------- what the model counts but nothing binds
 
-# Items Odin's status counts bridged although neither the Odin package nor the library binds
-# them: the report names why instead of a missing Go runtime name.
-_STYLE_SIZED = ("Odin's style_sized_any table is private and no element's decoder dispatches to "
+# Items the model counts bridged although nothing binds them: the report names why instead of a
+# missing Go runtime name.
+_STYLE_SIZED = ("no element's decoder dispatches to "
                 "core/src/gen/traits.rs tr_style_sized_53 (the library answers 'op is not an op of Div')")
 UNBOUND = {
     **{f"gpui_kit::component::StyleSized::{n}": _STYLE_SIZED for n in (
         "button_text_size", "input_h", "input_pl", "input_pr", "input_px", "input_py", "input_size", "input_text_size",
         "list_px", "list_py", "list_size", "size_with", "table_cell_size")},
-    "gpui_kit::base::VirtualList::track_scroll": "the library's virtual list node (core/src/source.rs) takes only style ops, and Odin's gk.Virtual_List only Styled: no decoder to call",
-    "gpui_kit::base::VirtualList::with_sizing_behavior": "the library's virtual list node (core/src/source.rs) takes only style ops, and Odin's gk.Virtual_List only Styled: no decoder to call",
-    "gpui_kit::base::VirtualList::with_item_to_measure_index": "the library's virtual list node (core/src/source.rs) takes only style ops, and Odin's gk.Virtual_List only Styled: no decoder to call",
+    "gpui_kit::base::VirtualList::track_scroll": "the library's virtual list node (core/src/source.rs) takes only style ops: no decoder to call",
+    "gpui_kit::base::VirtualList::with_sizing_behavior": "the library's virtual list node (core/src/source.rs) takes only style ops: no decoder to call",
+    "gpui_kit::base::VirtualList::with_item_to_measure_index": "the library's virtual list node (core/src/source.rs) takes only style ops: no decoder to call",
 }
 
 
@@ -103,22 +100,22 @@ UNBOUND = {
 
 # Item id (or an id prefix ending in "::") -> the hand-written Go names that serve it. The names
 # are what an app calls (or the type it gets); an item whose names are all declared counts as
-# ported. Grouped as the Odin files they port.
+# ported. Grouped by family.
 _DOCK_PANEL = ("NewPanel", "SetPanel", "EmitPanel", "PanelEvents")  # GkPanel: from the data the app pushed
 PORTED = {
-    # rt_state.odin / rt_app.odin: windows
+    # windows (rt_state.go, rt_app.go)
     "gpui_kit::component::TitleBar::window_options": ("WindowConfig", "OpenWindowWith"),
-    # rt_platform.odin: the menu bar
+    # the menu bar (rt_platform.go)
     "gpui_kit::base::GlobalState::app_menus": ("Menus",),
     "gpui_kit::base::GlobalState::set_app_menus": ("SetMenus",),
-    # rt_overlay.odin: dropdowns, key bindings, the app menu bar, the clock
+    # dropdowns, key bindings, the app menu bar, the clock
     "gpui_kit::component::menu::DropdownMenu::dropdown_menu": ("DropdownMenu",),
     "gpui_kit::component::menu::DropdownMenu::dropdown_menu_with_anchor": ("DropdownMenuAnchored",),
     "gpui_kit::component::kbd::Kbd::binding_for_action": ("KbdForAction",),
     "gpui_kit::component::kbd::Kbd::binding_for_action_in": ("KbdForActionIn",),
     "gpui_kit::component::kbd::Kbd::global_binding_for_action": ("KbdGlobalForAction",),
     "gpui_kit::component::menu::AppMenuBar::new": ("NewAppMenuBar", "AppMenuBarView"),
-    # rt_motion.odin
+    # animations (rt_motion.go)
     "gpui_kit::base::animation::EffectTransition::apply": ("Effect",),
     "gpui_kit::base::animate_keyframes": ("Motion", "AtKeyframes"),
     "gpui_kit::base::spring": ("Motion", "ToSpring"),
@@ -128,10 +125,10 @@ PORTED = {
     "gpui_kit::base::FocusTrapElement::focus_trap": ("FocusTrap",),
     "gpui_kit::base::ElementExt::text_selection_scope": ("TextSelectionScopeOf",),
     "gpui_kit::base::TextSelectionScopeId::new": ("NewTextSelectionScopeID",),
-    # rt_source.odin: virtual lists
+    # virtual lists (rt_source.go)
     "gpui_kit::base::v_virtual_list": ("VVirtualList",),
     "gpui_kit::base::h_virtual_list": ("HVirtualList",),
-    # rt_dock.odin: panels, saved layouts, the skin, renderers, toggles
+    # panels, saved layouts, the skin, renderers, toggles (rt_dock.go)
     "gpui_kit::base::dock::Panel::": _DOCK_PANEL,
     "gpui_kit::base::dock::PanelView::": _DOCK_PANEL,
     "gpui_kit::component::dock::Panel::": _DOCK_PANEL,
@@ -160,15 +157,15 @@ PORTED = {
     "gpui_kit::base::dock::DockContext::(library hand-out)": ("DockRender",),
     "gpui_kit::base::dock::TabGroupContext::(library hand-out)": ("DockRender",),
     "gpui_kit::component::dock::DockToggleEvent::": ("OnDockToggle", "DockToggle"),
-    # kit_rows.odin: lists, tables, per-row menus
+    # lists, tables, per-row menus (rt_rows.go, rt_table.go)
     "gpui_kit::component::list::ListDelegate::": ("NewListSource", "ListEvents", "SetDelegateData"),
     "gpui_kit::component::table::TableDelegate::": ("NewTableSource", "TableEvents", "SetDelegateData", "TableLook",
                                                     "SetTableLook", "SetTableTexts", "SetTableRowLabels", "RowMenu"),
-    # kit_select.odin: selects and comboboxes
+    # selects and comboboxes (rt_select.go)
     "gpui_kit::component::searchable_list::SearchableListDelegate::": ("NewSearchSource", "SearchRequests",
                                                                       "SearchWillChange"),
     "gpui_kit::component::searchable_list::SearchableListItem::": ("SearchItem",),
-    # kit_input.odin, kit_editor.odin, kit_editor_text.odin: the editor's providers and languages
+    # the editor's providers and languages (rt_editor.go, rt_editor_lang.go)
     "gpui_kit::base::input::CompletionProvider::": ("EditorProviders", "ProviderRequest"),
     "gpui_kit::base::input::HoverProvider::": ("EditorProviders", "ProviderRequest"),
     "gpui_kit::base::input::DefinitionProvider::": ("EditorProviders", "ProviderRequest"),
@@ -190,11 +187,11 @@ PORTED = {
     "gpui_kit::component::combobox::ComboboxTriggerContext::": ("Items",),
     "gpui_kit::base::ResizeHandleContext::": ("Items",),
     "gpui_kit::component::resize_handle_appearance": ("Items",),
-    # rt_editor_host.go: the editor host's element (gen_editor_host.odin)
+    # rt_editor_host.go: the editor host's element
     "gpui_kit::base::text::editor_host::collect_leaf_geometry": ("BlockHost",),
     # an event payload made of its reads (PROTOCOLS.md 9.35): gk.InputEditsEvent carries the edits
     "gpui_kit::base::input::InputEditsEvent::edits": ("InputEditsEvent",),
-    # rt_values.odin: the settings fields (a field's element is a generated fragment)
+    # the settings fields (a field's element is a generated fragment)
     "gpui_kit::component::setting::AnySettingField::": ("SettingFieldBool", "SettingFieldNumber", "SettingFieldText"),
     "gpui_kit::component::setting::SettingFieldElement::render_field": ("NewSettingFieldTextElement",),
 }
@@ -254,10 +251,10 @@ def covered(go, it, mapped):
             return None
         return "trait row: no element type's instance is in Go yet"
     if it["id"] in UNBOUND:
-        return "not bound in Odin either: " + UNBOUND[it["id"]]
+        return "not bound: " + UNBOUND[it["id"]]
     names = ported_names(it)
     if names is None:
-        return f"kind {k}: an Odin hand-written bridge or protocol the Go runtime has not ported yet"
+        return f"kind {k}: a hand-written bridge or protocol the Go runtime does not have yet"
     have = _names(go)
     missing = [n for n in names if n not in have]
     if not missing:
@@ -268,8 +265,7 @@ def covered(go, it, mapped):
 # ---------------------------------------------------------------- what the generated package adds
 
 def focus_trap_elements(go):
-    """FocusTrapElement: the elements gk.FocusTrap and gk.TextSelectionScopeOf wrap (Odin's
-    Focus_Trap_Element, gk_values.odin_unions)."""
+    """FocusTrapElement: the elements gk.FocusTrap and gk.TextSelectionScopeOf wrap."""
     import gk_values  # noqa: PLC0415
     _, trap = gk_values.animatable(go.m)
     names = sorted({go.m.nodes[k]["go"] for k, _ in trap if "go" in go.m.nodes[k]})
@@ -286,6 +282,3 @@ def emit(go):
     go.add(*lines)
     go.close()
 
-
-def odin_name(s):
-    return ada(s)

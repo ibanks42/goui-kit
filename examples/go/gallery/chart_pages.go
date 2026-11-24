@@ -1,4 +1,4 @@
-// The charts' gallery pages, the Go twin of examples/odin/gallery/chart_pages.odin and of
+// The charts' gallery pages, the Go twin of
 // ref/src/bin/gallery/chart_pages.rs, chart for chart: the rows are the app's own structs, given
 // as a data table (gk.NewData, a column per exported field), and where the Rust page passes a
 // closure over a row this page names a column ("Month") or a template ("{:.1} visits"):
@@ -85,7 +85,7 @@ type chartPages struct {
 	tips gk.RowSource // the bar chart's tooltip content, one row per month
 }
 
-// The comp6-* pages of the Odin table (comp6-sankey-labels, comp6-bar-gradient,
+// The comp6-* pages (comp6-sankey-labels, comp6-bar-gradient,
 // comp6-bar-labels) wait for bindings: chart_pending.go.
 var chartPageTable = []Page{
 	{"chart-line", chartLine},

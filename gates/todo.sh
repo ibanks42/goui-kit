@@ -1,14 +1,14 @@
 #!/bin/bash
-# todo.sh [SCRIPT]: runs the todo example (examples/odin/todo) offscreen under a gk-meter script
+# todo.sh [SCRIPT]: runs the todo example (examples/go/todo, bin/todo-go) offscreen under a gk-meter script
 # (default gates/todo.script, then gates/todo-reload.script on what it saved) with a fresh state
 # file, keeps the images in gates/out/todo/, and checks what the session must have left behind in
 # the saved state (gates/todo-check.py). No Rust twin: the images are looked at by eye. Builds the
-# app first. Prints one line "GATE todo session ...". Another SCRIPT: that script alone, no checks.
-# GK_FRONT=go: the Go app (examples/go/todo, bin/todo-go); the line is then "GATE todo session-go".
+# app first. Prints one line "GATE todo session-go ...". Another SCRIPT: that script alone, no
+# checks.
 here=$(cd "$(dirname "$0")" && pwd); repo=$(dirname "$here")
-front=${GK_FRONT:-odin}; gate="todo session"; [ "$front" = odin ] || gate="todo session-$front"
+front=go; gate="todo session-$front"
 script=$(realpath "${1:-$here/todo.script}")
-out=$here/out/todo${GK_FRONT:+-$front}
+out=$here/out/todo-$front
 "$repo/examples/$front/build.sh" todo || { echo "GATE $gate FAIL the app does not build"; exit 1; }
 rm -rf "$out"; mkdir -p "$out"; cd "$out"
 export LD_LIBRARY_PATH=${GK_LIB_ROOT:-$repo/lib}/diag

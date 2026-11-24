@@ -1,6 +1,6 @@
 package gk
 
-// The data protocol (docs/PROTOCOLS.md section 12), the port of odin/gk/rt_data.odin: a chart, a
+// The data protocol (docs/PROTOCOLS.md section 12): a chart, a
 // plot shape or a scale that is generic over the type of one row of data gets the app's own rows
 // as a table, and every closure upstream calls on a row while it draws is answered from that
 // table instead:
@@ -342,7 +342,7 @@ func dataSpecOK(spec string) bool {
 	return true
 }
 
-// --- described plots (docs/PROTOCOLS.md 12.6, 12.14, 12.17), the port of odin/gk/rt_data.odin -------
+// --- described plots (docs/PROTOCOLS.md 12.6, 12.14, 12.17) -----------------------------------------
 
 // Plot is a plot described as a list of parts: an axis, a grid, the kit's shapes over the app's
 // rows, and the binding's own paths and quads, painted in this order in the plot's bounds, which

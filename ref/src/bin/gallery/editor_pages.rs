@@ -1,5 +1,5 @@
 //! The editor family's gallery pages (docs/PROTOCOLS.md 9.20 to 9.23), the Rust reference of
-//! examples/odin/gallery/editor_pages.odin, call for call: a block surface, headings styled by level,
+//! examples/go/gallery/editor_pages.go, call for call: a block surface, headings styled by level,
 //! Markdown plugins (the kit's frontmatter plugin, a block plugin for ```badge code and an inline one
 //! for inline code, written in Rust here as an app would) and a link's tooltip; the editor host
 //! and the decorated buttons, the Lsp's completion highlighter and a presented diagnostic.
@@ -103,7 +103,7 @@ pub fn page(id: &str, cx: &mut App) -> Option<AnyElement> {
                 2 => StyleRefinement::default().text_color(success),
                 _ => StyleRefinement::default(),
             });
-            // The next page's text view drawn here first, as the Odin page does (its plugin rows are
+            // The next page's text view drawn here first (its plugin rows are
             // described the frame after the nodes are parsed).
             div()
                 .w(px(360.))
@@ -167,7 +167,7 @@ fn host_blocks() -> Vec<BlockNode> {
             start: None,
             span: None,
         },
-        BlockNode::CodeBlock(CodeBlock::from_code("x := 1", Some("odin")).with_leaf_key(4)),
+        BlockNode::CodeBlock(CodeBlock::from_code("x := 1", Some("demo")).with_leaf_key(4)),
     ];
     v.extend(parse_markdown(HOST_MD, Arc::new(MarkdownExtensions::default())).unwrap_or_default());
     v
@@ -258,8 +258,7 @@ use std::rc::Rc;
 
 const MESSAGES: usize = 30;
 
-/// The editor7-* pages, one view: its states are made the first time it renders, where the window is (as
-/// the Odin twin makes them in init).
+/// The editor7-* pages, one view: its states are made the first time it renders, where the window is.
 #[derive(Default)]
 struct Round7 {
     page: &'static str,

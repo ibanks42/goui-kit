@@ -1,4 +1,4 @@
-//! ref-todo: the Rust reference for examples/go/todo (and examples/odin/todo), written the way a
+//! ref-todo: the Rust reference for examples/go/todo, written the way a
 //! Rust GPUI-kit app is written, call for call with the Go app: projects in a resizable sidebar, a
 //! task list per project with custom rows (ListDelegates), add/edit/delete through a dialog and an
 //! alert dialog opened with closures, filters and search, keyboard shortcuts heard app-wide, a File

@@ -1,4 +1,4 @@
-//! ref-reader: the Rust reference for examples/go/reader (and examples/odin/reader), written the way
+//! ref-reader: the Rust reference for examples/go/reader, written the way
 //! a Rust GPUI-kit app is written, call for call with the Go app: the articles of a feed file (or of
 //! a folder of .md files) in a list on the left (a ListDelegate), the open articles as tabs on the
 //! right, each drawn by the kit's Markdown view; a toolbar of icon buttons with tooltips, a settings

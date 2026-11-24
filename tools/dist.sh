@@ -1,8 +1,8 @@
 #!/bin/bash
 # dist.sh [LIBROOT]: assemble exactly what an app developer downloads, for one platform, into
 # dist/gpuikit-VERSION-PLATFORM/ and an archive beside it. No Rust source, no toolchain: the
-# prebuilt library, the Odin package, the Go module, the C header, the examples in both languages
-# with a build script each, the guides and the licence texts of every crate linked into the
+# prebuilt library, the Go module, the C header, the examples with a build script, the guides and
+# the licence texts of every crate linked into the
 # library. PLATFORM is GK_PLATFORM, or this machine's:
 #   linux-x86_64    built by tools/build-lib.sh, linked by tools/zigbuild.sh against glibc 2.28
 #                   for a release (make lib-release, CI); .tar.zst
@@ -19,20 +19,18 @@
 #   lib/libgpuikit.dylib                   macOS: the same, universal (arm64 and x86_64 slices, each
 #                                          with install name @rpath/libgpuikit.dylib)
 #   lib/gpuikit.dll                        Windows: the same, and its import libraries:
-#   lib/gpuikit.dll.lib                    MSVC's, which Odin links (link.exe)
 #   lib/libgpuikit.dll.a, lib/gpuikit.def  MinGW's, which Go's cgo links (gcc)
 #   windows/gpuikit.manifest, gpuikit.rc   Windows: the manifest a program embeds (DPI awareness)
-#   odin/gk/*.odin           the Odin package: -collection:gpuikit=<here>/odin
 #   go/                      the Go module gpuikit.dev (package gk, and s, theme, palette): an app's
 #                            go.mod requires it and replaces it with this folder
 #   include/*.h              the C interface, for other languages
-#   README.md                where to start, in both languages, for this platform (written here)
-#   examples/{hello,counter,notes,todo,reader,expenses} the Odin examples and build.sh
-#   examples/go/             the same apps in Go (module gpuikit.dev/examples) and build.sh
-#   docs/                    the guides of both languages and the programs their snippets come from
+#   README.md                where to start, for this platform (written here)
+#   examples/go/             hello, counter, notes, todo, reader, expenses (module
+#                            gpuikit.dev/examples) and build.sh
+#   docs/                    the guides and the programs their snippets come from
 #   VERSIONS                 what was built from what, what the library needs, the compilers tested
 #   THIRD_PARTY.md, licences/ the crates linked into this platform's library, their licences and texts
-# The build scripts are the same file on every platform (they look at uname). Only the ship
+# The build script is the same file on every platform (they look at uname). Only the ship
 # library is shipped; the diagnostic one (lib/diag) is for this repository's own tests.
 # LIBROOT (default lib) holds ship/ and licences/ (or GK_LICENCES names the licences
 # folder), as tools/build-lib.sh leaves them. GK_DIST_OUT is the output folder (default dist).
@@ -56,7 +54,7 @@ case "$GK_PLATFORM" in
   # library is built too (lib/ship) but not shipped: what the library needs is read from it.
   linux-x86_64) libs=(libgpuikit_static.a libgpuikit_sys.so); main=libgpuikit_static.a; probe=libgpuikit.so; ext=.bin ;;
   macos-universal) libs=(libgpuikit_static.a); main=libgpuikit_static.a; probe=libgpuikit.dylib; ext=.bin ;;
-  windows-x86_64) libs=(libgpuikit_static.a libgpuikit_sys.a gpuikit_static.lib gpuikit_sys.lib); main=libgpuikit_static.a; probe=gpuikit.dll; ext=.exe ;;
+  windows-x86_64) libs=(libgpuikit_static.a libgpuikit_sys.a); main=libgpuikit_static.a; probe=gpuikit.dll; ext=.exe ;;
   *) echo "dist.sh: GK_PLATFORM is linux-x86_64, macos-universal or windows-x86_64" >&2; exit 2 ;;
 esac
 ver=$(grep -m1 '^version' Cargo.toml | cut -d'"' -f2)
@@ -74,69 +72,24 @@ fi
 # The licence texts of every crate linked into the library (tools/build-lib.sh writes them).
 [ -f "$lic/THIRD_PARTY.md" ] || { echo "dist.sh: $lic/THIRD_PARTY.md is missing (make lib writes it)" >&2; exit 1; }
 rm -rf "${dst:?}/$name" "$dst/$name".*
-mkdir -p "$out/lib" "$out/odin/gk" "$out/go" "$out/include" "$out/examples/go" "$out/docs"
+mkdir -p "$out/lib" "$out/go" "$out/include" "$out/examples/go" "$out/docs"
 for f in "${libs[@]}"; do cp "$root/ship/$f" "$out/lib/"; done
 if [ "$GK_PLATFORM" = windows-x86_64 ]; then
   mkdir -p "$out/windows"; cp core/windows/gpuikit.manifest core/windows/gpuikit.rc "$out/windows/"
 fi
 cp -r "$lic" "$out/licences"
 cp "$lic/THIRD_PARTY.md" "$out/THIRD_PARTY.md"
-cp odin/gk/*.odin "$out/odin/gk/"
 # The Go module as the repository has it.
 cp go/go.mod "$out/go/" && cp -r go/gk "$out/go/"
 cp core/include/gpuikit.h core/include/gk_ops.h "$out/include/"
-cp -r examples/odin/hello examples/odin/counter examples/odin/notes examples/odin/todo examples/odin/reader \
-  examples/odin/expenses "$out/examples/"
 # The Go examples: one module whose go.mod replaces gpuikit.dev with ../../go, the download's go/.
 cp examples/go/go.mod "$out/examples/go/"
 cp -r examples/go/hello examples/go/counter examples/go/notes examples/go/todo examples/go/reader \
   examples/go/expenses "$out/examples/go/"
-# The guides and the programs every snippet in them is cut from (gates/docs.sh builds them); the Go
+# The guides and the programs every snippet in them is cut from (gates/docs-go.sh builds them); the
 # programs' go.mod files replace gpuikit.dev with ../../go as well.
-cp docs/GETTING-STARTED.md docs/API.md docs/GETTING-STARTED-GO.md docs/API-GO.md docs/GO.md "$out/docs/"
-cp -r docs/tutorial docs/snippets docs/tutorial-go docs/snippets-go "$out/docs/"
-cat > "$out/examples/build.sh" <<'B'
-#!/bin/sh
-# build.sh [APP [ODIN-FLAG...]]: build an app against the prebuilt library. Needs only the Odin
-# compiler and the linker it uses: clang on Linux and macOS (the Xcode command-line tools there),
-# Visual Studio's C++ build tools (link.exe) on Windows, where this runs in Git Bash or MSYS2.
-#   APP   an example's name (hello, counter, notes, todo, reader, expenses; default hello), built into
-#         examples/APP.bin (APP.exe on Windows), or the path of any app folder (docs/tutorial/03-list,
-#         ../myapp), built into FOLDER.bin (FOLDER.exe) beside it
-#   ODIN-FLAG...  passed on to odin build (not -o:, which is set here): on macOS -target:darwin_amd64
-#         builds for Intel on Apple silicon, -target:darwin_arm64 for Apple silicon on Intel (the
-#         library is universal)
-# The library is linked into the program, with only the component families the app calls into
-# (package gk asks the linker to drop the rest): one file, nothing to ship beside it (on Windows,
-# the manifest: see below).
-set -e
-here=$(cd "$(dirname "$0")" && pwd); lib=$(cd "$here/../lib" && pwd); app=${1:-hello}
-if [ $# -gt 0 ]; then shift; fi
-case "$(uname -s)" in MINGW*|MSYS*|CYGWIN*) win=1; ext=.exe ;; *) win=; ext=.bin ;; esac
-case "$app" in
-  */*) src=$(cd "${app%/}" && pwd); bin=$src$ext ;;
-  *) src=$here/$app; bin=$here/$app$ext ;;
-esac
-# odin can end with status 0 and no program (a target it cannot link for here): no old one stays.
-rm -f "$bin"
-if [ -n "$win" ]; then
-  # lld-link (shipped with Odin on Windows): Odin's radlink drops a section the
-  # package's generated tables still point into ("relocating against symbol
-  # that is in a removed section"). ODIN_LINKER picks another.
-  odin build "$(cygpath -m "$src")" -o:minimal -linker:"${ODIN_LINKER:-lld}" \
-    -collection:gpuikit="$(cygpath -m "$here/../odin")" \
-    "-extra-linker-flags:/LIBPATH:$(cygpath -m "$lib")" -out:"$(cygpath -m "$bin")" "$@"
-  # Required, not only for DPI: the library imports comctl32 6's TaskDialogIndirect, and without a
-  # manifest asking for common controls 6 Windows loads comctl32 5 and refuses to start the program.
-  cp "$(dirname "$lib")/windows/gpuikit.manifest" "$bin.manifest"
-else
-  odin build "$src" -o:minimal -collection:gpuikit="$here/../odin" \
-    "-extra-linker-flags:-L$lib" -out:"$bin" "$@"
-fi
-[ -f "$bin" ] || { echo "build.sh: odin made no $bin" >&2; exit 1; }
-echo "built $bin"
-B
-chmod +x "$out/examples/build.sh"
+cp docs/GETTING-STARTED-GO.md docs/API-GO.md docs/GO.md "$out/docs/"
+cp -r docs/tutorial-go docs/snippets-go "$out/docs/"
 cat > "$out/examples/go/build.sh" <<'B'
 #!/bin/sh
 # build.sh [APP]: build a Go app against the prebuilt library. Needs Go 1.27 or newer and a C
@@ -177,27 +130,22 @@ chmod +x "$out/examples/go/build.sh"
 # What differs per platform in the README: the system, what to install, how an app links.
 case "$GK_PLATFORM" in
   linux-x86_64) sys="Linux x86_64"; libdesc="the library"
-    odin_needs="needs odin and clang on PATH"
     go_needs="a C compiler for cgo (gcc, or clang with CC=clang)"
     go_link='CGO_LDFLAGS="-L<this folder>/lib" go build -ldflags="-s -w -extldflags=-Wl,--gc-sections"'
     ship_note='An app is one file: the library is linked into it, with only the component families the app calls into (a Go app without the -ldflags still works, but holds all of them).' ;;
   macos-universal) sys="macOS, Apple silicon and Intel (universal)"
     libdesc="the library, universal (arm64 and x86_64), which an app links into itself"
-    odin_needs="needs odin and the Xcode command-line tools (clang)"
     go_needs="the Xcode command-line tools (clang) for cgo"
     go_link='CGO_LDFLAGS="-L<this folder>/lib" go build -ldflags="-s -w -extldflags=-Wl,-dead_strip"'
-    ship_note="An app is one file: the library is linked into it, with only the component families the app calls into. The build scripts build for this Mac's architecture. For Intel on Apple silicon: examples/build.sh APP -target:darwin_amd64, or GOARCH=amd64 CC='clang -arch x86_64' examples/go/build.sh APP (the other way round: darwin_arm64, GOARCH=arm64, -arch arm64); lipo -create joins the two programs into a universal one." ;;
+    ship_note="An app is one file: the library is linked into it, with only the component families the app calls into. The build script builds for this Mac's architecture. For Intel on Apple silicon: GOARCH=amd64 CC='clang -arch x86_64' examples/go/build.sh APP (the other way round: GOARCH=arm64, -arch arm64); lipo -create joins the two programs into a universal one." ;;
   windows-x86_64) sys="Windows x86_64"; libdesc="the library, which Go apps link into themselves (MinGW's format)"
-    odin_needs="needs odin and Visual Studio's C++ build tools; in Git Bash or MSYS2"
     go_needs="MinGW-w64 gcc and lld on PATH for cgo (MSYS2's ucrt64 with the mingw-w64-ucrt-x86_64-lld package, llvm-mingw, or WinLibs' LLVM build)"
     go_link="CGO_LDFLAGS=\"-L<this folder>/lib\" go build -ldflags=\"-s -w '-extldflags=-fuse-ld=lld -Wl,--gc-sections,-Xlink=-force:multipleres'\" (with lld on PATH; without it, -extldflags=-Wl,--gc-sections, and the program holds every component)"
-    ship_note="An app is one .exe: the library is linked into it, with only the component families the app calls into. A Go app has the manifest linked in too; an Odin app needs windows/gpuikit.manifest beside it as APP.exe.manifest (the build script puts it there) or embedded (windows/gpuikit.rc says how): without it the program does not start (the library needs common controls 6) and the window is not DPI aware" ;;
+    ship_note="An app is one .exe: the library is linked into it, with only the component families the app calls into. The manifest is linked in too: without it the program does not start (the library needs common controls 6) and the window is not DPI aware." ;;
 esac
 librows=$(for f in "${libs[@]}"; do
   case $f in
     ("$main") echo "| lib/$f | $libdesc; an app keeps only the component families it uses |" ;;
-    (gpuikit_static.lib) echo "| lib/$f | the same library in MSVC's format, which Odin apps link into themselves |" ;;
-    (gpuikit_sys.lib) echo "| lib/$f | the import library of the Windows API it links, in MSVC's format |" ;;
     (libgpuikit_sys.so) echo "| lib/$f | a linker script that names the system libraries the static library needs |" ;;
     (libgpuikit_sys.a) echo "| lib/$f | the import library of the Windows API the static library links |" ;;
     (*) echo "| lib/$f | an import library of gpuikit.dll |" ;;
@@ -209,22 +157,13 @@ kit=$("$py" -c "import json;print(json.load(open('api/coverage.json', encoding='
 cat > "$out/README.md" <<R
 # gpuikit $ver for $sys
 
-Desktop apps in **Odin** or **Go** with GPUI-kit $kit: GPUI's renderer and the kit's components,
-from one prebuilt library behind a C interface. No Rust is needed. Both languages get the same
-components, generated from the same description, and the same examples.
-
-## Odin
-
-Start with **docs/GETTING-STARTED.md**: what to install, building the examples, and a
-15-minute tutorial. Then **docs/API.md**: how GPUI-kit's documentation (gpui-kit.com/docs)
-reads as Odin calls, and an index of every component with its constructor.
-
-    examples/build.sh hello && examples/hello$ext    $odin_needs
-    examples/build.sh ../myapp                       builds any app folder into ../myapp$ext
+Desktop apps in **Go** with GPUI-kit $kit: GPUI's renderer and the kit's components, from one
+prebuilt library behind a C interface. No Rust is needed.
 
 ## Go
 
-Start with **docs/GETTING-STARTED-GO.md** (the same tutorial in Go), then **docs/API-GO.md**.
+Start with **docs/GETTING-STARTED-GO.md**: what to install, building the examples, and a
+tutorial. Then **docs/API-GO.md**.
 Needs Go 1.27 or newer and $go_needs.
 
     examples/go/build.sh hello && examples/go/hello$ext
@@ -240,11 +179,9 @@ and builds with $go_link as examples/go/build.sh does. $ship_note
 | path | what |
 |---|---|
 $librows
-| odin/gk/ | the Odin package an app imports: import gk "gpuikit:gk" |
 | go/ | the Go module gpuikit.dev: import "gpuikit.dev/gk" (and gk/s, gk/theme, gk/palette) |
-| examples/ | hello, counter, todo, reader, notes, expenses in Odin, and build.sh |
-| examples/go/ | the same six apps in Go, and build.sh |
-| docs/ | the guides of both languages, and the tutorial's programs in docs/tutorial/ and docs/tutorial-go/ |
+| examples/go/ | hello, counter, todo, reader, notes, expenses, and build.sh |
+| docs/ | the guides, and the tutorial's programs in docs/tutorial-go/ |
 | include/ | the C interface, for other languages |
 | VERSIONS | what the library was built from, and what it needs to run |
 | THIRD_PARTY.md, licences/ | the licences of everything inside the library |
@@ -273,8 +210,7 @@ architectures: $arch_line"
 esac
 engine=$(cat "$root/ship/ENGINE" 2>/dev/null || echo gpui-fast)
 [ "$engine" = gpui ] && engine="upstream GPUI" || engine="gpui-fast $("$py" -c "import json;print(json.load(open('api/coverage.json', encoding='utf-8'))['pin'].get('gpui-fast', '?'))")"
-hash=$(grep -m1 API_HASH odin/gk/ops.odin | grep -o '0x[0-9a-f]*')
-odin_v=$("${ODIN:-odin}" version 2>/dev/null | awk '{print $NF}' || true)
+hash=$(grep -m1 'const apiHash' go/gk/gen_ops.go | grep -o '0x[0-9a-f]*')
 go_v=$(go version 2>/dev/null | awk '{print $3}' | sed 's/^go//' || true)
 cat > "$out/VERSIONS" <<V
 gpuikit $ver for $GK_PLATFORM
@@ -284,7 +220,7 @@ needs: $needs${arch_line:-}
 licences: THIRD_PARTY.md (every crate linked into the library, its licence; texts in licences/texts)
 library sha256: $(sha256 "$out/lib/$main")
 source commit: $(git rev-parse --short HEAD 2>/dev/null || echo "${GK_COMMIT:-unknown} (a copy without git)")$(git diff --quiet 2>/dev/null || [ -n "${GK_COMMIT:-}" ] || echo ' with uncommitted changes')
-tested with: Odin ${odin_v:-not found}, Go ${go_v:-not found}
+tested with: Go ${go_v:-not found}
 V
 if [ "$GK_PLATFORM" = windows-x86_64 ]; then
   ( cd "$dst" && "$py" -m zipfile -c "$name.zip" "$name" )
@@ -305,18 +241,16 @@ def files(top):
             p = os.path.join(d, f)
             yield os.path.relpath(p, out).replace(os.sep, "/"), os.path.getsize(p)
 def mb(n): return f"{n / 1e6:.1f} MB"
-gen_odin = gen_go = texts = 0; n_odin = n_go = n_texts = 0
+gen_go = texts = 0; n_go = n_texts = 0
 listed = []
 for rel, size in files(out):
     base = rel.rsplit("/", 1)[-1]
-    if rel.startswith("odin/gk/gen_"): gen_odin += size; n_odin += 1
-    elif rel.startswith("go/gk/") and base.startswith("gen_"): gen_go += size; n_go += 1
+    if rel.startswith("go/gk/") and base.startswith("gen_"): gen_go += size; n_go += 1
     elif rel.startswith("licences/texts/"): texts += size; n_texts += 1
     else: listed.append((rel, size))
 for rel, size in sorted(listed): print(f"{size:10d}  ./{rel}")
 crates = len([d for d in os.listdir(os.path.join(out, "licences", "texts")) if d != "_canonical"])
 print(f"{texts:10d}  ./licences/texts/ ({n_texts} licence files of {crates} crates)")
-print(f"{gen_odin:10d}  ./odin/gk/gen_*.odin ({n_odin} generated files)")
 print(f"{gen_go:10d}  ./go/gk/gen_*.go, ./go/gk/{{s,theme,palette}}/gen_*.go ({n_go} generated files)")
 total = sum(s for _, s in files(out))
 print(f"unpacked: {mb(total)}; download: {mb(os.path.getsize(os.path.join(dst, arc)))} ({arc})")

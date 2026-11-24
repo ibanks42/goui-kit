@@ -1,7 +1,7 @@
 // misuse_values: mistakes against the values family's protocols (docs/PROTOCOLS.md sections
 // 13.8 to 13.12, 11.17 and 11.25) that must stop with a message and the app's line, never decode
-// a value inside itself until the library's stack runs out. The port of
-// examples/odin/negative_values; run offscreen with the diag library by gates/go-misuse.sh, one
+// a value inside itself until the library's stack runs out. Run
+// offscreen with the diag library by gates/go-misuse.sh, one
 // mode per case:
 //
 //	GK_NEG=val-ok           a scale made in a handler and read in the view: correct (exit 0)

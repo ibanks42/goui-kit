@@ -1,7 +1,7 @@
 //! ref-gallery: the Rust reference of the gallery, a pure Rust GPUI-kit app on gpui-fast that
 //! shows every stateless component in a fixed set of states, one page per component and state
 //! group, and then one generated page per bound function (conf.rs, written by
-//! gates/conformance.py). The Odin twin is examples/odin/gallery; the pages of both are named
+//! gates/conformance.py). The Go twin is examples/go/gallery; the pages of both are named
 //! by ref/gallery/pages.txt and conf.txt and compared pixel for pixel by gates/gallery.sh.
 //!
 //!   ref-gallery --script FILE   offscreen, driven by a gk-meter script (diag build)

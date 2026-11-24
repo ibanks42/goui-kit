@@ -1,15 +1,15 @@
 # run-rows.sh: the rows family's protocol tests (docs/PROTOCOLS.md section 9.5), sourced by
 # core/tests/go/run.sh, which defines build and run: the kit's list, table and tree over row
 # sources, offscreen. Each check is one mode of core/tests/go/rows: its exit code and the lines it
-# printed. Odin twin: core/tests/run-rows.sh. examples/go/proto's mode list (gates/go-proto.sh) is
+# printed. examples/go/proto's mode list (gates/go-proto.sh) is
 # an older port of the first check, with "proto" lines.
 build rows-go rows
 # A list: the first frame complete; a click selects and confirms, Down selects the next row, a
 # right click and Escape reach the app, all as queued events; a far scroll draws placeholders
 # for exactly one frame and one ROWS turn binds them; back at the top nothing is described
 # again.
-# Go: the delegate's kind is RightClick (Odin Right_Click); the state's events print as Go values
-# (ListEventSelect{...} for Odin's List_Event_Select{...}).
+# Go: the delegate's kind is RightClick; the state's events print as Go values
+# (ListEventSelect{...}).
 GK_PROTO_BIN=rows-go run list 0 \
   'rows list Select has=true section=0 row=0 ' 'rows list Confirm has=false .*secondary=false' \
   'rows list Select has=true section=0 row=1 ' 'rows list RightClick has=true section=0 row=[0-9]+ ' \
@@ -27,7 +27,7 @@ GK_PROTO_BIN=rows-go run list-sections 0 \
   'rows header section=0' 'rows footer section=0' 'rows header section=1' 'rows footer section=1' \
   'rows done mode=list-sections '
 # The views the app gives as data: empty, loading; load_more when scrolled near the end.
-# Go: the kind is LoadMore (Odin Load_More).
+# Go: the kind is LoadMore.
 GK_PROTO_BIN=rows-go run list-states 0 \
   'rows empty view described n=1' 'rows loading view described n=1' 'rows list LoadMore ' \
   'rows done mode=list-states '
@@ -35,7 +35,7 @@ GK_PROTO_BIN=rows-go run list-states 0 \
 # last row with one placeholder frame, the generated scroll_to_row jumps to row 50,000, a click on
 # the sort icon sorts (the app invalidates and the cells are described again; the click also
 # selects the column, so the selected row it reads is none), a double click, a column moved and one resized, visible ranges.
-# Go: the delegate's kinds are VisibleRows and MoveColumn (Odin Visible_Rows, Move_Column); the
+# Go: the delegate's kinds are VisibleRows and MoveColumn; the
 # state's event prints as a Go value (TableEventSelectColumn{Value:0}).
 GK_PROTO_BIN=rows-go run table 0 \
   'rows table Select_Row row=0$' 'rows table Select_Row row=1$' 'rows table Select_Row row=99999$' \

@@ -1,6 +1,5 @@
-"""The generated protocol tests in Go: the twins of the Odin ones (gen/gkgen.py Sample.emit,
-gen/gk_tests.py odin_test, gen/gk_app.py odin_test), written by `make gen` from the same model
-and the Go names gen/gk_go.py gave it, into core/tests/go (core/tests/go/README.md):
+"""The generated protocol tests in Go, written by `make gen` from the model and the Go names
+gen/gk_go.py gave it, into core/tests/go (core/tests/go/README.md):
 
   core/tests/go/gensample/main.go   every Go-bound constructor and builder once (gates/go-gensample.sh)
   core/tests/go/gen/main.go         modes shapes and states (core/tests/go/run-gen.sh)
@@ -8,9 +7,8 @@ and the Go names gen/gk_go.py gave it, into core/tests/go (core/tests/go/README.
 
 Only what the Go package generated is called: an item gk_go left out (gen/out/go-report.md) is
 counted as skipped, as an item the sample has no argument for is. The sample values are Go
-expressions (GoSample, the twin of gkgen.Sample.val). Go has no generic re-encoder like Odin's
-gk.test_wire, so the shapes test carries one encoder per payload type, written here from the
-wire descriptors (the Rust `Wire` layout gk_tests.Bytes writes and the Go readers read).
+expressions (GoSample). Go has no generic re-encoder, so the shapes test carries one encoder per
+payload type, written here from the wire descriptors (the Rust `Wire` layout gk_tests.Bytes writes and the Go readers read).
 """
 import os
 import re
@@ -38,7 +36,7 @@ def bound(i):
 
 
 class GoSample:
-    """Sample argument values as Go expressions: the twin of gkgen.Sample.val, for what the Go
+    """Sample argument values as Go expressions, for what the Go
     package generated. `pre` prefixes the helpers it asks the file for (handlers, rows, the
     action), so two generated files can share a package."""
 
@@ -48,7 +46,7 @@ class GoSample:
         self.uses = set()       # "rows", "action"
         self.meths = {}         # node key -> {Go method name: (kind, item)}
         div = next((n for n in m.nodes.values() if n["name"] == "Div" and n["crate"] == "gpui"), None)
-        ok = div is not None and any(self.ctor_ok(i) and i.get("odin") == "div" for i in div["ctors"])
+        ok = div is not None and any(self.ctor_ok(i) and i.get("stem") == "div" for i in div["ctors"])
         self.elem = "gk.Div()" if ok else None
         self.tok = {}
         seen = set()
@@ -91,7 +89,7 @@ class GoSample:
             out[name] = ("conv", it)
         for tk in node["tables"]:
             t = next(t for t in m.traits.values() if t["key"] == tk)
-            if "odin" not in t:
+            if "stem" not in t:
                 continue
             if t["name"] == "Styled" and "Style" not in seen:
                 seen.add("Style")
@@ -395,7 +393,7 @@ def imports(text, extra=()):
 
 
 def gensample(m, go, path):
-    """core/tests/go/gensample/main.go: the twin of gkgen.Sample.emit. Returns (calls, skipped)."""
+    """core/tests/go/gensample/main.go: the sample by generation. Returns (calls, skipped)."""
     sm = GoSample(m, go)
     body = []
     calls = skipped = 0
@@ -451,7 +449,7 @@ def gensample(m, go, path):
                 pick = [toks[(len(body) * 7 + j * 131) % len(toks)] for j in range(3)]
                 body.append(f"\te = e.Style({', '.join('s.' + sm.tok[i['id']] for i in pick)})")
         body += ["\t_ = e", "}", ""]
-    o = [HEAD, "", "// The sample by generation in Go, the twin of core/tests/gensample (gen/gkgen.py Sample): every",
+    o = [HEAD, "", "// The sample by generation in Go (gen/gk_tests_go.py gensample): every",
          "// constructor and builder the Go package generated, once. Run offscreen against the real",
          "// runtime by gates/go-gensample.sh: every generated function exists and writes a tape the",
          "// runtime accepts.", "package main", ""]
@@ -622,17 +620,17 @@ def go_states(m, go, sa, skip_calls):
     builder chain) and the methods it has, in gk_go.Go.state's order."""
     ok = lambda i: i["status"] == "bridged"  # noqa: E731
     out = []
-    for key in sorted(m.states, key=lambda k: m.states[k].get("odin", "") or ""):
+    for key in sorted(m.states, key=lambda k: m.states[k].get("stem", "") or ""):
         st = m.states[key]
-        S = st.get("odin")
+        S = st.get("stem")
         if not S:
             continue
         if "go" not in st:
-            out.append({"odin": S, "skip": "no Go type"})
+            out.append({"stem": S, "skip": "no Go type"})
             continue
         G = st["go"]
         ctor = None
-        for it in sorted([i for i in st["ctors"] if ok(i)], key=lambda i: i["odin"]):
+        for it in sorted([i for i in st["ctors"] if ok(i)], key=lambda i: i["stem"]):
             if any(a["desc"][0] in ("shim", "rows") for a in it["args"]):
                 continue
             if "go" not in it or it["id"] not in go.mapped:
@@ -647,7 +645,7 @@ def go_states(m, go, sa, skip_calls):
                 "no constructor with arguments this test can make" if any(
                     ok(i) and "go" in i and i["id"] in go.mapped for i in st["ctors"]) else \
                 "no constructor in Go" if any(ok(i) for i in st["ctors"]) else "no constructor with arguments this test can make"
-            out.append({"odin": S, "skip": why})
+            out.append({"stem": S, "skip": why})
             continue
         builders = sorted([i for i in st["builders"] if ok(i)], key=lambda i: i["name"])
         chain, nb = "", 0
@@ -685,7 +683,7 @@ def go_states(m, go, sa, skip_calls):
                 continue
             names.add(name)
             events.append((name, m.shapes[ev["shape"]]))
-        out.append({"odin": S, "go": G, "field": "st" + G, "make": ctor + chain, "builders": nb, **groups, "events": events})
+        out.append({"stem": S, "go": G, "field": "st" + G, "make": ctor + chain, "builders": nb, **groups, "events": events})
     return out
 
 
@@ -713,9 +711,9 @@ GEN_RUNTIME = [
 
 
 def gen_test(m, go, path, skip):
-    """core/tests/go/gen/main.go: modes shapes and states, the twin of gk_tests.odin_test."""
+    """core/tests/go/gen/main.go: modes shapes and states (gen/gk_tests.py)."""
     saved = (dict(go.names), list(go.collisions), dict(go.tuples), dict(go.handles), dict(go.oneofs), set(go.need_readers))
-    sh = gk_tests.shapes(m, go.od)
+    sh = gk_tests.shapes(m)
     enc = Enc(m, go)
     sa = StateArgs(m, go, "")
     st = go_states(m, go, sa, set(skip.get("calls", [])))
@@ -764,7 +762,7 @@ def gen_test(m, go, path, skip):
     mk, rel, made, any_ev, notread = [], [], 0, {}, []
     for s in st:
         if "skip" in s:
-            mk.append(f"\t// {s['odin']}: not made here: {s['skip']}")
+            mk.append(f"\t// {s['stem']}: not made here: {s['skip']}")
             continue
         made += 1
         F = f"a.{s['field']}"
@@ -797,14 +795,14 @@ def gen_test(m, go, path, skip):
                 any_ev[num] = (f"func anyEvent{num}(cx *gk.Cx{', e ' + qualify(ev) if ev else ''}){' ' + ret if ret else ''} {{\n"
                                f"\tapp.events++{back}\n}}")
             mk.append(f"\ta.subs = append(a.subs, {F}.{name}(cx, anyEvent{num}))")
-        mk.append(f"\tfmt.Printf(\"states made {s['odin']} builders={s['builders']} reads={len(s['reads'])} "
+        mk.append(f"\tfmt.Printf(\"states made {s['stem']} builders={s['builders']} reads={len(s['reads'])} "
                   f"writes={len(s['writes'])} calls={len(s['calls'])} events={len(s['events'])}\\n\")")
         first = next(((n, x) for n, x in s["reads"] if x is not False and x != "stop"), None)
         if first:
             name, args = first
             rel.append(f"\t_ = {F}.{name}(cx{', ' + args if args else ''})")
         rel.append(f"\tgk.Release(cx, {F})")
-    o = [HEAD, "", "// The generated protocol tests in Go, the twin of core/tests/gen (gen/gk_tests.py): every handler",
+    o = [HEAD, "", "// The generated protocol tests in Go (gen/gk_tests.py, gen/gk_tests_go.py): every handler",
          "// shape the package registers fired once through the library, every generated state type made,",
          "// read, written, called, subscribed and released. Run by core/tests/go/run-gen.sh",
          "// (GK_PROTO=shapes | states), offscreen, with the diag library.", "package main", ""]
@@ -861,32 +859,32 @@ def gen_test(m, go, path, skip):
 
 def ambient_test(m, go, path):
     """core/tests/go/app/gen_ambient.go: every ambient call the Go package generated, once (the
-    twin of gk_app.odin_test). Returns (called, skipped with the reason)."""
+    app family's mode ambient). Returns (called, skipped with the reason)."""
     sm = GoSample(m, go, "amb")
     sm.elem = None
     body, called, skipped = [], 0, []
-    for it in sorted(gk_app.bound(m), key=lambda i: i["odin"]):
+    for it in sorted(gk_app.bound(m), key=lambda i: i["stem"]):
         if "go" not in it or it["id"] not in go.mapped:
-            skipped.append(f"{it['odin']} (not in Go)")
+            skipped.append(f"{it['stem']} (not in Go)")
             continue
         vals = [sm.val(a["desc"]) for a in it["args"] if a["desc"][0] != "ctx"]
         held = any(x[0] in ("entity", "handle", "obj", "refmut") for a in it["args"] for x in walk_desc(a["desc"]))
         if None in vals or held:
-            skipped.append(it["odin"])
+            skipped.append(it["stem"])
             continue
         if it.get("ret") is not None and sm.stops(it["ret"]):
-            skipped.append(f"{it['odin']} (its result is not read in Go yet)")
+            skipped.append(f"{it['stem']} (its result is not read in Go yet)")
             continue
         call = f"gk.{it['go']}({', '.join(['cx'] + vals)})"
         if it.get("ret") is None:
-            body += [f"\t{call}", f'\tfmt.Println("ambient {it["odin"]}")']
+            body += [f"\t{call}", f'\tfmt.Println("ambient {it["stem"]}")']
         else:
-            body += ["\t{", f"\t\tv := {call}", f'\t\tfmt.Printf("ambient {it["odin"]} %v\\n", v)', "\t}"]
+            body += ["\t{", f"\t\tv := {call}", f'\t\tfmt.Printf("ambient {it["stem"]} %v\\n", v)', "\t}"]
         body.append("\tcalled++")
         called += 1
-    o = [HEAD, "", "// Every ambient call of the Go package once (docs/PROTOCOLS.md section 11.5), the twin of",
-         "// core/tests/app/gen_ambient.odin, run by core/tests/go/run-app.sh (mode ambient). The lines",
-         "// printed name each call by its Odin name, so the patterns are the Odin ones.", "package main", ""]
+    o = [HEAD, "", "// Every ambient call of the Go package once (docs/PROTOCOLS.md section 11.5), run by",
+         "// core/tests/go/run-app.sh (mode ambient). The lines printed name each call by its stem",
+         "// (gen/gk_names.py), which the patterns use.", "package main", ""]
     rest = sm.helpers("ambRow")
     rest += ["// ambientAll makes every ambient call once and returns how many it made.",
              "func ambientAll(a *App, cx *gk.Cx) (called int) {"]
@@ -902,7 +900,7 @@ def ambient_test(m, go, path):
 
 
 def emit(m, go, repo):
-    """All three, after gk_go.Go.emit; prints the counts as gkgen.gen prints the Odin ones."""
+    """All three, after gk_go.Go.emit; prints the counts."""
     saved = (dict(go.names), list(go.collisions), dict(go.tuples), dict(go.handles), dict(go.oneofs), set(go.need_readers))
     try:
         base = os.path.join(repo, "core", "tests", "go")
@@ -911,7 +909,7 @@ def emit(m, go, repo):
         t = gen_test(m, go, os.path.join(base, "gen", "main.go"), m.ov.get("tests", {}))
         print(f"gen: go tests: {t['shapes']} handler shapes ({t['typed']} typed, {len(t['shape_skips'])} skipped: "
               + ", ".join(f"{s['num']}: {s['skip']}" for s in t["shape_skips"]) + f"), {t['states']} state types made "
-              f"({len(t['state_skips'])} not: " + ", ".join(f"{s['odin']}: {s['skip']}" for s in t["state_skips"]) + ")"
+              f"({len(t['state_skips'])} not: " + ", ".join(f"{s['stem']}: {s['skip']}" for s in t["state_skips"]) + ")"
               + (f"; {len(t['notread'])} reads left out, not read by the Go package yet: {', '.join(t['notread'])}" if t["notread"] else ""))
         amb, amb_skip = ambient_test(m, go, os.path.join(base, "app", "gen_ambient.go"))
         print(f"gen: go tests: ambient calls: {amb} in the app test, {len(amb_skip)} not ({', '.join(amb_skip)})")

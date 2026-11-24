@@ -6,17 +6,16 @@
   gkgen.py gen                   stages 2, 3 and 6 in one command, from the committed extract:
                                  classify every public function, apply api/quarantine.json, number
                                  from api/opcodes.lock, write the Rust decoders (core/src/gen, or
-                                 --rust-out), the Odin package (odin/gk/gen_*.odin, or --odin-out),
-                                 the sample (core/tests/gensample), the opcode tables (core/wire/
-                                 gen.py), api/gk.api.json.gz, api/coverage.json, gen/out/report.md
-                                 and the coverage block of docs/STATUS.md.
+                                 --rust-out), the Go package (go/gk/gen_*.go, or --go-out), the
+                                 generated tests (core/tests/go/gensample, gen, app), the opcode
+                                 tables (core/wire/gen.py), api/gk.api.json.gz, api/coverage.json,
+                                 gen/out/report.md and the coverage block of docs/STATUS.md.
                                  Exits 1 when a signature meets no rule (gen/out/no-rule.md lists
                                  them), unless --allow-no-rule.
   gkgen.py quarantine rust LOG   charge the errors of a `cargo check --message-format short` log to
                                  items (api/quarantine.json) and run `gen` again; exit 3 if any moved
-  gkgen.py quarantine odin LOG   the same for an `odin check` log of odin/gk or core/tests/gensample
 
-rustc and the Odin compiler are the judges: nothing here decides that an item compiles.
+rustc and the Go compiler are the judges: nothing here decides that an item compiles.
 """
 import gzip
 import json
@@ -28,10 +27,9 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import gk_model  # noqa: E402
-import gk_odin  # noqa: E402
+import gk_names  # noqa: E402
 import gk_rust  # noqa: E402
-import gk_tests  # noqa: E402
-import gk_values  # noqa: E402  (the values family: sample arrays)
+import gk_values  # noqa: E402  (the values family: partly reachable options, action types)
 import rdj  # noqa: E402
 
 REPO = os.path.dirname(HERE)
@@ -252,21 +250,12 @@ def quarantine(judge, log_path):
     q = load_q()
     log = open(log_path, errors="replace").read()
     moved = 0
-    if judge == "rust":
-        where = json.load(open(os.path.join(OUT, "rust-lines.json")))
-        pat = re.compile(r"(?:^|/)gen/(\w+\.rs):(\d+):\d+: error(?:\[(E\d+)\])?: (.*)", re.M)
-        hits = [(m.group(1), m.group(2), f"{m.group(3) or ''} {m.group(4)}".strip()) for m in pat.finditer(log)]
-        look = lambda f, line: where.get(f, {}).get(line)  # noqa: E731
-    else:
-        spans = json.load(open(os.path.join(OUT, "odin-lines.json")))
-        pat = re.compile(r"(?:^|/)(\w+\.odin)\((\d+):\d+\) (?:Syntax )?Error: (.*)", re.M)
-        hits = [(m.group(1), m.group(2), m.group(3)) for m in pat.finditer(log)]
-
-        def look(f, line):
-            for a, b, key in spans.get(f, []):
-                if a <= int(line) <= b:
-                    return key
-            return None
+    if judge != "rust":
+        sys.exit(f"quarantine: unknown judge {judge} (rust)")
+    where = json.load(open(os.path.join(OUT, "rust-lines.json")))
+    pat = re.compile(r"(?:^|/)gen/(\w+\.rs):(\d+):\d+: error(?:\[(E\d+)\])?: (.*)", re.M)
+    hits = [(m.group(1), m.group(2), f"{m.group(3) or ''} {m.group(4)}".strip()) for m in pat.finditer(log)]
+    look = lambda f, line: where.get(f, {}).get(line)  # noqa: E731
     unmapped = []
     for f, line, msg in hits:
         key = look(f, line)
@@ -285,229 +274,16 @@ def quarantine(judge, log_path):
     return moved, unmapped
 
 
-# ---------------------------------------------------------------- the Odin sample
-
-
-class Sample:
-    """The conformance sample by generation: every bound constructor and builder called once,
-    with fixed arguments. Compiled and run, it proves every generated procedure exists and
-    writes a tape; its hash is the first golden value."""
-
-    def __init__(self, m, od):
-        self.m, self.od = m, od
-        self.lines, self.spans = [], []
-
-    def val(self, d, depth=0):
-        m, k = self.m, d[0]
-        if depth > 4:
-            return None
-        if k == "bool":
-            return "true"
-        if k == "int":
-            return "3"
-        if k == "leaf" and d[1] in ("click_event", "key_event", "mouse_event"):
-            return None
-        if k in ("f32", "f64"):
-            return "1.5"
-        if k == "str":
-            return '"s"'
-        if k == "leaf":
-            return {"px": "4", "rems": "1", "color": "gk.hsla(0.5, 0.25, 0.75, 1)", "length": "gk.px(8)",
-                    "definite_length": "gk.px(8)", "absolute_length": "gk.px(8)", "id": 'gk.Id("id")',
-                    "duration": "250 * time.Millisecond", "range": "gk.Range{1, 3}"}[d[1]]
-        if k == "enum":
-            e = m.enums[d[1]]
-            return f"gk.{e['odin']}.{gk_odin.oname(gk_model.ada(e['variants'][0]['name']))}" if e["variants"] else None
-        if k == "denum":
-            return self.denum(m.denums[d[1]], depth)
-        if k == "rec":
-            rc = m.records[d[1]]
-            vs = [self.val(f["desc"], depth + 1) for f in rc["fields"]]
-            return None if None in vs else f"gk.{rc['odin']}{{{', '.join(vs)}}}"
-        if k == "into":
-            s = m.intos[d[1]]
-            for mem in s["members"]:
-                v = self.val(mem["desc"], depth + 1)
-                if v is not None:
-                    return v
-            return None
-        if k in ("ref", "from", "opt"):
-            return self.val(d[1], depth)
-        if k == "list":
-            v = self.val(d[1], depth + 1)
-            t = re.sub(r"\b(?!Maybe\b)([A-Z]\w*)", r"gk.\1", self.od.otype(d[1]))
-            return None if v is None else f"[]{t}{{{v}}}"
-        if k == "tuple":
-            vs = [self.val(x, depth + 1) for x in d[1]]
-            return None if None in vs else f"gk.{self.od.otype(d)}{{{', '.join(vs)}}}"
-        if k in ("child", "fragment"):
-            return self.elem
-        if k == "array":
-            return gk_values.sample_val(self, d, depth)  # PROTOCOLS.md 13.10
-        if k in ("node", "build", "stylefn"):
-            return self.make(m.nodes[d[1]], depth + 1)
-        if k == "entity" and "odin" in m.states.get(d[1], {}):
-            return f"gk.{m.states[d[1]]['odin']}{{state = {{h = 1}}}}"
-        if k == "obj" and "odin" in m.states.get(d[2], {}):
-            return f"gk.{m.states[d[2]]['odin']}{{state = {{h = 1}}}}"
-        if k == "refmut":
-            return self.val(d[1], depth)
-        if k in ("entity", "handle"):
-            t = self.od.otype(d)
-            if t in m.ov.get("runtime", {}).get("odin_types", []):
-                return f"gk.{t}{{state = {{h = 1}}}}"
-            return f"gk.{t}(gk.Handle{{1}})"
-        if k == "action":  # an action listener (gen/gk_app.py) takes the action and a handler
-            return "gk.act(gk.Action{1}, gk.on(noop))" if d[1] == "listener" else "gk.Action{1}"
-        if k == "handler":
-            return "gk.on(noop)"
-        # The data protocol (docs/PROTOCOLS.md section 12): the sample's own rows and their columns.
-        if k == "data":
-            return "gk.data(SAMPLE_ROWS[:])"
-        if k == "field":
-            return {"text": '"label"', "num": '"value"', "opt": '"gap"', "color": '"color"'}[d[1]]
-        if k == "format":
-            nums = sum(1 for f in d[5] if f[0] in ("f32", "f64", "int"))
-            row = any(f[0] == "datum" for f in d[5])
-            return '"' + ("{label} " if row else "") + ("{:.1}" if nums else "s") + '"'
-        return None
-
-    def denum(self, e, depth):
-        for v in e["variants"]:
-            if v["ok"] and v["shape"] == "unit" and v.get("unit_odin"):
-                return "gk." + v["unit_odin"]
-            if v["ok"] and v["shape"] == "unit":
-                return f"gk.{e['odin']}_Kind.{gk_odin.oname(gk_model.ada(v['name']))}"
-        for v in e["variants"]:
-            if v["ok"] and v.get("odin"):
-                vs = [self.val(f["desc"], depth + 1) for f in v["fields"]]
-                if None not in vs:
-                    return f"gk.{v['odin']}{{{', '.join(vs)}}}"
-        return None
-
-    def args(self, it, depth=0):
-        vs = [self.val(a["desc"], depth) for a in it["args"] if a["desc"][0] != "ctx"]
-        return None if None in vs else ", ".join(vs)
-
-    def make(self, node, depth=0):
-        """An expression that constructs a node of this type, by its simplest constructor."""
-        best = None
-        for it in sorted(node["ctors"], key=lambda i: (len(i["args"]), i["id"])):
-            if it["status"] not in ("bound", "bridged") or (it["kind"] == "convert" and not it.get("emitted")):
-                continue
-            if it.get("handed"):
-                continue  # only an item procedure's row makes one (PROTOCOLS.md 9.41)
-            a = self.args(it, depth)
-            if a is None:
-                continue
-            if it["kind"] == "convert":
-                src = self.make(self.m.nodes[it["from"]], depth + 1) if depth < 4 else None
-                if src is None:
-                    continue
-                best = f"{src}->{gk_odin.oname(it['name'])}({a})"
-            else:
-                best = f"gk.{it['odin']}({a})"
-            break
-        return best
-
-    def emit(self, path):
-        m = self.m
-        bound = lambda i: i["status"] in ("bound", "bridged")  # noqa: E731
-        div = next((n for n in m.nodes.values() if n["name"] == "Div" and n["crate"] == "gpui"), None)
-        self.elem = "gk.div()" if div and any(bound(i) and i.get("odin") == "div" for i in div["ctors"]) else None
-        o = ["// Generated by gen/gkgen.py. Do not edit.", "// The sample by generation: every bound constructor and builder, once.",
-             "// Run offscreen against the real runtime (core/tests/run.sh, mode gensample): every generated",
-             "// procedure exists, its table entry is not nil, and it writes a tape the runtime accepts.",
-             "package gensample", "", 'import "core:fmt"', 'import "core:time"', 'import gk "gpuikit:gk"', "",
-             "@(private)", "_t :: time.Duration", "",
-             "App :: struct {", "\troot: gk.View,", "\truns: int,", "}", "",
-             "noop :: proc(a: ^App, cx: ^gk.Cx) {}", "",
-             "// Rows for every builder that takes a data table (docs/PROTOCOLS.md section 12).",
-             "Sample_Row :: struct {", "\tlabel: string,", "\tvalue: f64,", "\tgap:   Maybe(f64),", "\tcolor: gk.Color,", "}", "",
-             "SAMPLE_ROWS := [?]Sample_Row{{\"a\", 1, 2, {}}, {\"b\", 3, nil, {}}}", ""]
-        calls = skipped = 0
-        procs = []
-        for key in sorted(m.nodes):
-            node = m.nodes[key]
-            base = self.make(node)
-            if base is None:
-                skipped += sum(1 for i in node["ctors"] + node["ops"] if bound(i))
-                continue
-            procs.append(f"s_{node['fn']}")
-            o.append(f"s_{node['fn']} :: proc() {{")
-            for it in sorted(node["ctors"], key=lambda i: i["id"]):
-                if not bound(it) or (it["kind"] == "convert" and not it.get("emitted")) or it.get("handed"):
-                    continue
-                a = self.args(it)
-                if a is None:
-                    skipped += 1
-                    continue
-                if it["kind"] == "convert":
-                    src = self.make(m.nodes[it["from"]], 1)
-                    if src is None:
-                        skipped += 1
-                        continue
-                    line = f"\t_ = {src}->{gk_odin.oname(it['name'])}({a})"
-                else:
-                    line = f"\t_ = gk.{it['odin']}({a})"
-                self.spans.append((len(o) + 1, len(o) + 1, ["item", it["id"]]))
-                o.append(line)
-                calls += 1
-            o.append(f"\te := {base}")
-            for it in sorted(node["ops"], key=lambda i: i["name"]):
-                if not bound(it):
-                    continue
-                a = self.args(it)
-                if a is None:
-                    skipped += 1
-                    continue
-                self.spans.append((len(o) + 1, len(o) + 1, ["item", it["id"]]))
-                o.append(f"\te = e->{gk_odin.oname(it['name'])}({a})")
-                calls += 1
-            done = {gk_odin.oname(i["name"]) for i in node["ops"]}
-            for tk in node["tables"]:
-                t = next(t for t in m.traits.values() if t["key"] == tk)
-                for it in sorted(t["ops"], key=lambda i: i["name"]):
-                    n = gk_odin.oname(it["name"])
-                    if not bound(it) or n in done:
-                        continue
-                    done.add(n)
-                    a = self.args(it)
-                    if a is None:
-                        continue
-                    o.append(f"\te = e->{n}({a})")
-                    calls += 1
-            if node["styled"] and "style" not in done:
-                toks = [i for i in m.tokens if bound(i)]
-                if toks:
-                    pick = [toks[(len(o) * 7 + j * 131) % len(toks)] for j in range(3)]
-                    o.append(f"\te = e->style({', '.join('.' + gk_model.ada(i['name']) for i in pick)})")
-            o += ["\t_ = e", "}", ""]
-        o += ["root_view :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {"] + [f"\t{p}()" for p in procs]
-        o += ["\ta.runs += 1", f'\tfmt.printf("gensample: {calls} calls in {len(procs)} node types, run %d\\n", a.runs)',
-              '\treturn gk.div(.Size_Full)->text("gensample")', "}", "",
-              "main :: proc() {", "\tapp: App",
-              '\tgk.run_headless(&app, "frame\\nframe\\n", proc(a: ^App, cx: ^gk.Cx) {',
-              "\t\ta.root = gk.view(a, nil, root_view)", "\t\tgk.open_window(cx, \"gensample\", {640, 480}, a.root)", "\t})",
-              '\tfmt.printf("gensample: done runs=%d\\n", app.runs)', "}"]
-        os.makedirs(os.path.dirname(path), exist_ok=True)
-        open(path, "w").write("\n".join(o) + "\n")
-        return calls, skipped
-
-
 # ---------------------------------------------------------------- gen
 
 
 def gen(argv):
     rust_out = os.path.join(REPO, "core", "src", "gen")
-    odin_out = os.path.join(REPO, "odin", "gk")
     go_out = os.path.join(REPO, "go", "gk")
     allow = "--allow-no-rule" in argv
     for n, a in enumerate(argv):
         if a == "--rust-out":
             rust_out = argv[n + 1]
-        if a == "--odin-out":
-            odin_out = argv[n + 1]
         if a == "--go-out":
             go_out = argv[n + 1]
     os.makedirs(OUT, exist_ok=True)
@@ -520,30 +296,15 @@ def gen(argv):
     rs = gk_rust.Rust(m, rust_out)
     where = rs.emit()
     json.dump(where, open(os.path.join(OUT, "rust-lines.json"), "w"))
-    import gk_doc  # noqa: PLC0415 (GPUI-kit's doc comments, translated into both languages)
+    import gk_doc  # noqa: PLC0415 (GPUI-kit's doc comments, translated into Go)
     docs, doc_names = gk_doc.Docs(), gk_doc.resolver(m)
-    od = gk_odin.Odin(m, odin_out)
-    od.docs, od.doc_names = docs, doc_names
-    spans = od.emit()
-    rs.fam.odin_link(odin_out, spans)  # each family linked only when the program calls into it (gen/gk_fam.py)
-    sm = Sample(m, od)
-    calls, skipped = sm.emit(os.path.join(REPO, "core", "tests", "gensample", "main.odin"))
-    spans["main.odin"] = sm.spans
-    tests = gk_tests.odin_test(m, od, Sample(m, od), gk_odin.oname, os.path.join(REPO, "core", "tests", "gen", "main.odin"),
-                               m.ov.get("tests", {}))
-    print(f"gen: tests: {tests['shapes']} handler shapes ({tests['typed']} typed, {len(tests['shape_skips'])} without a sample), "
-          f"{tests['states']} state types made ({len(tests['state_skips'])} not: "
-          + ", ".join(f"{s['odin']}: {s['skip']}" for s in tests['state_skips']) + ")")
-    import gk_app  # noqa: PLC0415 (the app family's generated test, PROTOCOLS.md section 11.5)
-    amb, amb_skip = gk_app.odin_test(m, od, Sample(m, od), os.path.join(REPO, "core", "tests", "app", "gen_ambient.odin"))
-    print(f"gen: ambient calls: {amb} in the app test, {len(amb_skip)} without a sample ({', '.join(amb_skip)})")
-    json.dump(spans, open(os.path.join(OUT, "odin-lines.json"), "w"))
-    if od.collisions:
+    names = gk_names.Names(m)
+    if names.collisions:
         with open(os.path.join(OUT, "collisions.md"), "w") as f:
-            f.write("# Odin names that collided and got a number\n\n")
-            for base, key, other in od.collisions:
+            f.write("# Names that collided and got a number\n\n")
+            for base, key, other in names.collisions:
                 f.write(f"- `{base}`: {key} (taken by {other})\n")
-    report(m, q, od, calls, skipped)
+    report(m, q, names)
     norule = [i for i in m.items if i["status"] == "norule"]
     if norule:
         with open(os.path.join(OUT, "no-rule.md"), "w") as f:
@@ -557,21 +318,21 @@ def gen(argv):
             sys.exit(1)
     elif os.path.exists(os.path.join(OUT, "no-rule.md")):
         os.remove(os.path.join(OUT, "no-rule.md"))
-    import gk_go  # noqa: PLC0415 (the Go front end, docs/GO.md: from the same model, after the Odin names)
-    go = gk_go.Go(m, od, go_out)
+    import gk_go  # noqa: PLC0415 (the Go package, docs/GO.md: from the model and the stems gk_names gave it)
+    go = gk_go.Go(m, go_out)
     go.docs, go.doc_names = docs, doc_names
     go.emit()
     import gk_tests_go  # noqa: PLC0415 (the generated protocol tests in Go: core/tests/go/gensample, gen, app)
     gk_tests_go.emit(m, go, REPO)
     n = docs.report()
     print(f"gen: docs: {len(docs.found):,} of {len(docs.asked):,} upstream items have a doc comment, carried into "
-          f"both languages; {n} sentences left out as Rust-only (gen/out/doc-rust-only.md)")
+          f"Go; {n} sentences left out as Rust-only (gen/out/doc-rust-only.md)")
     rs.fam.go_link(go_out)  # each family linked only when the program calls into it (gen/gk_fam.py)
     rows, tot = go.report(os.path.join(OUT, "go-report.md"), family)
     print(f"gen: go: {tot[1]:,} of {tot[0]:,} bound or bridged functions generated into {os.path.relpath(go_out, REPO)} "
           f"({tot[2]:,} not yet: gen/out/go-report.md)")
-    if os.path.abspath(odin_out) == os.path.join(REPO, "odin", "gk"):
-        import gk_apidoc  # noqa: PLC0415 (the component index of docs/API.md, read from the package just written)
+    if os.path.abspath(go_out) == os.path.join(REPO, "go", "gk"):
+        import gk_apidoc  # noqa: PLC0415 (the component index of docs/API-GO.md, read from the package just written)
         gk_apidoc.main([])
 
 
@@ -631,7 +392,7 @@ def verified_ids(m):
     return out
 
 
-def report(m, q, od, calls, skipped):
+def report(m, q, names):
     rows, by_reason = [], {}
     ver = verified_ids(m)
     for r in m.owners:
@@ -666,10 +427,10 @@ def report(m, q, od, calls, skipped):
            "partial": gk_values.partials(m)}  # options only partly reachable (tools/status.py)
     json.dump(cov, open(os.path.join(API, "coverage.json"), "w"), indent=1)
     # the interface description: language-neutral (no emitter's names)
-    drop = {"fn", "odin", "fcrate", "members", "short_odin"}
+    drop = {"fn", "stem", "fcrate", "members", "short_stem"}
     clean = lambda d: {k: v for k, v in d.items() if k not in drop}  # noqa: E731
     desc = {"schema": 1, "pin": cov["pin"],
-            "items": [{k: v for k, v in it.items() if k not in ("fn", "odin", "fcrate", "crate", "row", "emitted")}
+            "items": [{k: v for k, v in it.items() if k not in ("fn", "stem", "fcrate", "crate", "row", "emitted")}
                       for it in m.all_items()],
             "states": {k: {"path": st["path"], **{g: [i["id"] for i in st[g]] for g in ("ctors", "builders", "reads", "writes", "calls", "events")}}
                        for k, st in sorted(m.states.items())},
@@ -697,8 +458,7 @@ def report(m, q, od, calls, skipped):
          f"{len(m.records)} records, {sum(1 for s in m.intos.values() if len(s['members']) > 1)} Into sets, "
          f"{len(m.shapes)} handler shapes, {len(m.tokens)} style tokens, {len(m.palette)} palette colours, "
          f"{len(m.theme)} theme colours.",
-         f"- The Odin sample calls {calls} generated procedures; {skipped} have an argument the sample cannot make.",
-         f"- Odin names that collided: {len(od.collisions)}.", "",
+         f"- Names that collided: {len(names.collisions)}.", "",
          "## Compiler rounds", "", "| round | judge | errors | items or types refused | errors outside any item |", "|---|---|---|---|---|"]
     for n, r in enumerate(q["rounds"], 1):
         o.append(f"| {n} | {r['judge']} | {r['errors']} | {r['moved']} | {r['unmapped']} |")
@@ -715,7 +475,7 @@ def report(m, q, od, calls, skipped):
         o.append(f"| `{' '.join(map(str, json.loads(key)))[:110]}` | {e['judge']} | {e['error'][:160].replace('|', '/')} |")
     open(os.path.join(OUT, "report.md"), "w").write("\n".join(o) + "\n")
     print(f"gen: {tot['total']} functions: {tot['bound']} bound, {tot['bridged']} bridged, {tot['skipped']} skipped, "
-          f"{tot['failed']} failed, {tot['todo']} not yet; sample {calls} calls")
+          f"{tot['failed']} failed, {tot['todo']} not yet")
     # the opcode tables and the interface hash, which covers api/opcodes.lock
     subprocess.run([sys.executable, os.path.join(REPO, "core", "wire", "gen.py")], check=True)
     subprocess.run([sys.executable, os.path.join(REPO, "tools", "status.py")], check=False)

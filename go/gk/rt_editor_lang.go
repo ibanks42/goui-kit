@@ -1,7 +1,7 @@
 package gk
 
-// Syntax highlighters and language providers made of the app's functions, ported from
-// odin/gk/kit_editor.odin (docs/PROTOCOLS.md 9.18). The library asks them between frames (asks,
+// Syntax highlighters and language providers made of the app's functions
+// (docs/PROTOCOLS.md 9.18). The library asks them between frames (asks,
 // PROTOCOLS.md 9.14); an editor draws unstyled text until the answer for its text is in.
 
 // HighlightQuery is what a highlighter is asked: the editor's language, its whole text, and the

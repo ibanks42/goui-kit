@@ -1,5 +1,5 @@
 // val-one-handle: an entity read back through the values path and the dock's path
-// (gk.TestEntityHandles; Odin's gk.test_entity_handles).
+// (gk.TestEntityHandles).
 package main
 
 import (

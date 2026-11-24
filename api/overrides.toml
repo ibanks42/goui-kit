@@ -127,7 +127,7 @@ types = []
 # component crate's skin draws the preview), taken by TabGroupContext::drop_panel and handed
 # out by drag_panel.
 objects = ["DragPanel"]
-# Reads that also get a try_ form in Odin (ok is false while the state is on lease: a handler
+# Reads that also get a Try form in Go (ok is false while the state is on lease: a handler
 # the component calls from inside its own update). Every state type that has the read gets it.
 try_reads = ["value"]
 
@@ -227,8 +227,8 @@ try_reads = ["value"]
 "gpui_kit::base::input::EditorExtras::Default::default" = "rust-only-extension: the editor mode's own state (InputModeKind::Extras), which the kit makes inside every EditorState; no public function takes one"
 # (end of the lists and editor families' skips)
 # The values family's skips: Rust's own reflection, profiling and plugin points.
-"gpui_kit::base::measure" = "rust-only-extension: times a Rust closure (a profiling helper of the kit's own code); app code runs in Odin and times itself"
-"gpui_kit::base::measure_if" = "rust-only-extension: times a Rust closure (a profiling helper of the kit's own code); app code runs in Odin and times itself"
+"gpui_kit::base::measure" = "rust-only-extension: times a Rust closure (a profiling helper of the kit's own code); app code runs in Go and times itself"
+"gpui_kit::base::measure_if" = "rust-only-extension: times a Rust closure (a profiling helper of the kit's own code); app code runs in Go and times itself"
 "gpui_kit::base::styled_ext_reflection_methods" = "rust-only-extension: gpui's inspector reflection over Rust method tables (debug tooling of a Rust build)"
 "AnySettingField::as_any" = "rust-only-extension: Rust's dynamic typing (std::any::Any) of a settings field, for downcasting in Rust"
 "AnySettingField::type_id" = "rust-only-extension: Rust's dynamic typing (std::any::TypeId) of a settings field, for downcasting in Rust"
@@ -400,11 +400,6 @@ try_reads = ["value"]
 "Fn(usize, &gpui_kit::base::TreeEntry, bool, &mut gpui_kit::Window, &mut gpui_kit::App) -> gpui_kit::component::list::ListItem" = "crate::shim_rows::tree_item"
 "Fn(usize, &gpui_kit::base::TreeEntry, gpui_kit::component::menu::PopupMenu, &mut gpui_kit::Window, &mut gpui_kit::Context<gpui_kit::base::TreeState>) -> gpui_kit::component::menu::PopupMenu" = "crate::shim_rows::tree_menu"  # the menu row ix's view describes (PROTOCOLS.md 11.24)
 
-# Odin types the hand-written bridges of the package declare (odin/gk/kit_*.odin); the
-# generator uses the name and its field h and does not declare the type.
-[runtime]
-odin_types = []
-
 # Types that are value nodes although their impls make them entity state (docs/PROTOCOLS.md
 # 11.6): the kit's Sheet, which open_sheet's closure builds, and PopupMenu, described as the
 # value a dropdown, context or submenu's closure builds.
@@ -459,11 +454,11 @@ enum_nodes = ["SettingItem", "PopupMenuItem"]  # PopupMenuItem: the views family
 # a primitive, or an upstream or gpui type by name. `D::Item` of a state instantiated for the shim
 # is the shim's item type.
 assoc = { "crate::shim_select::GkSearchDelegate::Item" = "crate::shim_select::GkItem", "crate::shim_select::GkItem::Value" = "SharedString" }
-# Library types that travel both ways as plain values: the Odin struct the family's kit file
-# declares (written and read by reflection; Rust: the type's Wire and Unwire impls).
+# Library types that travel both ways as plain values: the stem of the struct the runtime
+# declares (Go: gen/gk_go_kinds.py LIBVALS; Rust: the type's Wire and Unwire impls).
 values = { "crate::shim_select::GkItem" = "Search_Item", "crate::values::Drag" = "Drag_Value" }
 # Traits whose implementors are node types, taken as one of them (`Table::child(impl
-# ChildElement)`): the Odin union the family's kit file declares.
+# ChildElement)`): the stem of the union of them (Go: an interface).
 unions = { "ChildElement" = "Table_Child", "Sizable" = "Sizable_Element", "Selectable" = "Selectable_Element" }
 # Delegates the library implements over procedures of the app (docs/PROTOCOLS.md 9.18): a type
 # alias, or "dyn Trait" for Rc, Arc or Box of it, = the library function that makes the upstream

@@ -60,7 +60,7 @@ var modeInit = map[string]func(a *App, cx *gk.Cx){}
 
 var fruit = []gk.SearchItem{{Value: "apple", Title: "Apple"}, {Value: "pear", Title: "Pear"}}
 
-// Go: the Go package's enums print as numbers; these print them as Odin's %v does.
+// Go: the Go package's enums print as numbers; these print them by name, as the checks expect.
 var (
 	segmentNames = [...]string{"Hour", "Minute", "Second", "Period"}
 	phaseNames   = [...]string{"Entering", "Present", "Exiting", "Absent"}

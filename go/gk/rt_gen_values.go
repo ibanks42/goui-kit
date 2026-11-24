@@ -1,8 +1,7 @@
 package gk
 
-// Values the generator's descriptor kinds carry that are not upstream records (ported from
-// odin/gk/rt_values.odin, kit_text.odin, kit_input.odin, kit_select.odin and rt_data.odin;
-// docs/PROTOCOLS.md 9.14, 9.19, 11.21 to 11.26, 12.15, 13.9, 13.13, 13.19): jiff's calendar values,
+// Values the generator's descriptor kinds carry that are not upstream records
+// (docs/PROTOCOLS.md 9.14, 9.19, 11.21 to 11.26, 12.15, 13.9, 13.13, 13.19): jiff's calendar values,
 // results that may fail, value cells, and the library values that travel by their fields.
 
 // --- results read back (PROTOCOLS.md 13.9) -------------------------------------------------------
@@ -420,14 +419,14 @@ func rdBackgroundValue(r *reader) BackgroundValue {
 
 // IntervalMatcher is a calendar matcher's interval (PROTOCOLS.md 11.21), both ways:
 // gk.MatcherInterval{Value: gk.IntervalMatcher{Before: gk.Some(d)}} disables the days before
-// Before and after After; none is no bound. Odin: gk.Interval_Matcher.
+// Before and after After; none is no bound.
 type IntervalMatcher struct {
 	Before Option[CivilDate]
 	After  Option[CivilDate]
 }
 
 // RangeMatcher is a calendar matcher's range (PROTOCOLS.md 11.21), both ways: the days from From to
-// To, both included; none is no bound. Odin: gk.Range_Matcher.
+// To, both included; none is no bound.
 type RangeMatcher struct {
 	From Option[CivilDate]
 	To   Option[CivilDate]

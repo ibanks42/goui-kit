@@ -41,7 +41,7 @@ type App struct {
 	asked  int
 }
 
-// Odin prints an enum value by its name.
+// The checks expect an enum value printed by its name.
 var (
 	stepNames = map[gk.StepAction]string{gk.StepActionIncrement: "Increment", gk.StepActionDecrement: "Decrement"}
 	otpNames  = map[gk.OtpEvent]string{gk.OtpEventChange: "Change", gk.OtpEventComplete: "Complete", gk.OtpEventFocus: "Focus", gk.OtpEventBlur: "Blur"}

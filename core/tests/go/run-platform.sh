@@ -1,8 +1,8 @@
 # run-platform.sh: the protocol tests (docs/PROTOCOLS.md 11.30), sourced by core/tests/go/run.sh,
 # which defines build and run. The app is core/tests/go/platform: requests that answer later (a
 # completion and its DONE turn), file dialogs and a prompt answered by the test (offscreen the
-# platform is scripted), the menu bar read back, OpenURL recorded. Odin twin:
-# core/tests/run-platform.sh. Go has no String for the kit's enums: the app prints Odin's names
+# platform is scripted), the menu bar read back, OpenURL recorded.
+# Go has no String for the kit's enums: the app prints the names the checks expect
 # (Answered, Copy, ...) itself.
 build platform-go platform
 
@@ -38,7 +38,7 @@ GK_PROTO_BIN=platform-go run menus 0 'platform menus n=2' 'platform menu "File" 
   'platform urls n=1 first="https://example.com/gk"'
 # Misuse, each stopped at the app's line (exit 2): a completion released twice, a request from a
 # view function, a menu item with no action. Go: the app's line is platform/main.go's; a view
-# function, not a view procedure. Odin's wrong-payload (a handler whose payload is not the
+# function, not a view procedure. A wrong payload (a handler whose payload is not the
 # request's) is a compile error in Go: examples/go/misuse_compile (gates/go-misuse.sh).
 GK_PROTO_BIN=platform-go run release-twice 2 'this completion was released already' 'at .*platform/main.go:[0-9]+'
 GK_PROTO_BIN=platform-go run request-in-view 2 'a view (procedure|function) may not start a request' 'at .*platform/main.go:[0-9]+'

@@ -47,8 +47,7 @@ run handlers 0 \
   'proto key key="k" char="k" has_char=true held=false' \
   'proto key key="enter" .*mods=.*\{Shift\}' \
   'proto done mode=handlers views=[0-9]+ .*clicks=1'
-# Odin's `shape` and `state-type` modes (a handler that does not fit stops at registration) are
-# compile errors in Go: examples/go/misuse_compile, checked by gates/go-misuse.sh.
+# A handler that does not fit its shape or state type is a compile error in Go: examples/go/misuse_compile, checked by gates/go-misuse.sh.
 run state 0 \
   'proto echo view=1 frame=0 value="abc"' \
   'proto input change value="abcx"' 'proto input change value="abcxy"' \
@@ -97,11 +96,10 @@ run version 0 \
 run released-shown 2 'proto released-shown released' \
   'a view shows a .*InputBaseState.* through a handle that cannot be used: handle 0x[0-9a-f]+ \(state\) was released'
 # Go: posted closures are the collector's. 300,000 lines of 100 bytes queued at once, twice: once
-# delivered nothing of them is kept (the heap after a collection is under 10 MB; Odin's check is its
-# own owned-bytes count).
+# delivered nothing of them is kept (the heap after a collection is under 10 MB).
 run post-memory 0 'proto post-memory round=2 ' 'proto done mode=post-memory .*' 'proto post-memory done lines=600000 .*heap_kb=([0-9]{1,4})$'
 # Handlers of a view described on every frame with new closures: the heap stays small (Go: the
-# collector frees the old tables; Odin's check is its owned-bytes count).
+# collector frees the old tables).
 run handler-memory 0 'proto handler-memory done frames=60[01] .*heap_kb=([0-9]{1,4})$'
 run rows 0 \
   'proto row clicked row=5000' \
@@ -109,7 +107,7 @@ run rows 0 \
   'proto answered ok=true text="pong ping" bound=20' \
   'rows_turns: 1,' 'placeholder_frames: 1 ' 'rows_missing: [1-9][0-9]?,' \
   'proto rows described=[0-9]+ again=0'
-# The kit's List over a list source (PROTOCOLS.md 9.5; Odin: core/tests/run-rows.sh list): the
+# The kit's List over a list source (PROTOCOLS.md 9.5): the
 # first frame complete; a click selects and confirms, Down selects the next row, a right click,
 # Escape; a far scroll draws placeholders for one frame; back at the top nothing is described again.
 run list 0 \
@@ -117,7 +115,7 @@ run list 0 \
   'proto list Select has=true section=0 row=1 ' 'proto list RightClick has=true section=0 row=[0-9]+ ' \
   'proto list Cancel ' 'proto list-state read selected_index ok=true row=0' 'placeholder_frames: 0 ' 'placeholder_frames: 1 ' \
   'rows_turns: [1-9],' 'proto rows described=[0-9]+ again=0$'
-# A dialog over a view-built closure (PROTOCOLS.md 11.6; Odin: core/tests/run-overlay.sh dialog):
+# A dialog over a view-built closure (PROTOCOLS.md 11.6):
 # described before the kit first builds it, described again while open, escape runs on_cancel of
 # the second description, opened again on the same view, closed by the app.
 run dialog 0 \
@@ -129,7 +127,7 @@ run dialog 0 \
 run stale-cx 2 'a \*gk.Cx was used after the function it was given to returned' 'at .*proto/main.go:[0-9]+'
 run stale-element 2 'an element was used after the view function that made it returned' 'at .*proto/main.go:[0-9]+'
 # The port round (PROTOCOLS.md 11.38, 12.17, and the Go ports of 11.17, 11.30, 13.20, 13.31):
-# examples/go/port, bin/port-go. The first five are the Odin twins of core/tests/run-app.sh's modes.
+# examples/go/port, bin/port-go.
 port() { mode_name=$1; if wanted; then GK_PROTO_BIN=port-go check "$@"; fi; }
 port close-veto 0 'port asked may close n=1 answer=false' 'port asked may close n=2 answer=true' \
   'port asked by a second handler n=3' \
@@ -165,8 +163,7 @@ port tooltip 0 'port tooltip view described' 'gk-headless: wrote tooltip-kit.png
 # and options; a nil gk.Fill stops.
 port plot 0 'port plot described=true'
 port fill-nil 2 'a nil gk.Fill was given to a builder' 'at .*port/main.go:[0-9]+'
-# The generator's descriptor kinds beyond the core ones (gen/gk_go_kinds.py; examples/go/proto/kinds.go,
-# the Odin twins in core/tests/values, items and lists2): jiff's calendar values both ways, value
+# The generator's descriptor kinds beyond the core ones (gen/gk_go_kinds.py; examples/go/proto/kinds.go): jiff's calendar values both ways, value
 # cells, results that may fail, the expression check, a date that does not exist, item functions
 # (a calendar's days, a tree's entries; one of the wrong kind stops), asks, transformations and
 # gpui's element leftovers decoded by the library.
@@ -187,8 +184,8 @@ run kinds-tree 0 'kinds tree row ix=0 label=Alpha depth=0 folder=false selected=
 run kinds-wrong-kind 2 'gk.Items was given a function of the kind func\(cx \*Cx, v0 int, v1 TreeEntryReads' 'at .*proto/kinds.go:[0-9]+'
 run kinds-elements 0 'kinds ask highlight lang=go code="func x"' 'kinds ask image uri=pic.png' \
   'kinds ask counts asked=2 answered=2 gets_more=true' 'kinds asks highlight=1 image=1'
-# The Go ports of Odin's hand-written bridges (examples/go/proto/bridges.go), smoke tests beside
-# core/tests/overlay and core/tests/rows. The dock: the skin's settings (with the collapsed tab bar
+# The hand-written bridges (examples/go/proto/bridges.go), smoke tests beside
+# core/tests/go/overlay and core/tests/go/rows. The dock: the skin's settings (with the collapsed tab bar
 # and the split divider line) set buffered and read back, a panel's tab group and id, the pane
 # tree's kinds and walk, a saved layout (a panel's own JSON in it) loaded back through the
 # registry (a PanelBuild per panel, filled with gk.PanelFill) and dumped again the same, a pane

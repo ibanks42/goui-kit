@@ -61,7 +61,7 @@ func badDate(a *App, cx *gk.Cx) {
 }
 
 // A calendar's disabled matcher of every variant, given in the state's builder chain and by
-// SetDisabledMatcher, read back by DisabledMatcherRef (comp6.odin, PROTOCOLS.md 11.21).
+// SetDisabledMatcher, read back by DisabledMatcherRef (PROTOCOLS.md 11.21).
 func matcher(a *App, cx *gk.Cx) {
 	d := gk.CivilDate{Year: 2026, Month: 11, Day: 12}
 	cal := gk.NewCalendarState(cx).DisabledMatcher(gk.MatcherInterval{Value: gk.IntervalMatcher{Before: gk.Some(d)}}).Build()

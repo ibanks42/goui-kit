@@ -1,7 +1,7 @@
 //! The values family's gallery pages (docs/PROTOCOLS.md sections 13.8 to 13.12), written the way a
 //! Rust GPUI-kit app writes them: the theme's mode switched with `Theme::change`, the theme's
 //! fields edited in place through `Theme::global_mut`, and bars placed by the plot scales
-//! (`ScaleBand`, `ScaleLinear`). The Odin twin is examples/odin/gallery/values_pages.odin; the
+//! (`ScaleBand`, `ScaleLinear`). The Go twin is examples/go/gallery/values_pages.go; the
 //! pages' lines are in ref/gallery/pages.txt. Each theme page toggles with one button, clicked
 //! twice by its script, so the theme is as before afterwards.
 use gpui_kit::base::plot::scale::{Scale, ScaleBand, ScaleLinear};
@@ -210,14 +210,14 @@ fn settings_page() -> impl IntoElement {
     )
 }
 
-/// The value a drag carries, as the Odin app's gk.Drag_Value.
+/// The value a drag carries.
 #[derive(Clone)]
 struct DragValue {
     id: u64,
     text: SharedString,
 }
 
-/// The drag's preview, a view as the Odin app's.
+/// The drag's preview, a view.
 struct Preview;
 impl gpui_kit::Render for Preview {
     fn render(&mut self, _: &mut Window, cx: &mut gpui_kit::Context<Self>) -> impl IntoElement {
@@ -271,7 +271,7 @@ pub fn page_state(id: &str, g: &crate::Gallery) -> Option<AnyElement> {
 }
 
 // --- the components family, docs/PROTOCOLS.md 11.17 to 11.24, written the way a Rust
-// GPUI-kit app writes them; the Odin twins are at the end of examples/odin/gallery/values_pages.odin:
+// GPUI-kit app writes them; the Go twins are in examples/go/gallery/values_pages.go:
 // tooltips the kit's Tooltip describes, a resizable group whose divider the app draws beside one the
 // kit draws, labels in Markdown (Text::TextView), calendars with a disabled range and a set of
 // disabled days, and a table's and a tree's context menus.

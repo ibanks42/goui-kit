@@ -1,13 +1,10 @@
 #!/bin/bash
 # shellcheck disable=SC2329  # stubs, darwin and macho run through gate()
-# cross.sh: both front ends compiled from Linux for the other platforms, macOS (arm64
+# cross.sh: the Go front end compiled from Linux for the other platforms, macOS (arm64
 # and x86_64, the two slices of its universal library) and Windows x86-64, in under a minute and
 # without their SDKs, so a change that breaks them is seen before CI
 # (.github/workflows/platforms.yml) builds and runs them there. Runs on Linux
 # (make cross); prints GATE lines and exits non-zero on a failure.
-#   odin   `odin check` of examples/odin/hello for linux_amd64, darwin_arm64, darwin_amd64 and
-#          windows_amd64: the package with each platform's runtime file (rt_platform_*.odin) and
-#          foreign import (Odin links for macOS only on a Mac, so check is as far as it goes here)
 #   go     examples/go/hello built with cgo by zig cc for darwin/arm64, darwin/amd64 and
 #          windows/amd64, linked against stand-ins of the library made here: for Windows the MinGW
 #          import library tools/win-implib.sh makes from the header (the one the Windows download
@@ -16,12 +13,11 @@
 #          nothing (zig carries macOS's C headers and libSystem's stubs), so each Go build takes its
 #          own slice of the one file, as on a Mac; each binary is checked to be its architecture
 #          alone. Nothing is run; the binaries are thrown away.
-# ODIN (default: odin on PATH), ZIG (default: the pinned zig of tools/zigbuild.sh, downloaded
+# ZIG (default: the pinned zig of tools/zigbuild.sh, downloaded
 # once into target/toolchain/). Scratch (zig's caches, the stand-ins) goes to GK_SCRATCH and is deleted.
 set -uo pipefail
 repo=$(cd "$(dirname "$0")/.." && pwd)
 . "$repo/go/env.sh"
-odin=${ODIN:-odin}
 zig=${ZIG:-$("$repo/tools/zigbuild.sh" fetch-zig "$repo/target/toolchain")}
 out=$repo/gates/out/cross
 rm -rf "$out"; mkdir -p "$out"
@@ -35,10 +31,6 @@ gate() { # NAME CMD...: one check, its output in gates/out/cross/NAME.log
   if "$@" > "$out/$name.log" 2>&1; then echo "GATE cross $name PASS"
   else echo "GATE cross $name FAIL (gates/out/cross/$name.log)"; tail -15 "$out/$name.log"; rc=1; fi
 }
-
-for t in linux_amd64 darwin_arm64 darwin_amd64 windows_amd64; do
-  gate "odin-$t" "$odin" check "$repo/examples/odin/hello" -target:$t -collection:gpuikit="$repo/odin"
-done
 
 # The stand-ins: Windows' import library from the header, a macOS dylib with the header's functions.
 win=$tmp/windows mac=$tmp/macos

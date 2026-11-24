@@ -1,8 +1,8 @@
 //! The rows family's gallery pages (docs/PROTOCOLS.md section 9.8): a list of 10,000 rows, a
 //! table of 10,000 rows with a sortable column, and a tree, each driven by clicks, keys and the
 //! scroll wheel (a far scroll and a jump to the last row included), written the way a Rust
-//! GPUI-kit app writes them, with Rust delegates. The Odin twin is
-//! examples/odin/gallery/rows_pages.odin, whose rows are views over row sources; the pages'
+//! GPUI-kit app writes them, with Rust delegates. The Go twin is
+//! examples/go/gallery/rows_pages.go, whose rows are views over row sources; the pages'
 //! lines are in ref/gallery/pages.txt. Each page has its own state, made once when the gallery
 //! starts. Scrollbars are hidden: they fade in and out on a clock.
 use crate::Gallery;
@@ -42,8 +42,8 @@ impl RowsPages {
                     .child(TreeItem::new("docs/api", "api.md")),
                 TreeItem::new("src", "src")
                     .expanded(true)
-                    .child(TreeItem::new("src/a", "a.odin"))
-                    .child(TreeItem::new("src/b", "b.odin")),
+                    .child(TreeItem::new("src/a", "a.demo"))
+                    .child(TreeItem::new("src/b", "b.demo")),
                 TreeItem::new("readme", "README"),
             ])
         });

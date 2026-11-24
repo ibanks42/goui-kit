@@ -3,9 +3,9 @@
 # A function is written Type.method with the element type it is called on (Button.primary,
 # whichever trait declares it), a free constructor by its name (div, uniform_list), and a
 # style token as style.name.
-# This one file is compiled into the Rust reference (ref/src/bin/gallery) and into the Odin
-# twin (examples/odin/gallery) and read by gates/gallery.sh. Every id has a Rust page; the
-# Odin app answers `--list` with the ids it has, and the gate reports the others as not
+# This one file is compiled into the Rust reference (ref/src/bin/gallery) and read by
+# gates/gallery.sh. Every id has a Rust page; the Go twin (examples/go/gallery) answers `--list`
+# with the ids it has, and the gate reports the others as not
 # bound. A step is a gk-meter script line (click X Y | type TEXT); a shot follows each.
 # The third column is what the conformance count credits when the page's pixels match.
 # The image page (round 6's elem-image) is walked first. gpui keeps every image in one texture atlas and
@@ -48,7 +48,7 @@ description-list |  | DescriptionList.new DescriptionList.item DescriptionList.c
 kbd |  | Kbd.new Kbd.outline
 link |  | Link.new Link.href Link.disabled Link.child
 skeleton |  | Skeleton.new Skeleton.secondary
-# The input family (ref/src/bin/gallery/input_pages.rs, examples/odin/gallery/input_pages.odin)
+# The input family (ref/src/bin/gallery/input_pages.rs)
 input-edit | click 60 96; key ctrl-a; type Ada; key ctrl-a; key ctrl-c; key end; key ctrl-v; key ctrl-z; key ctrl-y; key shift-left | Input.new InputState.new InputState.placeholder
 textarea | click 60 100; type one; key enter; type two; key shift-up | Textarea.new TextareaState.new TextareaState.auto_grow TextareaState.placeholder
 editor | click 300 200; type x; key enter; type y | gpui_kit::base::Editor::new EditorState.new EditorState.language EditorState.default_value EditorState.set_line_number
@@ -81,13 +81,13 @@ overlay-sheet | click 60 96 | WindowExt.open_sheet Sheet.title Sheet.child
 overlay-sheet-left | click 60 96 | WindowExt.open_sheet_at Sheet.resizable
 overlay-dropdown | click 60 96 | DropdownMenu.dropdown_menu PopupMenu.menu PopupMenu.separator PopupMenu.label PopupMenu.menu_with_check PopupMenu.menu_with_disabled
 overlay-context | rclick 100 150 | ContextMenuExt.context_menu PopupMenu.submenu
-# The values track (ref/src/bin/gallery/values_pages.rs, examples/odin/gallery/values_pages.odin):
+# The values track (ref/src/bin/gallery/values_pages.rs):
 # each theme page's button toggles, so the second click puts the theme back.
 values-theme-mode | click 60 96; click 60 96 | Theme.change Theme.is_dark
 values-theme-edit | click 60 96; click 60 96 | Theme.font_size Theme.radius
 values-scales |  | ScaleBand.new ScaleBand.padding_inner ScaleBand.band_width ScaleLinear.new Scale.tick
 dock-panels |  | DockSkin.dock_area DockArea.set_center DockArea.set_dock DockLayout.tabs DockLayout.panel Panel.panel_name Panel.title
-# The lists and editor track (ref/src/bin/gallery/lists2_pages.rs, examples/odin/gallery/lists2_pages.odin)
+# The lists and editor track (ref/src/bin/gallery/lists2_pages.rs)
 lists2-select | click 100 96; advance 500; key down; key enter | Select.new Select.placeholder SelectState.new SearchableListDelegate.items_count SearchableListDelegate.item SearchableListDelegate.position SearchableListDelegate.is_item_enabled SearchableListDelegate.is_item_checked SearchableListItem.title SearchableListItem.display_title SearchableListItem.render SearchableListItem.value SearchableListItem.disabled
 lists2-select-search | click 100 96; advance 500; type an; key escape | SelectState.searchable Select.search_placeholder SearchableListDelegate.perform_search SearchableListDelegate.sections_count SearchableListItem.matches
 lists2-select-rows | click 100 96; advance 500; key escape | SearchableListDelegate.render_item SearchableListDelegate.render_section_header
@@ -117,7 +117,7 @@ dock-skin |  | DockSkin.set_panel_style DockSkin.set_close_button_visible
 # frame, a dock's chrome around the content and the tab bar are app views), a popover held open by the app.
 dock-renderer |  | DockArea.with_renderer DockAreaRenderer.frame DockAreaRenderer.render_dock TabGroupRenderer.render_tab_bar DockAreaRenderer.tab_group_renderer DockContext.placement DockContext.is_open
 overlay-popover-open |  | Popover.trigger Popover.open
-# The values track, round 4 (docs/PROTOCOLS.md 13.19, 13.20; values_pages.rs and values_pages.odin):
+# The values track, round 4 (docs/PROTOCOLS.md 13.19, 13.20; values_pages.rs):
 # a settings page over value cells (its switch and the zoom field's + clicked), drag and drop of the library's drag value, box_shadow read back,
 # the kit's resizable panels, a div with the kit's scrollbar, a toolbar of Sizable children.
 values-settings | click 742 251; click 739 468 | Settings.new Settings.sidebar_size_range Settings.page SettingPage.new SettingPage.group SettingGroup.new SettingGroup.title SettingGroup.item SettingItem.new SettingItem.render gpui_kit::component::setting::SettingField<bool>::switch gpui_kit::component::setting::SettingField<bool>::checkbox gpui_kit::component::setting::SettingField<gpui_kit::SharedString>::input gpui_kit::component::setting::SettingField<gpui_kit::SharedString>::dropdown gpui_kit::component::setting::SettingField<f64>::number_input gpui_kit::component::setting::SettingField<bool>::default_value
@@ -126,12 +126,12 @@ values-shadow |  | box_shadow
 values-resizable |  | h_resizable resizable_panel ResizablePanelGroup.child ResizablePanel.size
 values-scrollbar-div |  | ScrollableElement.overflow_y_scrollbar
 values-toolbar |  | Toolbar.new Toolbar.child Toolbar.children
-# The views track, round 5 (views_pages.rs and views_pages.odin): a sidebar of groups of the kit's menus,
+# The views track, round 5 (views_pages.rs): a sidebar of groups of the kit's menus,
 # one group collapsed (SidebarGroup<SidebarMenu>, Sidebar<SidebarGroup<SidebarMenu>>).
 views-sidebar-groups |  | SidebarGroup.new SidebarGroup.child SidebarGroup.children SidebarGroup.collapsed gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>::new gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>::side gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>::collapsible gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>::collapsed gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>::header gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>::child gpui_kit::component::sidebar::Sidebar<gpui_kit::component::sidebar::SidebarGroup<gpui_kit::component::sidebar::SidebarMenu>>::children
 views-submenu-icon | rclick 100 150 | PopupMenu.submenu_with_icon
 views-menu-items | rclick 100 150 | PopupMenu.item PopupMenuItem.new PopupMenuItem.icon PopupMenuItem.action PopupMenuItem.separator PopupMenuItem.label PopupMenuItem.checked PopupMenuItem.disabled PopupMenuItem.on_click PopupMenuItem.element PopupMenuItem.link
-# The editor track, round 5 (docs/PROTOCOLS.md 9.20 to 9.23; editor_pages.rs and editor_pages.odin): a block
+# The editor track, round 5 (docs/PROTOCOLS.md 9.20 to 9.23; editor_pages.rs): a block
 # surface (a typed fragment), headings styled by level (a table), Markdown plugins drawn by the app's
 # rows (block and inline) beside the kit's frontmatter plugin, a link's tooltip (a row per URL).
 editor5-surface |  | gpui_kit::base::MarkdownExtensions::block_surface
@@ -146,7 +146,7 @@ editor7-number |  | gpui_kit::base::NumberInput::new gpui_kit::base::NumberInput
 editor7-scroller | scroll 150 200 300; advance 300 | gpui_kit::component::message_scroller::MessageScroller::new gpui_kit::component::message_scroller::MessageScrollerState::new gpui_kit::component::message_scroller::MessageScroller::with_jump_button_renderer
 editor7-lsp | click 60 120; advance 100 | gpui_kit::base::input::EditorState::lsp_mut gpui_kit::base::input::Lsp::with_completion_highlighter gpui_kit::base::input::EditorState::present_completion_items
 editor7-diagnostic | click 60 120; advance 100 | gpui_kit::base::input::EditorState::present_diagnostic
-# The platform and motion track, round 5 (motion_pages.rs and motion_pages.odin, docs/PROTOCOLS.md 13.30):
+# The platform and motion track, round 5 (motion_pages.rs, docs/PROTOCOLS.md 13.30):
 # animations and motion values at fixed times (the offscreen clock moves only on advance).
 motion-animation | advance 100; advance 150; advance 300 | gpui_kit::base::animation::cubic_bezier
 motion-chain | advance 100; advance 150; advance 100; advance 300 |

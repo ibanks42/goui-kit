@@ -1,5 +1,5 @@
 //! The platform and motion families' gallery pages, written the way a Rust GPUI-kit app
-//! writes them; the Odin twin is examples/odin/gallery/motion_pages.odin, the pages' lines are in
+//! writes them; the Go twin is examples/go/gallery/motion_pages.go, the pages' lines are in
 //! ref/gallery/pages.txt (docs/PROTOCOLS.md 13.30): gpui's with_animation and a chain of animations
 //! with the kit's easing curves, the kit's EffectTransition, and the kit's motion values
 //! (transition, spring, keyframes, presence, a TransitionState kept with the page's data) sampled in
@@ -56,7 +56,7 @@ impl MotionPages {
             Keyframe::new(1., 100.).ease(Easing::Linear),
         ])
         .expect("keyframes");
-        // ImageSource's Path variant reads this file, written where the gallery runs (as the Odin twin does)
+        // ImageSource's Path variant reads this file, written where the gallery runs
         let _ = std::fs::write(ELEM_PNG_PATH, ELEM_PNG);
         let scroll = ScrollHandle::new();
         Self {
@@ -189,8 +189,7 @@ pub fn page(id: &str, g: &Gallery, window: &mut Window, cx: &mut Cx) -> Option<A
     })
 }
 
-// --- PROTOCOLS.md 13.31: gpui's element leftovers, written as a Rust app writes them; the
-// Odin twin gives data where these give closures (can_drop's ids, a drag's files).
+// --- PROTOCOLS.md 13.31: gpui's element leftovers, written as a Rust app writes them.
 
 const ELEM_PNG: [u8; 83] = [
     137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, 73, 72, 68, 82, 0, 0, 0, 4, 0, 0, 0, 4, 8, 6, 0, 0, 0, 169, 241, 158,

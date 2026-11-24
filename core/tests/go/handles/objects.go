@@ -1,5 +1,5 @@
-// The modes that count handles (gk.TestObjCounts; Odin: gk.test_obj_counts) and a table's
-// columns as the kit's Column values (gk.SetTableKitColumns; Odin: gk.table_columns).
+// The modes that count handles (gk.TestObjCounts) and a table's
+// columns as the kit's Column values (gk.SetTableKitColumns).
 package main
 
 import (
@@ -59,7 +59,7 @@ func objects(a *App, cx *gk.Cx) {
 	gk.Release(cx, m)
 }
 
-// diffSide prints a DiffSide as Odin's %v does (the variant's name).
+// diffSide prints a DiffSide as the checks expect (the variant's name).
 func diffSide(s gk.DiffSide) string {
 	switch s {
 	case gk.DiffSideModified:

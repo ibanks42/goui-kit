@@ -1,7 +1,6 @@
 package gk
 
-// The editor host's element (docs/PROTOCOLS.md 9.30), ported from odin/gk/gen_editor_host.odin
-// (gen/gk_editor.py host_args): upstream's editor_host renders a BlockNode tree and, around the
+// The editor host's element (docs/PROTOCOLS.md 9.30): upstream's editor_host renders a BlockNode tree and, around the
 // blocks' prepaint, collects each keyed text leaf's geometry (collect_leaf_geometry). The library's
 // element (core/src/editor_text.rs BlockHost) does both and hands the leaves to the app after the
 // frame (app code never runs mid-frame).
@@ -49,7 +48,7 @@ func init() {
 // or its place among the blocks: flows may be shorter than blocks, or nil; the render context, or
 // TextView's), the decorations painted behind the keyed leaves, and onGeometry (nil: none) given
 // each keyed leaf's geometry after the frame, when the leaves changed. A parsed document's blocks
-// are gk.BaseParseMarkdown's held values. Odin: gk.block_host.
+// are gk.BaseParseMarkdown's held values.
 func BlockHost(id string, blocks []BlockNode, flows []Option[FlowPosition], renderContext Option[RenderContext],
 	decorations []LeafDecoration, onGeometry func(cx *Cx, e LeafGeometryEvent)) Element {
 	n := newNode(nEditorHost)

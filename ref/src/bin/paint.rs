@@ -1,4 +1,4 @@
-//! ref-paint: the Rust reference for the `paint` app (examples/odin/paint, examples/go/paint;
+//! ref-paint: the Rust reference for the `paint` app (examples/go/paint;
 //! gates/pixels.sh paint): gradient backgrounds and a hand-written plot, as a Rust app writes them.
 //! The bindings describe the same: `.bg(linear_gradient(..))` (a Fill, PROTOCOLS.md 11.38) and
 //! `gk.plot(grid, area, lines, quads)` with the binding's own paths and quads (PROTOCOLS.md 12.17),

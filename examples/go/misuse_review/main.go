@@ -1,7 +1,7 @@
 // misuse_review: mistakes against the app protocols (actions, timers, windows: PROTOCOLS.md
 // section 11), the dock's panels (11.7) and library objects (13.2). Each must stop with a
 // message and the app's line (exit 2) or behave correctly (exit 0); exit 0 with wrong content
-// fails. The port of examples/odin/negative_review3; run offscreen with the diag library by
+// fails. Run offscreen with the diag library by
 // gates/go-misuse.sh, one mode per case:
 //
 //	GK_NEG=rv-ok             timers, a second window opened and closed, an action, a panel: correct (exit 0)
@@ -12,7 +12,7 @@
 //	GK_NEG=rv-temp-later     a temporary library object (a dock's layout) used a frame later: must stop
 //	GK_NEG=rv-panel-released a dock panel released and then changed: must stop
 //
-// Odin's rv-action-forged (an action id the library never made) does not compile in Go
+// A forged action (an action id the library never made) does not compile in Go
 // (examples/go/misuse_compile/action_forged); rv-timer-state (a timer handler of another state
 // type) cannot be written: a Go handler is a closure and carries no state type.
 package main

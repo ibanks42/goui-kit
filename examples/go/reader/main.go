@@ -1,4 +1,4 @@
-// reader: a feed reader, the Go twin of examples/odin/reader. The articles of a feed file (or of a
+// reader: a feed reader. The articles of a feed file (or of a
 // folder of .md files) in a list on the left, the open articles as tabs on the right, each drawn
 // by the kit's Markdown view; a toolbar of icon buttons with tooltips, a settings dialog (font
 // size, theme, order, summaries), a notification when a load finishes, and the article fading in

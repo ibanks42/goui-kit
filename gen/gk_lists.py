@@ -1,6 +1,6 @@
 """The lists and editor families' generator rules (docs/PROTOCOLS.md sections 9.9 to 9.12).
 
-Hooked into gk_model.py, gk_rust.py and gk_odin.py at a few points each (search for
+Hooked into gk_model.py, gk_rust.py and gk_go.py at a few points each (search for
 `gk_lists.`); everything else of the family's rules lives here.
 
 - **Associated types of a shim** (`qualified`). A state or element generic over a delegate
@@ -11,10 +11,10 @@ Hooked into gk_model.py, gk_rust.py and gk_odin.py at a few points each (search 
   `"crate::shim_select::GkSearchDelegate::Item" = "crate::shim_select::GkItem"`. The value is a
   library type (`crate::...`), a primitive, or an upstream or gpui type by name.
 - **Library values** (`libval`). A library type that travels both ways as a plain value (the
-  shim's item: `gk.Search_Item` in Odin) is `["libval", rust path, odin name]`: Rust reads it
+  shim's item: `gk.SearchItem` in Go) is `["libval", rust path, stem]`: Rust reads it
   with its `genapi::Unwire` impl and writes it with its `genapi::Wire` impl (both hand-written
-  beside the type), Odin declares the struct in the family's kit file and reads and writes it by
-  reflection (`rd_value`, `put_value`), field for field in wire order. `[lists] values` names
+  beside the type), the Go runtime declares the struct and its put and rd functions
+  (gen/gk_go_kinds.py LIBVALS), field for field in wire order. `[lists] values` names
   them: `"crate::shim_select::GkItem" = "Search_Item"`.
 """
 import gk_comp6  # the components family's rules (PROTOCOLS.md 11.17 to 11.23, 12.16)
@@ -27,11 +27,11 @@ def table(m, name):
 
 def libval(m, path, out):
     """The descriptor of a library value type, or None when `path` is not one."""
-    odin = table(m, "values").get(path)
-    if odin is None:
+    stem = table(m, "values").get(path)
+    if stem is None:
         return None
     m.ov_used.add("lists.values." + path)
-    return ["libval", path, odin]
+    return ["libval", path, stem]
 
 
 def resolve(m, ctx, t):
@@ -124,100 +124,13 @@ def rust_dec(rs, d):
     return None
 
 
-def odin_type(od, d, out=False):
-    """The Odin type of the family's descriptors, or None (gk_odin.Odin.otype's hook)."""
-    ip = gk_items.odin_type(od, d, out)
-    if ip is not None:
-        return ip  # an item procedure's rows (PROTOCOLS.md 9.41)
-    c6 = gk_comp6.odin_type(od, d, out)
-    if c6 is not None:
-        return c6  # the components family's PROTOCOLS.md 11.19 to 11.22, 12.16
-    if d[0] == "libval":
-        return d[2]
-    if d[0] == "viewfn":
-        return "View"
-    if d[0] == "char":
-        return "rune"
-    if d[0] == "expr":
-        return "string"
-    if d[0] == "arcslice":
-        return "[]" + od.otype(d[1], out)
-    if d[0] == "iter":
-        return "[]" + od.otype(d[1], out)
-    if d[0] == "oneof":
-        return table(od.m, "unions")[d[1]]
-    if d[0] == "nonzero":
-        return {"usize": "int"}.get(d[1], d[1])
-    if d[0] == "font":
-        return "Font"
-    if d[0] == "ask":
-        return f"Ask({od.otype(d[1], True)}, {od.otype(d[2], False)})"  # PROTOCOLS.md 9.14
-    if d[0] == "imgsrc":
-        return "string"
-    if d[0] == "rangeof":
-        return f"[2]{od.otype(d[1], out)}"
-    if d[0] == "rcvec":
-        return od.otype(d[1], out)
-    if d[0] == "ctxrows":
-        return "Row_Source"  # an element closure over a context: its rows (PROTOCOLS.md 9.16)
-    if d[0] == "lent":
-        t = od.otype(d[1], True)  # an object lent by kit state (PROTOCOLS.md 9.17)
-        return f"Maybe({t})" if d[3] else t
-    if d[0] == "uscroll":
-        return od.otype(d[1], True)  # a uniform list's scroll handle as gpui's ScrollHandle (9.19)
-    return None
-
-
-def odin_put(od, d, v):
-    """Statements that write the family's descriptors, or None (gk_odin.Odin.put's hook)."""
-    ip = gk_items.odin_put(od, d, v)
-    if ip is not None:
-        return ip  # an item procedure's rows (PROTOCOLS.md 9.41)
-    c6 = gk_comp6.odin_put(od, d, v)
-    if c6 is not None:
-        return c6  # the components family's PROTOCOLS.md 11.19 to 11.22, 12.16
-    if d[0] == "handler" and getattr(od, "in_call", False):
-        # A handler given to a call op (a state's or an object's method, or a builder of its
-        # constructor): kept, as a subscription's is (PROTOCOLS.md 9.12).
-        return [f"put_kept_handler(o, {v}, {od.m.shapes[d[1]]['num']})"]
-    if d[0] == "libval":
-        return [f"{{ lv := {v}; put_value(o, &lv, type_info_of({d[2]})) }}"]
-    if d[0] == "viewfn":
-        return [f"put_view_arg(o, {v})"]
-    if d[0] == "char":
-        return [f"put_u32(o, u32({v}))"]
-    if d[0] == "expr":
-        return [f"put_expr(o, {v}, {len(d[2])})"]
-    if d[0] == "arcslice":
-        return od.put(["list", d[1], "vec"], v)
-    if d[0] == "oneof":
-        # One of the trait's node types: the union's variant, attached as a child node.
-        out = ["{", f"\toe: Element", f"\tswitch x in {v} {{"]
-        for k in d[2]:
-            out += [f"\tcase {od.m.nodes[k]['odin']}:", "\t\toe = x.el"]
-        return out + ["\t}", "\tput_u32(o, take(oe))", "}"]
-    if d[0] == "nonzero":
-        return [f"put_nonzero(o, u64({v}), {8 if d[1] in ('u64', 'usize') else {'u8': 1, 'u16': 2, 'u32': 4}[d[1]]})"]
-    if d[0] == "font":
-        return [f"{{ fv := {v}; put_value(o, &fv, type_info_of(Font)) }}"]
-    if d[0] == "rangeof":
-        return od.put(d[1], f"{v}[0]") + od.put(d[1], f"{v}[1]")
-    if d[0] == "rcvec":
-        return od.put(d[1], v)
-    if d[0] == "ask":
-        return [f"put_u64(o, {v}.src.h)"]  # a data closure's ask (PROTOCOLS.md 9.14)
-    if d[0] == "ctxrows":
-        return [f"put_u64(o, {v}.h)"]  # an element closure over a context (PROTOCOLS.md 9.16)
-    return None
-
-
 SHIMS_OUT = {"crate::shim_rows::GkListDelegate", "crate::shim_rows::GkTableDelegate",
              "crate::shim_select::GkSearchDelegate"}
 
 
 def shim_out(m, path):
     """Whether a library delegate shim travels out (a state's `delegate()` read back): as the row
-    source it is made over (its Wire impl writes the source's handle; Odin: a `Row_Source`)."""
+    source it is made over (its Wire impl writes the source's handle; Go: a `RowSource`)."""
     return path in SHIMS_OUT
 
 
@@ -250,7 +163,7 @@ def from_arg(src, e):
 
 def gpui_value(m, hc, name, args, out):
     """gpui's `Font` (a family, a weight and a style; its features and fallbacks are the
-    defaults `gpui::font` gives) as `["font"]`: Odin's `gk.Font`, written and read by reflection;
+    defaults `gpui::font` gives) as `["font"]`: Go's `gk.Font`;
     Rust `crate::shim_editor::font` and its Wire impl (PROTOCOLS.md 9.11). None for other types."""
     from gk_model import GPUI_HOMES  # noqa: PLC0415 (gk_model imports this module)
     if name == "Font" and not args and hc in GPUI_HOMES:
@@ -330,7 +243,7 @@ def _num_kind(m, d):
 def expr_closure(m, ctx, inputs, output, wrap, params, ptypes, payload):
     """A closure that maps numbers to a number (arguments numbers, Pixels, bools or fieldless
     enums; the result a number, Pixels or a bool; at most the app as context): an expression the
-    library evaluates (`["expr", result kind, argument kinds, wrap, ptypes, params]`, Odin a
+    library evaluates (`["expr", result kind, argument kinds, wrap, ptypes, params]`, Go a
     `string`, PROTOCOLS.md 9.12). None for any other closure."""
     if output is None or not payload or any(p not in ("arg", "app", "app_ref") for p in params):
         return None
@@ -403,7 +316,7 @@ def resolved(m, ctx, t, out):
         return ["nonzero", NONZERO[name]]
     if name == "Range" and len(args) == 1 and not out and "impl_trait" in args[0]:
         # Range<impl Into<X>> (`Diagnostic::new(Range<impl Into<Position>>, ..)`): a range of X,
-        # `[2]X` in Odin (PROTOCOLS.md 9.13).
+        # `[2]X` in Go (PROTOCOLS.md 9.13).
         from gk_model import bound_parts  # noqa: PLC0415
         for n, tr in bound_parts(args[0]["impl_trait"]):
             ga = ((tr.get("args") or {}).get("angle_bracketed") or {}).get("args", [])
@@ -438,8 +351,8 @@ ITERS = ("Iterator", "DoubleEndedIterator", "ExactSizeIterator")
 def bounded_out(m, ctx, bounds, out):
     """`impl Iterator<Item = X>` (with DoubleEndedIterator, ExactSizeIterator) as a result: the
     items collected into a list (`History::entries`, `DiagnosticSet::iter`). Going in, a trait
-    of `[lists] unions` whose implementors are node types (`impl ChildElement`): one of them, a
-    union in Odin (`["oneof", trait, node keys]`). None otherwise."""
+    of `[lists] unions` whose implementors are node types (`impl ChildElement`): one of them, an
+    interface in Go (`["oneof", trait, node keys]`). None otherwise."""
     from gk_model import Unsup, bound_parts  # noqa: PLC0415 (gk_model imports this module)
     b6 = gk_comp6.bounded(m, ctx, bounds, out)
     if b6 is not None:

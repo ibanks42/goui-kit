@@ -15,7 +15,7 @@ import "slices"
 //	view: gk.Div().H(gk.Px(300)).Child(gk.List(a.list))
 
 // HeaderRow and FooterRow are the RowAt.Row of a list section's header and footer rows (drawn when
-// the list's DelegateData asks for them). Odin: gk.HEADER, gk.FOOTER.
+// the list's DelegateData asks for them).
 const (
 	HeaderRow = 0xffff_fffe
 	FooterRow = 0xffff_ffff

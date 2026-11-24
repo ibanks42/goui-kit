@@ -1,4 +1,4 @@
-// proto: the protocol tests of docs/PROTOCOLS.md in Go, the port of core/tests/proto (Odin).
+// proto: the protocol tests of docs/PROTOCOLS.md in Go.
 // Each mode runs offscreen (the diag library) under a gk-meter script and prints lines that
 // gates/go-proto.sh checks, together with the exit code. Nothing here is an example of good app
 // code; it pokes at the edges on purpose.
@@ -365,7 +365,7 @@ func (a *App) reportMemory(what string) {
 	fmt.Printf("proto %s rss_mb=%d growth_mb=%d heap_kb=%d\n", what, rssKB()/1024, (rssKB()-a.rss0)/1024, ms.HeapAlloc/1024)
 }
 
-// --- a list over a row source (PROTOCOLS.md 9.5; Odin: core/tests/run-rows.sh list) -------------
+// --- a list over a row source (PROTOCOLS.md 9.5) ----------------------------------------------
 
 func (a *App) listRow(cx *gk.Cx, at gk.RowAt) gk.ListItemEl {
 	a.described[at.Row]++
@@ -546,7 +546,7 @@ func version() {
 
 func main() {
 	a := &App{mode: os.Getenv("GK_PROTO"), described: map[int]int{}}
-	if kindsMain(a.mode) || runBridges(a.mode) { // kinds.go: the generator's descriptor kinds; bridges.go: the Go ports of Odin's hand-written bridges
+	if kindsMain(a.mode) || runBridges(a.mode) { // kinds.go: the generator's descriptor kinds; bridges.go: the Go package's hand-written bridges
 		return
 	}
 	if os.Getenv("GK_PROTO_STALE_HASH") != "" {

@@ -1,5 +1,5 @@
 // c6-resize: a resizable group whose divider the app draws through an item function over the kit's
-// ResizeHandleContext (gk.Items; Odin: a row source and gk.row_context) given to
+// ResizeHandleContext (gk.Items) given to
 // ResizablePanelGroupEl.WithHandleAppearance.
 package main
 
@@ -15,7 +15,7 @@ import (
 var c6 struct {
 	handles gk.RowSource
 	resizer gk.ResizableState
-	made    bool // the row source exists (Odin: handles.h != 0)
+	made    bool // the row source exists
 }
 
 func init() {
@@ -31,7 +31,7 @@ func comp6Init(a *App, cx *gk.Cx) {
 	c6.made = true
 }
 
-// Odin's names of the enum values the checks print.
+// The names of the enum values the checks print.
 func axisName(x gk.Axis) string {
 	if x == gk.AxisHorizontal {
 		return "Horizontal"

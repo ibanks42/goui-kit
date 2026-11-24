@@ -1,7 +1,7 @@
-# The files app's scripted session (examples/odin/files against ref/src/bin/files.rs, gates/pixels.sh
+# The files app's scripted session (examples/go/files against ref/src/bin/files.rs, gates/pixels.sh
 # files): every image must be byte-identical between the two. Offscreen the platform is not asked: the
 # `answer` lines answer the app's file dialogs and its prompt (the library's scripted platform for the
-# Odin app, the twin's own queue for Rust). The clock moves only on `advance`, so the status line's
+# Go app, the twin's own queue for Rust). The clock moves only on `advance`, so the status line's
 # entrance animation is shot at fixed times.
 size 720 480
 frame

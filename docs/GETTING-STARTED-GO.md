@@ -4,8 +4,7 @@ This guide takes a Go programmer who has never used GPUI from the download to a 
 app. Part 1 installs what you need and runs the example that comes with the download. Part 2 is a
 15-minute tutorial: a shopping list app, built in nine steps, each a complete program you can run.
 After it, [API-GO.md](API-GO.md) explains how to read GPUI-kit's own documentation
-(gpui-kit.com/docs) and know the Go call, and lists every component. (The same library has an Odin
-front end: [GETTING-STARTED.md](GETTING-STARTED.md) is this guide for Odin.)
+(gpui-kit.com/docs) and know the Go call, and lists every component.
 
 Every snippet in this guide is cut from the tutorial's programs in `docs/tutorial-go/`, and those
 programs are built and run by the project's tests, so the code you read here compiles against the
@@ -58,14 +57,11 @@ library's:
 |---|---|
 | `lib/libgpuikit_static.a` | the library (GPUI-kit 0.11.0 on the gpui-fast engine), which your program links into itself; on macOS one universal file for Apple silicon and Intel, on Windows in MinGW's format |
 | `lib/libgpuikit_sys.so`, `lib/libgpuikit_sys.a` | Linux: a small linker script naming the system libraries it needs; Windows: the import library of the Windows API it uses |
-| `lib/gpuikit_static.lib`, `lib/gpuikit_sys.lib` | Windows: the same in Visual Studio's format, which Odin links |
 | `windows/` | Windows: the manifest a program embeds, and `gpuikit.rc`, which embeds it |
 | `go/` | the Go module `gpuikit.dev`: the package `gpuikit.dev/gk` your app imports, and `s`, `theme`, `palette` beside it |
-| `odin/gk/` | the Odin package (the other front end) |
 | `README.md` | where to start |
 | `examples/go/` | `hello`, `counter`, `notes`, `todo`, `reader`, `expenses` in Go, and `build.sh`, which builds them |
-| `examples/` | the same apps in Odin, and their `build.sh` |
-| `docs/` | this guide, [API-GO.md](API-GO.md), [GO.md](GO.md), the tutorial's programs in `docs/tutorial-go/`, and the Odin guides |
+| `docs/` | this guide, [API-GO.md](API-GO.md), [GO.md](GO.md), the tutorial's programs in `docs/tutorial-go/` |
 | `VERSIONS` | what the library was built from, and what it needs (glibc, macOS, Windows) |
 | `THIRD_PARTY.md`, `licences/` | the licences of everything inside the library |
 

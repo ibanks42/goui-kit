@@ -59,7 +59,7 @@ impl<T> MainThread<T> {
 }
 
 /// A typed fragment whose root is not of the type upstream asked for: a mistake in app code (the
-/// Odin type of the argument prevents it; a tape written by hand could do it). Exit 2.
+/// Go type of the argument prevents it; a tape written by hand could do it). Exit 2.
 pub fn bad_fragment(what: &str) -> ! {
     eprintln!("gk: a fragment given where upstream wants a {what} is not a {what}");
     std::process::exit(2);
@@ -186,7 +186,7 @@ pub fn ctx_view(src: u64, print: Vec<u8>, write: Rc<dyn Fn(&mut Vec<u8>)>, windo
 
 // ---------------------------------------------------------------- 9.23 Markdown plugins
 
-/// The Markdown nodes a data plugin claims (Odin `gk.Markdown_Match`, in this order).
+/// The Markdown nodes a data plugin claims (Go `gk.MarkdownMatch`, in this order).
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum Match {
     Code,
@@ -215,7 +215,7 @@ impl Match {
     }
 }
 
-/// The library's data plugin (Odin `gk.Markdown_Plugin`): its name, the nodes it claims (a kind
+/// The library's data plugin (Go `gk.MarkdownPlugin`): its name, the nodes it claims (a kind
 /// and, for a fenced code block, its language, for a JSX element, its name; empty: every one),
 /// the row source that draws its nodes, and an inline node's baseline (0: upstream's).
 #[derive(Clone, Debug)]
@@ -395,7 +395,7 @@ pub fn entity_id(handle: u64) -> gpui_kit::EntityId {
     }
     // A handle of another type says "is a X, not a Y"; a released or unknown one says why itself.
     let why = if first.contains(", not a ") {
-        format!("handle {handle:#x} is not an input, a textarea or an editor (gk.entity_id takes one of those)")
+        format!("handle {handle:#x} is not an input, a textarea or an editor (gk.EntityIDOf takes one of those)")
     } else {
         first
     };
@@ -434,7 +434,7 @@ pub fn call(op: u16, _r: &mut R, c: &mut genapi::Call) -> Option<genapi::GkResul
 
 // ---------------------------------------------------------------- 9.30 the editor host
 
-/// The editor host (Odin `gk.block_host`, node `EDITOR_HOST`): renders the app's blocks as
+/// The editor host (node `EDITOR_HOST`): renders the app's blocks as
 /// TextView does (`BlockNode::render` with the block's `FlowPosition`, or its place among the
 /// blocks, and the `RenderContext`, or the one TextView would start from), runs upstream's
 /// `collect_leaf_geometry` around their prepaint with the app's decorations, and hands the keyed

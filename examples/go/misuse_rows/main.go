@@ -1,6 +1,6 @@
 // misuse_rows: mistakes against the delegate protocol (row sources, the kit's table) and
 // InputState that must behave correctly or stop with a message, never show wrong content or
-// crash. The port of examples/odin/negative_rows; run offscreen with the diag library by
+// crash. Run offscreen with the diag library by
 // gates/go-misuse.sh, one mode per case:
 //
 //	GK_NEG=table-freed   the row source a table draws is released while the table is shown:
@@ -14,7 +14,7 @@
 //	GK_NEG=input-release a change handler of an input releases that input while the view still
 //	                     shows it: must stop when the view is drawn
 //
-// (nul and utf8 of the Odin program are the nul and utf8 modes of examples/go/misuse.)
+// (The nul and utf8 cases are the nul and utf8 modes of examples/go/misuse.)
 package main
 
 import (

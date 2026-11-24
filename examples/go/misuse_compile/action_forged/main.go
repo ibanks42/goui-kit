@@ -1,5 +1,5 @@
-// An action id the library never made (Odin's negative_review3 rv-action-forged stops at run
-// time; in Go an Action's id is unexported, so it cannot be forged: only gk.NewAction makes one).
+// An action id the library never made (in Go an Action's id is unexported, so it cannot be
+// forged: only gk.NewAction makes one).
 package main
 
 import "gpuikit.dev/gk"

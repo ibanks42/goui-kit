@@ -1,6 +1,6 @@
 # run-editor2.sh: the protocol tests (docs/PROTOCOLS.md 9.20 to 9.40), sourced by core/tests/go/run.sh,
-# which defines build and run. The app is core/tests/go/editor2, offscreen under gk-meter scripts. Odin
-# twin: core/tests/run-editor2.sh. The logs go to a folder of their own ($out/editor2): some modes' names
+# which defines build and run. The app is core/tests/go/editor2, offscreen under gk-meter scripts.
+# The logs go to a folder of their own ($out/editor2): some modes' names
 # are other families' too, and run.sh keys a log by its mode's name.
 build editor2-go editor2
 editor2_out=$out; out=$out/editor2; mkdir -p "$out"

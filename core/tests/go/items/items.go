@@ -1,4 +1,4 @@
-// The modes of gk.Items (an item function as the row source a builder takes; Odin's gk.items) and
+// The modes of gk.Items (an item function as the row source a builder takes) and
 // the builders that take it.
 package main
 

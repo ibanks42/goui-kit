@@ -6,7 +6,7 @@
 use crate::genapi::{Call, GkResult, Put, R, Unwire, Wire};
 
 /// A `char` travels as its scalar value, a u32 (the generator's `char` rule: a mask's separator,
-/// a mask token). Odin: `rune`.
+/// a mask token). Go: `rune`.
 impl Wire for char {
     fn put(&self, out: &mut Vec<u8>) {
         out.put_u32(*self as u32);
@@ -37,7 +37,7 @@ pub fn call(op: u16, r: &mut R, c: &mut Call) -> Option<GkResult<()>> {
             let languages = (0..n.min(4096)).map(|_| r.str().to_string()).collect();
             let styles_ask = crate::shim_text::Ask::take(styles);
             if !styles_ask.is_live() {
-                return crate::rt::err(ERR_BAD_OP, "gk.highlighter: the styles procedure's ask was not made by gk.ask");
+                return crate::rt::err(ERR_BAD_OP, "gk.NewHighlighter: the styles function's ask was not made by gk.NewAsk");
             }
             let folds = (folds != 0).then(|| crate::shim_text::Ask::take(folds));
             HIGHLIGHTERS.with(|h| h.borrow_mut().insert(styles, Rc::new(Highlighter { styles: styles_ask, folds, languages })));
@@ -129,7 +129,7 @@ thread_local! {
 pub fn highlighter_factory(src: u64) -> Rc<dyn Fn(&str) -> Option<Box<dyn InputHighlighter>>> {
     let h = HIGHLIGHTERS.with(|m| m.borrow().get(&src).cloned());
     if h.is_none() {
-        eprintln!("gk: a highlighter factory was given a handle {src:#x} gk.highlighter did not make; it highlights nothing");
+        eprintln!("gk: a highlighter factory was given a handle {src:#x} gk.NewHighlighter did not make; it highlights nothing");
     }
     Rc::new(move |lang: &str| {
         let h = h.clone()?;
@@ -245,7 +245,7 @@ pub fn language_provider(src: u64) -> Rc<dyn LanguageProvider> {
     match LANGUAGES.with(|m| m.borrow().get(&src).cloned()) {
         Some(l) => l,
         None => {
-            eprintln!("gk: a language provider was given a handle {src:#x} gk.language_provider did not make; upstream's defaults answer");
+            eprintln!("gk: a language provider was given a handle {src:#x} gk.NewLanguageProvider did not make; upstream's defaults answer");
             Rc::new(GkLanguages { aliases: Default::default(), syntax: None })
         }
     }
@@ -344,7 +344,7 @@ pub fn kept(r: &mut R) -> crate::genapi::HandlerRef {
 /// middle of a frame, or inside the kit's own update). The arguments are `x`, `y`, `z` (or `a0` to
 /// `a9`); an enum argument is its variant's number, a bool 0 or 1. Operators `+ - * / % ^`,
 /// comparisons and `&& || !` (0 is false), `c ? a : b`, and `min max abs floor ceil round sqrt
-/// pow sin cos exp ln clamp`. The binding checked the text (`put_expr` in kit_editor.odin); a
+/// pow sin cos exp ln clamp`. The binding checked the text (`putExpr` in go/gk); a
 /// text that does not parse evaluates to NaN.
 pub struct Expr {
     code: Vec<Op>,

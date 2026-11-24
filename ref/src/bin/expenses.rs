@@ -1,4 +1,4 @@
-//! ref-expenses: the Rust reference for examples/go/expenses (and examples/odin/expenses), written
+//! ref-expenses: the Rust reference for examples/go/expenses, written
 //! the way a Rust GPUI-kit app is written, call for call with the Go app: a form with validation
 //! adds an expense (what, amount, category); the list shows them with a delete button each (a
 //! ListDelegate); a bar chart shows the total per category.

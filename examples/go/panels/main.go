@@ -1,5 +1,5 @@
-// panels: the panels scene in Go, the same dashboard as ref/src/bin/panels.rs and
-// examples/odin/panels (a port of gpui-fast's views_frames benchmark). 60 panels of 64 labels,
+// panels: the panels scene in Go, the same dashboard as ref/src/bin/panels.rs
+// (a port of gpui-fast's views_frames benchmark). 60 panels of 64 labels,
 // each panel a view of its own; `changing` of them change before every frame.
 //
 //	panels-go [panels] [labels] [changing]      (default 60 64 2)

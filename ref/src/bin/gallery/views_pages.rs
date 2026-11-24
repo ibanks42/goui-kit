@@ -1,5 +1,5 @@
 //! The views family's gallery pages, written the way a Rust GPUI-kit app writes them; the
-//! Odin twin is examples/odin/gallery/views_pages.odin, the pages' lines are in
+//! Go twin is examples/go/gallery/views_pages.go, the pages' lines are in
 //! ref/gallery/pages.txt: a sidebar whose items are groups of the kit's menus, one group collapsed;
 //! a context menu whose submenu item has an icon; a context menu of items made as values.
 use gpui_kit::base::Side;

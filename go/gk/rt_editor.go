@@ -1,6 +1,6 @@
 package gk
 
-// The editor's hand-written pieces, ported from odin/gk/kit_input.odin: the kit's styled code
+// The editor's hand-written pieces: the kit's styled code
 // editor (and, below, the providers an editor asks; docs/PROTOCOLS.md 9.6 and 9.11).
 
 // CodeEditorEl is the kit's styled code editor (gpui_kit::component::input::Editor): what the

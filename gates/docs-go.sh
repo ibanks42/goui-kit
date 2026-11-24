@@ -1,7 +1,6 @@
 #!/bin/bash
-# docs-go.sh: the Go guides cannot rot (the Go half of gates/docs.sh, which stays whole without
-# Odin). docs/GETTING-STARTED-GO.md, docs/API-GO.md and docs/GO.md show code only as excerpts of
-# programs under docs/ or examples/ (gates/docs-snippets.py checks every block against its program,
+# docs-go.sh: the Go guides cannot rot. docs/GETTING-STARTED-GO.md, docs/API-GO.md and
+# docs/GO.md show code only as excerpts of programs under docs/ or examples/ (gates/docs-snippets.py checks every block against its program,
 # and every call docs/API-GO.md names in its text against its snippet program); README.md's Go
 # block is gates/readme-go.sh's. This builds every program those guides cut from (every folder of
 # docs/tutorial-go and docs/snippets-go, and the examples they cite) with go build against the

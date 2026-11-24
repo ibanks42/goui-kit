@@ -1,6 +1,6 @@
 // misuse_overlay: mistakes against view-built closures (docs/PROTOCOLS.md section 11.6) that
-// must stop with a message, never draw a dialog from the wrong view. The port of
-// examples/odin/negative_overlay; run offscreen with the diag library by gates/go-misuse.sh, one
+// must stop with a message, never draw a dialog from the wrong view. Run
+// offscreen with the diag library by gates/go-misuse.sh, one
 // mode per case:
 //
 //	GK_NEG=built-ok    a dialog opened from a handler and drawn: correct (exit 0)
@@ -11,7 +11,7 @@
 //	                     (docs/PROTOCOLS.md 11.8)
 //	GK_NEG=dock-register gk.RegisterPanel in a view function: must stop at its line
 //
-// Odin's built-root (a function returning a node that is not a Dialog) does not compile in Go:
+// A built root (a function returning a node that is not a Dialog) does not compile in Go:
 // examples/go/misuse_compile/built_root.
 package main
 

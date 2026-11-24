@@ -17,7 +17,7 @@
 # and scripted input, for the tests. Results, in the layout tools/dist.sh and the gates read:
 #   lib/ship/  lib/diag/       libgpuikit.so | libgpuikit.dylib (universal, install name
 #                              @rpath/libgpuikit.dylib) | gpuikit.dll, gpuikit.dll.lib (MSVC import
-#                              library, for Odin), libgpuikit.dll.a and gpuikit.def (MinGW import
+#                              library), libgpuikit.dll.a and gpuikit.def (MinGW import
 #                              library, for Go's cgo; tools/win-implib.sh)
 #   lib/VARIANT/libgpuikit_static.a   the same library, static, which Go apps link (universal on
 #                              macOS; built for Rust's MinGW target on Windows); on Linux beside
@@ -139,12 +139,6 @@ for v in "$@"; do
     windows)
       cp $rd/gpuikit.dll $rd/gpuikit.dll.lib "$out/$v/"
       tools/win-implib.sh "$out/$v"
-      # The static library in MSVC's format, which Odin links (lld-link drops what the app does not
-      # use), and the import library of the Windows API it links (windows-targets' MSVC one).
-      cp $rd/gpuikit.lib "$out/$v/gpuikit_static.lib"
-      msvcimp=$(find "${CARGO_HOME:-$HOME/.cargo}/registry/src" -path '*windows_x86_64_msvc-0.52*' -name windows.0.52.0.lib | sort | tail -1)
-      [ -n "$msvcimp" ] || { echo "build-lib.sh: no windows.0.52.0.lib under ${CARGO_HOME:-$HOME/.cargo}/registry/src" >&2; exit 1; }
-      cp "$msvcimp" "$out/$v/gpuikit_sys.lib"
       # The static library for Go apps (docs/GO.md section 8). Go's cgo links with MinGW-w64, which
       # cannot link MSVC's objects, so this one is built for Rust's MinGW target, by the toolchain
       # hosted on MinGW (with the MSVC-hosted one, gpui's build script compiles its resources with

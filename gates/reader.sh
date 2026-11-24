@@ -1,13 +1,13 @@
 #!/bin/bash
-# reader.sh [SCRIPT]: runs the reader example (examples/odin/reader) offscreen under a gk-meter script
+# reader.sh [SCRIPT]: runs the reader example (examples/go/reader, bin/reader-go) offscreen under a gk-meter script
 # (default gates/reader.script) over a generated feed of 3,000 articles (gates/reader-feed.py), keeps
 # the images in gates/out/reader/ and checks the log for what the session must have done. No Rust
-# twin: the images are looked at by eye. Builds the app first. Prints one line "GATE reader session ...".
-# GK_FRONT=go: the Go app (examples/go/reader, bin/reader-go); the line is then "GATE reader session-go".
+# twin: the images are looked at by eye. Builds the app first. Prints one line
+# "GATE reader session-go ...".
 here=$(cd "$(dirname "$0")" && pwd); repo=$(dirname "$here")
-front=${GK_FRONT:-odin}; gate="reader session"; [ "$front" = odin ] || gate="reader session-$front"
+front=go; gate="reader session-$front"
 script=$(realpath "${1:-$here/reader.script}")
-out=$here/out/reader${GK_FRONT:+-$front}
+out=$here/out/reader-$front
 "$repo/examples/$front/build.sh" reader || { echo "GATE $gate FAIL the app does not build"; exit 1; }
 rm -rf "$out"; mkdir -p "$out"; cd "$out"
 python3 "$here/reader-feed.py" "$out/feed.md" 3000

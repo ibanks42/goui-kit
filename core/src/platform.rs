@@ -815,7 +815,7 @@ impl crate::genapi::Wire for DragMove {
     }
 }
 
-/// PLATFORM_TEST (core/tests/platform, mode elements): runs the decoders above on bytes the Odin
+/// PLATFORM_TEST (core/tests/platform, mode elements): runs the decoders above on bytes the Go
 /// package wrote, as generated code would. u8 what, then
 ///   1 drop accept: the Drop_Accept, u64 id of a library drag value -> u8 takes it, u8 takes files
 ///   2 drag payload: the payload -> u32 n, (str path, u8 directory) each

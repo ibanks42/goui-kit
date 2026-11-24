@@ -360,7 +360,7 @@ func OnFrame(cx *Cx, f func(cx *Cx)) {
 // Quit ends the app.
 func Quit(cx *Cx) { checkCx(cx).deferOp(*newReq(cQuit)) }
 
-// handle makes a focus handle something gk.Release takes (Odin's gk.release frees one).
+// handle makes a focus handle something gk.Release takes.
 func (f FocusHandle) handle() uint64 { return f.h }
 
 // NewFocusHandle makes a GPUI FocusHandle: give it to TrackFocus on an element, and move the

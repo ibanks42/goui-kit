@@ -1,6 +1,6 @@
 package gk
 
-// Animations and motion values (docs/PROTOCOLS.md 13.30), ported from odin/gk/rt_motion.odin. The
+// Animations and motion values (docs/PROTOCOLS.md 13.30). The
 // library side is core/src/motion.rs.
 //
 // App code never runs while a frame is drawn, so an animation is described as data and the library

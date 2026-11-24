@@ -1,7 +1,7 @@
 """gk_comp6: the rules of the components, charts, dialogs, tables and layout families
 (docs/PROTOCOLS.md 11.17 to 11.24 and 12.16). Hooked into the other families' modules at one line
 each (gk_values.resolved, gk_values.closure, gk_values.post, gk_values' viewany emitters,
-gk_values.rust_field_put, gk_values.odin_unions, gk_lists.bounded_out, gk_lists.alias, gk_lists'
+gk_values.rust_field_put, gk_lists.bounded_out, gk_lists.alias, gk_lists'
 emitters), never into the shared model or emitters directly.
 
 - 11.17 Tooltip values in view closures: a closure that returns a view (`["viewany"]`, 13.18)
@@ -28,7 +28,6 @@ import gk_editor
 import rdj
 
 TOOLTIP = "gpui_kit::component::tooltip::Tooltip"
-VIEWANY_UNION = "View_Or_Tooltip"
 
 
 def _g():
@@ -71,19 +70,6 @@ def rust_viewany(rs, d):
            f"std::rc::Rc::new(move |window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| crate::views_after::tooltip_view(&fr, window, cx, build_{fn})); f }}")
     return ("{ let f = if r.u8() == 1 { %s } else { %s }; "
             "move |window: &mut gpui_kit::Window, cx: &mut gpui_kit::App| -> gpui_kit::AnyView { f(window, cx) } }" % (tip, view))
-
-
-def odin_viewany_type(od, d):
-    return VIEWANY_UNION if len(d) > 1 else "View"
-
-
-def odin_viewany_put(od, d, v):
-    if len(d) < 2:
-        return [f"put_view_arg(o, {v})"]
-    t = od.m.nodes[d[1][1]]["odin"]
-    return ["{", f"\tswitch x in {v} {{", "\tcase View:", "\t\tput_u8(o, 0)", "\t\tput_view_arg(o, x)",
-            f"\tcase {t}:", "\t\tput_u8(o, 1)", "\t\tput_u32(o, take_value(x.nd))",
-            "\tcase:", "\t\tput_u8(o, 0)", "\t\tput_u64(o, 0)", "\t}", "}"]
 
 
 # ---------------------------------------------------------------- 11.18 snapshots
@@ -371,7 +357,7 @@ def kit_fns(m, alias_id_crate):
 
 
 def kitfn(m, hc, hid, it, d):
-    """`["kitfn", alias path, odin name, [kit fns], inner]` for an alias whose value the kit also
+    """`["kitfn", alias path, stem, [kit fns], inner]` for an alias whose value the kit also
     makes (11.20), else d."""
     fns = kit_fns(m, (hc, hid))
     if not fns or d[0] != "ctxrows":
@@ -382,42 +368,10 @@ def kitfn(m, hc, hid, it, d):
     return ["kitfn", path, it["name"], fns, d]
 
 
-def _kit_odin(name):
-    g = _g()
-    return g.ada(name)
-
-
 def rust_kitfn(rs, d):
     _, path, name, fns, inner = d
     arms = " ".join(f"{i} => {fn}()," for i, fn in enumerate(fns))
     return "{ if r.u8() == 1 { match r.u16() { %s _ => %s() } } else { %s } }" % (arms, fns[0], rs.dec(inner))
-
-
-def odin_kitfn_type(od, d):
-    return _kit_odin(d[2])
-
-
-def odin_kitfn_put(od, d, v):
-    k = _kit_odin(d[2]) + "_Kit"
-    return ["{", f"\tswitch x in {v} {{", "\tcase Row_Source:", "\t\tput_u8(o, 0)", "\t\tput_u64(o, x.h)",
-            f"\tcase {k}:", "\t\tput_u8(o, 1)", "\t\tput_u16(o, u16(x))",
-            "\tcase:", f'\t\tstop({{}}, "a zero gk.{_kit_odin(d[2])} was given to a builder: it was never made (make it with its constructor before giving it)")', "\t}", "}"]
-
-
-def odin_decls(od):
-    """Generated Odin types of this module (gen_values.odin, through gk_values.odin_unions)."""
-    m = od.m
-    out = []
-    key = tooltip_key(m)
-    if key is not None and "odin" in m.nodes[key]:
-        out += ["// A view closure's argument: the app's view or the kit's Tooltip value (PROTOCOLS.md 11.17).",
-                f"{VIEWANY_UNION} :: union {{View, {m.nodes[key]['odin']}}}", ""]
-    for path, k in sorted(getattr(m, "kitfns", {}).items()):
-        n = _kit_odin(k["name"])
-        out += [f"// {n} is the app's rows (9.16) or a renderer the kit makes (PROTOCOLS.md 11.20).",
-                f"{n}_Kit :: enum u16 {{" + ", ".join(_kit_odin(f.rsplit('::', 1)[-1]) for f in k["fns"]) + "}",
-                f"{n} :: union {{Row_Source, {n}_Kit}}", ""]
-    return out
 
 
 # ---------------------------------------------------------------- 11.22 boxed values, 11.23 Background
@@ -428,7 +382,7 @@ VALIDATOR_READ = ["libval", "std::rc::Rc<dyn Fn(&gpui_kit::base::questionnaire::
                   "Result<(), gpui_kit::SharedString>>", "Questionnaire_Validator"]
 # A calendar matcher's parts (11.21): private fields, made by the enum's own constructors
 # (`Matcher::interval(before, after)`, `range(from, to)`) and read back through `Matcher::matched`
-# (core/src/values.rs); Odin records in rt_values.odin.
+# (core/src/values.rs).
 MATCHER_PARTS = {"IntervalMatcher": ["libval", "gpui_kit::base::IntervalMatcher", "Interval_Matcher"],
                  "RangeMatcher": ["libval", "gpui_kit::base::RangeMatcher", "Range_Matcher"]}
 
@@ -487,36 +441,6 @@ def rust_dec(rs, d):
     return None
 
 
-def odin_type(od, d, out=False):
-    k = d[0]
-    if k == "kitfn":
-        return odin_kitfn_type(od, d)
-    if k == "valset":
-        return "[]" + od.otype(d[1], out)
-    if k == "rowvals":
-        return "[]" + od.otype(d[1], out)
-    if k == "boxed":
-        return od.otype(d[1], out)
-    if k == "qrules":
-        return "Questionnaire_Rules"
-    return None
-
-
-def odin_put(od, d, v):
-    k = d[0]
-    if k == "kitfn":
-        return odin_kitfn_put(od, d, v)
-    if k == "valset":
-        return od.put(["list", d[1], "vec"], v)
-    if k == "rowvals":
-        return od.put(["list", d[1], "vec"], v)
-    if k == "boxed":
-        return od.put(d[1], v)
-    if k == "qrules":
-        return [f"{{ qv := {v}; put_value(o, &qv, type_info_of(Questionnaire_Rules)) }}"]
-    return None
-
-
 CALL_SAFE = {"valset"}
 
 
@@ -539,8 +463,8 @@ def post(m):
     set_variants(m)
     for path, k in getattr(m, "kitfns", {}).items():
         for fn in k["fns"]:
-            LIBRARY_CALLS.setdefault(fn, f"made by the library where the app names gk.{_kit_odin(k['name'])}_Kit."
-                                         f"{_kit_odin(fn.rsplit('::', 1)[-1])} (PROTOCOLS.md 11.20)")
+            LIBRARY_CALLS.setdefault(fn, f"made by the library where the app names gk.{_g().ada(k['name'])}_Kit."
+                                         f"{_g().ada(fn.rsplit('::', 1)[-1])} (PROTOCOLS.md 11.20)")
     for it in m.all_items():
         if it["id"] in LIBRARY_CALLS and it["status"] in ("todo", "norule"):
             it.update(status="bridged", kind="shim", reason="", detail=LIBRARY_CALLS[it["id"]])

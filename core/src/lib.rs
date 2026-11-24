@@ -26,7 +26,7 @@ mod items; // item procedures: element closures over handed elements (docs/PROTO
 mod keep;
 mod objects;
 mod overlay; // view-built closures, described values (docs/PROTOCOLS.md 11.6)
-mod dock; // dock panels as Odin views (docs/PROTOCOLS.md 11.7)
+mod dock; // dock panels as app views (docs/PROTOCOLS.md 11.7)
 mod editor_text; // the editor's runtime (docs/PROTOCOLS.md 9.20 to 9.26)
 mod ops;
 mod rt;

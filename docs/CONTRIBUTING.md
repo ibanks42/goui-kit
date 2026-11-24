@@ -1,21 +1,19 @@
 # Working on the bindings
 
 This guide is for people who want to change the bindings themselves: build the library from
-source, regenerate the Odin and Go packages, and run the tests. If you only want to write an app,
+source, regenerate the Go package, and run the tests. If you only want to write an app,
 you don't need any of this. Grab a prebuilt download and follow
-[GETTING-STARTED.md](GETTING-STARTED.md) (Odin) or [GETTING-STARTED-GO.md](GETTING-STARTED-GO.md)
-(Go).
+[GETTING-STARTED-GO.md](GETTING-STARTED-GO.md).
 
 ## How the pieces fit
 
 - **The library** (`core/`) is Rust. It wraps GPUI-kit and exposes a small C interface
   (`core/include/gpuikit.h`). It compiles to `libgpuikit.so`, `libgpuikit.dylib` or `gpuikit.dll`.
 - **The generator** (`gen/`) is Python. It reads GPUI-kit's API (extracted from rustdoc, committed
-  in `api/rustdoc/`) and writes the Rust decoders in `core/src/gen/`, the Odin package's
-  `odin/gk/gen_*.odin` and the Go package's `go/gk/gen_*.go`. The `rt_*` and `kit_*` files next to
-  them are written by hand.
+  in `api/rustdoc/`) and writes the Rust decoders in `core/src/gen/` and the Go package's
+  `go/gk/gen_*.go`. The `rt_*` and `kit_*` files next to them are written by hand.
 - **The reference apps** (`ref/`) are the example apps written in plain Rust. The tests draw the
-  Odin and Go apps and these Rust apps and compare the pixels.
+  Go apps and these Rust apps and compare the pixels.
 - **The tests** (`gates/` and `core/tests/`) are shell and Python scripts.
 
 Most changes touch only the generator, the hand-written runtime files or the examples, and don't
@@ -27,7 +25,6 @@ need a Rust build at all, as long as you have a library in `lib/`.
 |---|---|
 | regenerating the bindings | Python 3 (standard library only); `gofmt` if you want the Go output formatted |
 | building the library | Rust (`rustup` picks up the version in `rust-toolchain.toml`), a C compiler, and your platform's GUI development packages (below) |
-| the Odin side | the Odin compiler (`make odin` downloads the tested release) and clang |
 | the Go side | Go 1.27 or newer and a C compiler (the bindings use cgo) |
 | the tests | Linux, plus `gamescope` or `kwin_wayland` (or `Xvfb`) for the private display the tests draw in, and `bc` |
 
@@ -90,7 +87,7 @@ make gen
 ```
 
 This takes a few seconds and needs only Python. It rewrites everything generated from
-`api/rustdoc/`: the Rust decoders, the Odin and Go packages, the opcode tables, the coverage
+`api/rustdoc/`: the Rust decoders, the Go package, the opcode tables, the coverage
 numbers in `api/coverage.json` and the table in `docs/STATUS.md`. It fails if an upstream function
 has a signature none of the generator's rules handle.
 
@@ -106,7 +103,7 @@ python3 gen/gkgen.py strip gen-json/public   # also writes api/rustdoc/docs.json
 make gen
 ```
 
-`make gen` copies GPUI-kit's doc comments into the Go and Odin packages (`gen/gk_doc.py`). Read
+`make gen` copies GPUI-kit's doc comments into the Go package (`gen/gk_doc.py`). Read
 `gen/out/doc-rust-only.md` after an upgrade: it lists the sentences left out because they
 describe Rust-only mechanics. A new one there that has a plain equivalent belongs in
 `gk_doc.REWRITES`.
@@ -123,20 +120,18 @@ make gates           # everything, about 25 minutes
 
 Both print one summary table at the end (also written to `gates/out/summary.md`), with the full
 log in `gates/out/logs/gates.log`. A few known failures are listed in `gates/expected.txt` with the
-reason; they show as XFAIL and don't fail the run. Every Odin gate has a Go gate beside it (named
-`NAME-go`) that checks the same thing against Rust; a Go gate that waits for a binding the Go package
+reason; they show as XFAIL and don't fail the run. The Go gates are named `NAME-go`; a Go gate that waits for a binding the Go package
 does not have yet shows as PENDING, and is allowed only while `gates/go-pending.txt` lists it.
 
 The tests are also available one at a time:
 
 | command | what it checks | time |
 |---|---|---|
-| `make proto` | the runtime's protocol tests, one per behaviour described in `docs/PROTOCOLS.md` | about 20 s |
-| `make examples` | the Odin examples build | a minute |
-| `make pixels` | the Odin apps draw exactly the same pixels as their Rust twins | a minute |
-| `make gallery` | every page of the component gallery, Odin against Rust | a few minutes |
+| `make proto` | the runtime's protocol tests, one per behaviour described in `docs/PROTOCOLS.md` (the same as `make go-proto-all`) | a few minutes |
+| `make pixels` | the Go apps draw exactly the same pixels as their Rust twins | a minute |
+| `make gallery` | every page of the component gallery, Go against Rust (also `make gallery-go`) | a few minutes |
 | `make misuse` | mistakes in app code are caught, with a clear message, at compile or run time | a minute |
-| `make docs` | every code snippet in the guides is part of a program that builds, and both tutorials run | a few minutes |
+| `make docs` | every code snippet in the guides is part of a program that builds, and the tutorial runs | a few minutes |
 | `make counter` | a click on every frame costs no more than in Rust | a minute |
 | `make fps` | frame cost against Rust for one scene (`HZ=240 SCENE='panels 60 64 2'`) | a few minutes |
 | `make memory` | memory stays flat over long runs | a few minutes |
@@ -145,12 +140,11 @@ The tests are also available one at a time:
 | `make go-proto-all` | every protocol test in Go: the core ones, each family's (core/tests/go, the twins of `make proto`'s families) and the sample by generation | a few minutes |
 | `make go-apps` | the Go notes, todo, reader and expenses apps and the tutorial's scripted last step draw the same images as their Rust twins; the other tutorial steps draw the same images in two runs | a few minutes |
 | `make go-static` | the Go apps built the way an app is (static, only the families each one uses) | a few minutes |
-| `make go-fps` | frame cost of Go against Rust, at the same bar as Odin | about ten minutes |
-| `make cross` | both front ends compile for macOS and Windows (checked from Linux) | under a minute |
+| `make go-fps` | frame cost of Go against Rust | about ten minutes |
+| `make cross` | the Go front end compiles for macOS and Windows (checked from Linux) | under a minute |
 
-The tests link the shared library (Go: the build tag `gkshared`, set in `go/env.sh`; Odin:
-`-define:GK_SHARED=true` in the test scripts), so one program can run against either `lib/ship` or
-`lib/diag`. `make go-static` builds the Go and Odin apps the way a user's app is built, statically
+The tests link the shared library (the build tag `gkshared`, set in `go/env.sh`), so one program can run against either `lib/ship` or
+`lib/diag`. `make go-static` builds the Go apps the way a user's app is built, statically
 against `lib/diag`, and runs their scripted sessions: if a generated function forgot to link its
 component family, the app stops and the check fails.
 
@@ -161,16 +155,14 @@ reach the GPU, or that has no GPU, set `GK_DISPLAY=xvfb` to use Xvfb instead; it
 60 Hz, so also set `GK_RATES=60`. Scratch files go to `$TMPDIR/gk-gates` (set `GK_SCRATCH` to move
 them) and are deleted when each test ends.
 
-The scripts find Odin as `odin` on your PATH; set `ODIN=/path/to/odin` to use another one.
-
 ## Making a download
 
 ```sh
 make dist
 ```
 
-This assembles what an app developer downloads (the library, the Odin package, the Go module,
-the examples, the guides and the licences) into `dist/`, for the platform you're on, from the
+This assembles what an app developer downloads (the library, the Go module, the
+examples, the guides and the licences) into `dist/`, for the platform you're on, from the
 library in `lib/`. The published releases are built by CI (`.github/workflows/platforms.yml`) on
 Linux, macOS and Windows, which runs for pull requests and for releases only (a push to `main` builds
 nothing). To release, bump `version` in `Cargo.toml`, push it to `main`, then run

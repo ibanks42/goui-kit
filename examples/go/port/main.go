@@ -2,8 +2,7 @@
 // of 11.17, 11.30, 13.20, 13.31): a window's close asked of the app, the quit hook, reduced motion, a
 // window's icon and app id, drag and drop, the menu bar, image sources as bytes and pixels, an
 // element's tooltip, a plot of paths and quads. Each mode runs offscreen (the diag library) under a
-// gk-meter script and prints lines gates/go-proto.sh checks, with the exit code. The Odin twins of
-// the first five are core/tests/app's modes of the same names.
+// gk-meter script and prints lines gates/go-proto.sh checks, with the exit code.
 //
 //	GK_PROTO=close-veto | quit-hook | reduce-motion | window-icon | bad-icon | drag | menus | menu-no-action |
 //	         images | bad-pixels | tooltip | plot | fill-nil
@@ -55,7 +54,7 @@ func (a *App) mayClose(cx *gk.Cx) bool {
 	return a.allow
 }
 
-// saysYes: Go's types leave no handler without an answer (Odin's twin has one; it lets the window close).
+// saysYes: Go's types leave no handler without an answer.
 func (a *App) saysYes(cx *gk.Cx) bool {
 	a.asked++
 	fmt.Printf("port asked by a second handler n=%d\n", a.asked)

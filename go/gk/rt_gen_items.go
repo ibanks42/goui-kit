@@ -1,7 +1,6 @@
 package gk
 
-// Item functions and asks (ported from odin/gk/rt_items.odin, rt_source.odin's row_context and
-// kit_text.odin; docs/PROTOCOLS.md 9.14, 9.16, 9.22, 9.41).
+// Item functions and asks (docs/PROTOCOLS.md 9.14, 9.16, 9.22, 9.41).
 //
 // Item functions: some components draw one part per item through a closure upstream calls while it
 // draws (a calendar's days, a tree's entries, a popover's content, an input's tokens, a diff's
@@ -67,7 +66,7 @@ func itemsSource(cx *Cx, f any, kind int, tramp func(f any, cx *Cx, src RowSourc
 	var src RowSource
 	row := func(cx *Cx, at RowAt) Element { return tramp(rec.f, cx, src, at) }
 	active := vb.active
-	vb.active = false // an item function's source may be made in a view function (Odin's new_source)
+	vb.active = false // an item function's source may be made in a view function
 	src = NewRowSource(cx, 0, row, Initial(0), Capacity(512))
 	vb.active = active
 	itemsSources[key] = src

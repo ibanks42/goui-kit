@@ -1,7 +1,7 @@
 package gk
 
-// gpui's Transformation and TimedTransformation of an svg (ported from odin/gk/rt_motion.odin;
-// docs/PROTOCOLS.md 13.30): Svg's WithTransformation and WithTimedTransformation, Icon's Transform.
+// gpui's Transformation and TimedTransformation of an svg
+// (docs/PROTOCOLS.md 13.30): Svg's WithTransformation and WithTimedTransformation, Icon's Transform.
 //
 //	gk.Svg().Path("icons/spinner.svg").WithTimedTransformation(gk.NewTimedRotation(time.Second, gk.NewTransformation()))
 //	gk.NewIcon(gk.IconStarFill).Transform(gk.NewTransformation().Rotated(0.5).WithAlpha(0.6))

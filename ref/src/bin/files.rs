@@ -1,4 +1,4 @@
-//! ref-files: the Rust reference for examples/odin/files, written the way a Rust GPUI-kit app is
+//! ref-files: the Rust reference for examples/go/files, written the way a Rust GPUI-kit app is
 //! written: the menu bar (gpui's `set_menus`, and the kit's `GlobalState::set_app_menus` so its
 //! `AppMenuBar` draws the same menus where the platform has none), the platform's file dialogs and a
 //! window prompt awaited on the main thread, `open_url`, and a status line that slides and fades in
@@ -7,7 +7,7 @@
 //!   ref-files                  a real window
 //!   ref-files --script FILE    offscreen, driven by a gk-meter script (diag build); the platform is
 //!                              not asked: the script's `answer ..` lines answer the dialogs, as they
-//!                              do the library's scripted platform for the Odin app (PROTOCOLS.md 11.31)
+//!                              do the library's scripted platform for the Go app (PROTOCOLS.md 11.31)
 use gpui_kit::base::animation::EffectTransition;
 use gpui_kit::base::{GlobalState, v_flex};
 use gpui_kit::component::ActiveTheme;

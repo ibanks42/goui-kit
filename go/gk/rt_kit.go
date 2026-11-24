@@ -2,8 +2,7 @@ package gk
 
 import "time"
 
-// Small hand-written pieces of the kit's API that Odin also writes by hand (rt_overlay.odin,
-// rt_motion.odin, kit_input.odin): a button with a dropdown menu, the kit's effect transition
+// Small hand-written pieces of the kit's API: a button with a dropdown menu, the kit's effect transition
 // applied to an element, and the number a slider reports.
 
 // DropdownMenu is the kit's Button with a dropdown menu (DropdownMenu::dropdown_menu): the menu

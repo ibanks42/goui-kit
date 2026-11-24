@@ -48,7 +48,7 @@ func key(section, row int) uint64 {
 	return uint64(section)<<32 | uint64(uint32(row))
 }
 
-// variant names an event's variant as Odin's %v does (Go: the type's name and its fields).
+// variant names an event's variant as the checks expect (Go: the type's name and its fields).
 func variant(e any) string {
 	return strings.ReplaceAll(fmt.Sprintf("%#v", e), "gk.", "")
 }
@@ -92,7 +92,7 @@ func (a *App) listEvent(cx *gk.Cx, e gk.ListDelegateEvent) {
 		}
 		gk.SetCount(cx, a.src, len(a.matches))
 		gk.Invalidate(cx, a.src, 0, len(a.matches))
-		gk.AnswerSearch(cx, a.src, e.ID) // Odin: gk.answer(cx, a.src, e.id, true)
+		gk.AnswerSearch(cx, a.src, e.ID)
 		fmt.Printf("rows search answered query=%q matches=%d\n", a.query, len(a.matches))
 	}
 }
@@ -110,7 +110,7 @@ func (a *App) listStep(cx *gk.Cx, _ gk.ClickEvent) {
 		fmt.Printf("rows table-state scroll_to_row 50000\n")
 		return
 	}
-	d := gk.DelegateData{Threshold: 20} // Odin: gk.default_delegate_data()
+	d := gk.DelegateData{Threshold: 20}
 	d.Empty = a.empty
 	d.LoadingView = a.loading
 	switch a.clicks {

@@ -1,6 +1,6 @@
 """The editor family's generator rules, docs/PROTOCOLS.md sections 9.20 to 9.26.
 
-Hooked into gk_model.py, gk_rust.py and gk_odin.py at a few points each (search for
+Hooked into gk_model.py, gk_rust.py and gk_go.py at a few points each (search for
 `gk_editor.`); everything else of the editor rules lives here. gk_lists.py (the rest of the lists
 and editor rules) is not edited: these rules come before or after its hooks.
 
@@ -21,7 +21,7 @@ and editor rules) is not edited: these rules come before or after its hooks.
   a row source, one row per distinct value.
 - **Markdown plugins** (`mdplug`, 9.23). `plugin<P: MarkdownPlugin>` and `plugin<P: TextViewPlugin>`
   take one of the kit's plugins (node types that implement MarkdownPlugin: FrontmatterPlugin) or
-  the library's data plugin (`crate::editor_text::DataPlugin`, Odin `gk.Markdown_Plugin`), which
+  the library's data plugin (`crate::editor_text::DataPlugin`, Go `gk.MarkdownPlugin`), which
   claims Markdown nodes by a rule the app gives as data and draws them through a row source.
 - **Small values** (9.24): an `ElementId` read back is its text; a `gpui::EntityId` argument is the
   entity behind any input, textarea or editor handle (`gk.entity_id(state)`).
@@ -337,58 +337,6 @@ def _rust_ctx(rs, d, lazy):
         ptr = {"rc": "std::rc::Rc", "box": "Box", "arc": "std::sync::Arc"}[wrap]
         return f"{{ let f: {ptr}<dyn Fn({', '.join(ptypes)}) -> {ret}> = {rs.wrap(wrap, body)}; f }}"
     return rs.wrap(wrap, body)
-
-
-# ---------------------------------------------------------------- Odin (gk_odin.Odin.otype / put hooks)
-
-def odin_type(od, d, out=False):
-    k = d[0]
-    if k == "askdyn":
-        return f"Ask({od.otype(d[1], True)}, {od.otype(d[2], False)})"  # a one-method delegate (9.26)
-    if k == "tfrag":
-        return od.m.nodes[d[1]]["odin"]
-    if k == "keyset":
-        return "[]" + od.otype(d[1], False)
-    if k == "table":
-        return "[]" + od.otype(d[1], False)
-    if k in ("ctxlazy", "viewrows"):
-        return "Row_Source"  # its rows read the closure's values with gk.row_context (PROTOCOLS.md 9.22)
-    if k == "mdplug":
-        return "Markdown_Plugin_Any"  # kit_editor_text.odin: one of the kit's plugins or a gk.Markdown_Plugin
-    if k == "entityid":
-        return "Entity_Id"
-    if k == "held":
-        return od.m.denums[d[1]]["odin"] + "_Held"  # a value the library holds (9.30)
-    if k == "decorate":
-        return "Decorate"  # kit_editor_text.odin: a style and a row (9.32)
-    if k == "lentmut":
-        return od.m.nodes[d[1][1]]["odin"]  # a value of the lent type (9.33)
-    return None
-
-
-def odin_put(od, d, v):
-    k = d[0]
-    if k == "askdyn":
-        return [f"put_u64(o, {v}.src.h)"]
-    if k == "tfrag":
-        return [f"put_u32(o, take({v}.el))"]
-    if k in ("keyset", "table"):
-        return od.put(["list", d[1], "vec"], v)
-    if k in ("ctxlazy", "viewrows"):
-        return [f"put_u64(o, {v}.h)"]
-    if k == "mdplug":
-        out = ["switch x in " + v + " {"]
-        for n, (_, key) in enumerate(d[2:]):
-            out += [f"case {od.m.nodes[key]['odin']}:", f"\tput_u8(o, {n})", "\tput_u32(o, take_value(x.nd))"]
-        return out + ["case Markdown_Plugin:", f"\tput_u8(o, {len(d) - 2})", "\tput_markdown_plugin(o, x)",
-                      "case:", f"\tput_u8(o, {len(d) - 2})", "\tput_markdown_plugin(o, {})", "}"]
-    if k == "entityid":
-        return [f"put_u64(o, u64({v}))"]
-    if k == "decorate":
-        return [f"put_decorate(o, {v})"]  # kit_editor_text.odin (9.32)
-    if k == "lentmut":
-        return [f"put_vtape(o, {v}.nd)"]  # a tape of its own (13.6), its ops applied in place (9.33)
-    return None
 
 
 def check(m):
@@ -743,12 +691,12 @@ def variant_new(rs, e, v):
 #
 # - **Held values.** A data enum the app builds that a bound function also returns, whose variants
 #   cannot be read back (`parse_markdown -> Result<Vec<BlockNode>, SharedString>`; BlockNode::Custom
-#   holds a parsed MarkdownNode): read back, each value is a library object (`["held", rt]`, Odin
-#   `Block_Node_Held`, a temporary handle; gk.retain keeps it), and the enum gets one member more,
+#   holds a parsed MarkdownNode): read back, each value is a library object (`["held", rt]`, Go
+#   `BlockNodeHeld`, a temporary handle; gk.Retain keeps it), and the enum gets one member more,
 #   the held value, so a parsed block goes wherever the app's own blocks go (variant 0xfffe).
 # - **Recursive data enums.** A variant holding a list of its own enum (`Root { children:
-#   Vec<BlockNode> }`, Blockquote, Surface, List, ListItem) is built like any variant: Odin's union
-#   holds a slice of itself, the decoder is the enum's own function.
+#   Vec<BlockNode> }`, Blockquote, Surface, List, ListItem) is built like any variant: the Go interface's
+#   variant holds a slice of it, the decoder is the enum's own function.
 # - **Iterators of iterators** read back are collected at each level (`Table::rows` ->
 #   `[][]gk.Paragraph_Read`).
 
@@ -958,17 +906,6 @@ def denum_arms(rs, e):
     return [f"        {HELD_TAG} => genapi::obj_shown::<{e['rust']}>(r.u64()),"]
 
 
-def odin_denum(od, e, members, puts, lines):
-    """The Odin union's member for a held value (`Block_Node_Held`, a library object's handle)."""
-    if not e.get("held") or e["out"]:
-        return
-    V = e["odin"] + "_Held"
-    lines += [f"// {V}: a {e['name']} the library holds (a function's result, PROTOCOLS.md 9.30); temporary until "
-              "gk.retain, as any object a call hands out.", f"{V} :: struct {{", "\tusing state: State,", "}"]
-    members.append(V)
-    puts.append((V, [f"put_u16(o, {HELD_TAG:#x})", "put_obj(o, x.h)"]))
-
-
 def rust_files(rs, groups):
     """n_editor_host.rs: the decoders gk.block_host's node uses (core/src/editor_text.rs), made from
     the descriptors of the values it takes (`host_args`), so a change upstream is a change here."""
@@ -989,44 +926,6 @@ def rust_files(rs, groups):
     rs.close()
     groups.setdefault("n_editor_host", [])
 
-
-def odin_files(od):
-    """gen_editor_host.odin: `gk.block_host`, the editor host's element (PROTOCOLS.md 9.30), written
-    from the same descriptors as its decoders."""
-    m = od.m
-    if not any(i.get("host") for i in m.all_items()):
-        return
-    a = host_args(m)
-    ranges = dict(a)["decorations"][1][1][1]
-    od.open("gen_editor_host.odin", "The editor host's element (docs/PROTOCOLS.md 9.30): its procedure, written from "
-            "the descriptors of the values it takes (gen/gk_editor.py host_args).")
-    od.add("// Leaf_Decoration: byte ranges of one keyed leaf's text painted behind it (a selection, find",
-           "// matches), as upstream's collect_leaf_geometry takes them.",
-           "Leaf_Decoration :: struct {", "	key:    u64,", f"	ranges: {od.otype(ranges)},", "}", "",
-           "// Leaf_Entry: one keyed text leaf the host laid out, and its geometry (a temporary library object:",
-           "// gk.retain keeps it).", "Leaf_Entry :: struct {", "	key:      u64,", "	geometry: Leaf_Geometry,", "}", "",
-           "// Leaf_Geometry_Event: the payload of on_geometry, after the frame the leaves were laid out in.",
-           "Leaf_Geometry_Event :: struct {", "	leaves: []Leaf_Entry,", "}", "",
-           "@(init, private)", "reg_editor_host :: proc \"contextless\" () {",
-           "\tregister_shape(SHAPE_LEAF_GEOMETRY, Leaf_Geometry_Event, nil)", "}", "")
-    ps = ["id: string"] + [f"{n}: {od.otype(d)}" + ("" if n == "blocks" else " = nil") for n, d in a if n != "decorations"]
-    ps += ["decorations: []Leaf_Decoration = nil", "on_geometry: Handler = {}", "loc := #caller_location"]
-    lines = ["// block_host is the editor host: the app's blocks drawn as TextView draws them (each with its",
-             "// flow, or its place among the blocks; the render context, or TextView's), the decorations painted",
-             "// behind the keyed leaves, and on_geometry given each keyed leaf's geometry after the frame, when",
-             "// the leaves changed. A parsed document's blocks are gk.parse_markdown's held values.",
-             f"block_host :: proc({', '.join(ps)}) -> Element {{",
-             "\te := new_node(N_EDITOR_HOST, loc)", "\to := node_args()", "\tput_str(o, id)"]
-    for n, d in a:
-        if n == "decorations":
-            lines += ["\tput_u32(o, u32(len(decorations)))", "\tfor dec in decorations {", "\t\tput_u64(o, dec.key)"]
-            lines += ["\t\t" + x for x in od.put(ranges, "dec.ranges")] + ["\t}"]
-        else:
-            lines += ["\t" + x for x in od.put(d, n)]
-    lines += ["\tif on_geometry.call != nil {", "\t\tput_u8(o, 1)", "\t\tput_u32(o, register(on_geometry, SHAPE_LEAF_GEOMETRY))",
-              "\t} else {", "\t\tput_u8(o, 0)", "\t}", "\treturn e", "}", ""]
-    od.item(["item", HOST + "::collect_leaf_geometry"], lines)
-    od.close()
 
 def mutator(m, node, it, fn, ctx, tp):
     """`fn push(&mut self, x)` returning nothing, on a value the editor host takes, with no `self ->
@@ -1119,7 +1018,7 @@ def decorate(m, key, kind, params, wrap, ptypes):
     """`impl FnOnce(X) -> X + 'static` with no window and app, X an element that is Styled and a
     ParentElement (NumberInput::increment_button(Button), MessageScroller::with_jump_button_renderer):
     upstream keeps it and calls it while it renders, where the app cannot run and no decode context
-    is left. The app gives what it would add as data (Odin `gk.Decorate`): a style, decoded where
+    is left. The app gives what it would add as data (Go `gk.Decorate`): a style, decoded where
     the closure is decoded (its colours resolved then), and content, a row of a row source laid out
     where the window is (as the fold placeholder's, 9.22). gk_model.closure_desc's hook before it
     refuses a build closure without a window; None when the rule does not apply."""
@@ -1207,7 +1106,7 @@ def event_reads(m, st, crate, ctx, tpath, t):
 def event_read_statuses(m):
     """The reads of an event payload made of them (9.35) are bridged by it. A payload whose event no
     state the binding keeps raises (the state was made again or left to a hand-written protocol: the
-    kit's DockArea raises DockToggleEvent, which `gk.on_dock_toggle` delivers, rt_dock.odin) loses its
+    kit's DockArea raises DockToggleEvent, which `gk.OnDockToggle` delivers, rt_dock.go) loses its
     record and shape, so no type is generated that nothing hands the app."""
     kept, owners = set(), set()
     for st, ev, rt, key, owner in getattr(m, "_editor_event_reads", []):
@@ -1239,8 +1138,8 @@ def answer_sets(m):
     E an enum the binding reads (EditorState::set_overlay_action_handler(InputOverlayKind, action)):
     upstream needs the answer at once, while it dispatches a key, so the app gives it in advance: the
     pairs (E, action name) it takes; the handler answers true for those (upstream then leaves the action
-    to the app's own key bindings and, for Enter and Escape, closes the overlay). Odin
-    `ed->set_overlay_action_handler(cx, {{.Completion, "input::Tab"}})` (PROTOCOLS.md 9.36)."""
+    to the app's own key bindings and, for Enter and Escape, closes the overlay)
+    (PROTOCOLS.md 9.36)."""
     g = _g()
     pat = re.compile(r"fn (\w+)\(&mut self, (\w+): impl Fn\((\w+), Box<dyn gpui::Action>, &mut Window, &mut Context<'_, [\w<>]+>\) -> bool \+ 'static\)")
     for st in m.states.values():

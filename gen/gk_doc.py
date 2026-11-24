@@ -1,10 +1,10 @@
-"""gk_doc: GPUI-kit's own documentation, carried into the generated Go and Odin (docs/DESIGN.md
+"""gk_doc: GPUI-kit's own documentation, carried into the generated Go (docs/DESIGN.md
 section 13), so an editor shows it on hover.
 
 Reads api/rustdoc/docs.json.gz (gkgen.py strip keeps each item's doc text and intra-doc links
 there) and translates a doc comment for a binding:
   - an intra-doc link to something the binding has becomes that thing's name in the language
-    (`[`Self::on_click`]` is `OnClick` in Go, `on_click` in Odin); any other link keeps its text;
+    (`[`Self::on_click`]` is `OnClick` in Go); any other link keeps its text;
   - Rust code examples are left out (a ```-fenced block, and an Examples heading left empty);
   - a sentence about Rust-only mechanics (`cx.notify()`, `&mut Window`, `Rc<..>`, ...) is left
     out: a binding's handler redraws its own view and has no window or context to pass, so the
@@ -184,15 +184,10 @@ NOTES = {
         "go": ["Shows an image the library made from pixels. Make the gk.RenderImage once, with",
                "gk.NewRenderImage, keep it while a view shows it and gk.Release it when no view does:",
                "gpui keeps its texture on the graphics card until then."],
-        "odin": ["Shows an image the library made from pixels. Make the gk.Render_Image once, with",
-                 "gk.render_image, keep it while a view shows it and gk.release it when no view does:",
-                 "gpui keeps its texture on the graphics card until then."],
     },
     "gpui_kit::ImageSource::Custom": {
         "go": ["Upstream's loader, called while gpui draws, is the image itself here: a gk.RenderImage",
                "made once with gk.NewRenderImage, as for gk.ImageSourceRender."],
-        "odin": ["Upstream's loader, called while gpui draws, is the image itself here: a gk.Render_Image",
-                 "made once with gk.render_image, as for gk.Image_Source_Render."],
     },
 }
 
@@ -222,11 +217,6 @@ def resolver(m):
     for table in (m.enums, m.denums, m.records):
         for rt, t in table.items():
             by_path[rt] = ("type", t)
-    owner = {}
-    for st in m.states.values():
-        for g in ("reads", "writes", "calls", "events"):
-            for it in st.get(g, []):
-                owner[id(it)] = st
     for it in m.items + [i for n in m.nodes.values() for i in n["ctors"]]:
         if it.get("doc") and it["status"] in bound:
             by.setdefault(tuple(it["doc"]), ("item", it))
@@ -242,12 +232,7 @@ def resolver(m):
         if kind in ("type", "state"):
             return x.get(lang)
         if x.get(lang):  # a free function or a constructor
-            return ("gk." if lang == "odin" else "gk.") + x[lang]
-        if lang == "go":
-            return gk_go.camel(x["name"])
-        st = owner.get(id(x))
-        if st is not None and st.get("odin"):
-            return f"gk.{st['odin'].lower()}_{x['name']}"
-        return "->" + x["name"]
+            return "gk." + x[lang]
+        return gk_go.camel(x["name"])
 
     return names

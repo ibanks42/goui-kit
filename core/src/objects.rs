@@ -48,7 +48,7 @@ thread_local! {
 }
 
 const HINT: &str = "a library object a read, a call or an event hands out is temporary: it lives \
-                    until the next frame begins unless gk.retain keeps it";
+                    until the next frame begins unless gk.Retain keeps it";
 
 fn stale(e: GkErr) -> GkErr {
     if e.0 == ERR_STALE_HANDLE {

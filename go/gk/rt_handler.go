@@ -421,7 +421,7 @@ func event(cx *Cx, r *reader) {
 	info := shapes[shape]
 	if info.call == nil || !info.call(h.fn, cx, r, &t.ret) {
 		// A handler that takes no event fits every shape (a kept handler given where another
-		// shape fires, as in Odin): it runs, and the library gets the default return value.
+		// shape fires): it runs, and the library gets the default return value.
 		if f, ok := h.fn.(func(*Cx)); ok {
 			f(cx)
 			goto ran

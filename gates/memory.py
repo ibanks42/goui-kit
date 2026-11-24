@@ -2,8 +2,7 @@
 """memory.py sample|verdict ...: resident memory over a long run (gates/memory.sh).
 
     memory.py sample OUT.csv -- CMD ARGS...    run CMD, write its resident set every 20 ms
-    memory.py verdict NAME FRAMES DIR          judge DIR/rust.csv against DIR/odin.csv
-                                               (DIR/go.csv with GK_FRONT=go)
+    memory.py verdict NAME FRAMES DIR          judge DIR/rust.csv against DIR/go.csv
 
 sample follows the process it starts (not its children) through /proc/PID/statm and exits
 with CMD's status; the command's output goes to OUT.log.
@@ -11,7 +10,7 @@ with CMD's status; the command's output goes to OUT.log.
 verdict compares the resident set at the middle of the run (median of the samples between
 40 % and 50 % of its duration, when every page has been shown many times) with the end
 (median of the last 10 %). A leak of b bytes a frame shows as growth of about half the
-run's frames times b. Pass: the Odin app grows no more than the Rust reference plus
+run's frames times b. Pass: the Go app grows no more than the Rust reference plus
 SLACK_KB (default 2048 kB, about 1 % of either process; the spread of this number between
 two equal runs), and both finished. Prints the table rows and one line "GATE memory NAME".
 Standard library only."""
@@ -71,8 +70,8 @@ def windows(rows):
 def verdict(name, frames, d):
     slack = int(os.environ.get("SLACK_KB", "2048"))
     why, growth, cells = [], {}, []
-    front = os.environ.get("GK_FRONT", "odin")
-    title = {"odin": "Odin", "go": "Go"}.get(front, front)
+    front = os.environ.get("GK_FRONT", "go")
+    title = {"go": "Go"}.get(front, front)
     for b in ("rust", front):
         rows = read(f"{d}/{b}.csv")
         if len(rows) < 50:

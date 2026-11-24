@@ -1,4 +1,4 @@
-# Odin names that collided and got a number
+# Names that collided and got a number
 
 - `Link`: gpui_kit::base::text::Link (taken by gpui_kit::base::Link)
 - `Theme_Color`: gpui_kit::component::ThemeColor (taken by gpui_kit::component::ThemeColor)

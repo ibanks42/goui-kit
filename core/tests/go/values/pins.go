@@ -1,5 +1,4 @@
-// val-pins: the temporary handles pinned to views, now and released later (gk.TestValuePins;
-// Odin's gk.test_value_pins).
+// val-pins: the temporary handles pinned to views, now and released later (gk.TestValuePins).
 package main
 
 import (

@@ -34,13 +34,13 @@ USABLE = ("bound", "bridged")
 
 # Procedures of the runtime that take a value type (the description cannot see them).
 RUNTIME = {
-    "gpui_kit::component::table::Column": "gk.table_columns (kit_rows.odin, PROTOCOLS.md 13.6)",
-    # animations and motion values (rt_motion.odin, PROTOCOLS.md 13.30)
-    "gpui_kit::base::Presence": "gk.motion(el, {prop, gk.At_Presence{presence, from, to}}) (rt_motion.odin, PROTOCOLS.md 13.30)",
-    "gpui_kit::base::animation::EffectTransition": "gk.effect(el, effect, id): EffectTransition::apply (rt_motion.odin, PROTOCOLS.md 13.30)",
-    "gpui_kit::base::Timing": "gk.motion(el, {prop, gk.At_Keyframes{id, keyframes, timing}}) (rt_motion.odin, PROTOCOLS.md 13.30)",
-    "gpui_kit::base::Transition": "gk.motion(el, {prop, gk.To_Transition{id, target, policy}}) (rt_motion.odin, PROTOCOLS.md 13.30)",
-    "gpui_kit::base::Spring": "gk.motion(el, {prop, gk.To_Spring{id, target, policy}}) (rt_motion.odin, PROTOCOLS.md 13.30)",
+    "gpui_kit::component::table::Column": "gk.SetTableKitColumns (rt_table.go, PROTOCOLS.md 13.6)",
+    # animations and motion values (rt_motion.go, PROTOCOLS.md 13.30)
+    "gpui_kit::base::Presence": "gk.Motion(el, gk.MotionValue{prop, gk.AtPresence{presence, from, to}}) (rt_motion.go, PROTOCOLS.md 13.30)",
+    "gpui_kit::base::animation::EffectTransition": "gk.Effect(el, effect, id): EffectTransition::apply (rt_kit.go, PROTOCOLS.md 13.30)",
+    "gpui_kit::base::Timing": "gk.Motion(el, gk.MotionValue{prop, gk.AtKeyframes{id, keyframes, timing}}) (rt_motion.go, PROTOCOLS.md 13.30)",
+    "gpui_kit::base::Transition": "gk.Motion(el, gk.MotionValue{prop, gk.ToTransition{id, target, policy}}) (rt_motion.go, PROTOCOLS.md 13.30)",
+    "gpui_kit::base::Spring": "gk.Motion(el, gk.MotionValue{prop, gk.ToSpring{id, target, policy}}) (rt_motion.go, PROTOCOLS.md 13.30)",
 }
 
 # Why a value type left is not accepted, by the upstream path of the type or by a prefix

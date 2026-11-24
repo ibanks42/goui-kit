@@ -1,6 +1,6 @@
 // paint: gradient backgrounds and a plot of the binding's own paths and quads (docs/PROTOCOLS.md
-// 11.38, 12.17), the Go twin of ref/src/bin/paint.rs and examples/odin/paint. gates/pixels.sh paint
-// compares the three image by image.
+// 11.38, 12.17), the Go twin of ref/src/bin/paint.rs. gates/pixels.sh paint
+// compares the two image by image.
 package main
 
 import (

@@ -13,12 +13,11 @@
 #             time, the list's scrollbar fade and what differs between the two Rust runs not counted)
 #   expenses  gates/expenses.script by the Rust twin (ref-expenses) and by Go: every image
 #             byte-identical
-#   tutorial  every step a few frames (as gates/docs.sh), twice each; the last step's session under
+#   tutorial  every step a few frames, twice each; the last step's session under
 #             gates/docs-tutorial.script by the Rust twin (ref-tutorial) and by Go
 # notes, todo, reader and expenses have Rust twins (ref/src/bin/notes.rs, todo.rs, reader.rs,
 # expenses.rs), and so has the tutorial's last step (tutorial.rs, its scripted session); the
-# tutorial's other steps had their Odin twins as the second implementation, and now are judged by
-# their own runs (a run that is not deterministic fails) and by gates/docs-go.sh. Default: all of them. Prints lines starting with GATE.
+# tutorial's other steps are judged by their own runs (a run that is not deterministic fails) and by gates/docs-go.sh. Default: all of them. Prints lines starting with GATE.
 # Images in gates/out/go-apps/.
 # GK_STATIC=1: the Go programs are built the way an app is, against the static library
 # (lib/diag's, for the offscreen runs), so each links only the component families it calls into;

@@ -180,7 +180,7 @@ pub fn styled<E: IntoElement + Styled + 'static>(el: E, w: Wrap) -> AnyElement {
 }
 
 fn bad(msg: String) -> AnyElement {
-    // A described animation the library cannot draw is the app's mistake (the Odin package
+    // A described animation the library cannot draw is the app's mistake (the Go package
     // refuses what it can see at the app's line), found while drawing: it stops, as a released
     // handle shown by a view does (genapi::released_shown), never draws something else.
     eprintln!("gk: an animation cannot be drawn: {msg}");
@@ -325,7 +325,7 @@ pub fn node(dx: &mut Dx, ty: u16, args: u32, _first: u32) -> Option<AnyElement> 
             };
             return Some(match crate::generated::motion_trap(dx, child, id, &focus) {
                 Some(el) => el,
-                None => bad("focus_trap takes an element that is a parent, styled and an Element (gk.div())".into()),
+                None => bad("FocusTrap takes an element that is a parent, styled and an Element (gk.Div())".into()),
             });
         }
         5 => {
@@ -333,7 +333,7 @@ pub fn node(dx: &mut Dx, ty: u16, args: u32, _first: u32) -> Option<AnyElement> 
             let scope = crate::platform::scope_shown(r.u64());
             return Some(match crate::generated::motion_scope(dx, child, scope) {
                 Some(el) => el,
-                None => bad("text_selection_scope takes an element that is a parent (gk.div())".into()),
+                None => bad("TextSelectionScopeOf takes an element that is a parent (gk.Div())".into()),
             });
         }
         k => return Some(bad(format!("animated node kind {k}: 1 animations, 2 effect, 3 motion values, 4 focus trap, 5 text selection scope"))),
@@ -347,7 +347,7 @@ pub fn node(dx: &mut Dx, ty: u16, args: u32, _first: u32) -> Option<AnyElement> 
 // ------------------------------------------------------------------ svg transformations (13.30)
 
 /// gpui's Transformation of an svg: f32 scale x, y, translation x, y (pixels), rotation (radians),
-/// alpha (1 opaque; Odin writes 1 for a gk.Transformation without one).
+/// alpha (1 opaque; Go writes 1 for a gk.Transformation without one).
 pub fn transformation(r: &mut R) -> gpui_kit::Transformation {
     let scale = gpui_kit::size(r.f32(), r.f32());
     let translate = gpui_kit::point(gpui_kit::px(r.f32()), gpui_kit::px(r.f32()));

@@ -88,7 +88,7 @@ func hostBlocks() []gk.BlockNode {
 	two := []gk.BlockNode{gk.BlockNodeParagraph{Value: gk.NewParagraphDefault().Push(gk.NewInlineNode("second"))}}
 	items := []gk.BlockNode{gk.BlockNodeListItem{Children: one}, gk.BlockNodeListItem{Children: two, Checked: gk.Some(true)}}
 	bs = append(bs, gk.BlockNodeList{Children: items})
-	bs = append(bs, gk.BlockNodeCodeBlock{Value: gk.NewBaseCodeBlockFromCode("x := 1", gk.Some("odin")).WithLeafKey(4)})
+	bs = append(bs, gk.BlockNodeCodeBlock{Value: gk.NewBaseCodeBlockFromCode("x := 1", gk.Some("demo")).WithLeafKey(4)})
 	for _, h := range r6.held {
 		bs = append(bs, h)
 	}
@@ -121,7 +121,7 @@ func (a *App) onLeaves(cx *gk.Cx, e gk.LeafGeometryEvent) {
 	}
 }
 
-// alignNames prints column alignments as Odin's %v does: ["Left", "Right"].
+// alignNames prints column alignments in the form the checks expect: ["Left", "Right"].
 func alignNames(as []gk.ColumnumnAlign) string {
 	names := [...]string{"None", "Left", "Center", "Right"}
 	parts := make([]string, len(as))

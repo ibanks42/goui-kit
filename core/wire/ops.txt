@@ -1,5 +1,5 @@
 # The wire tables: one line per number. Numbers are append-only.
-# core/wire/gen.py writes core/src/ops.rs, core/include/gk_ops.h and odin/gk/ops.odin from
+# core/wire/gen.py writes core/src/ops.rs, core/include/gk_ops.h and go/gk/gen_ops.go from
 # this file; the hash of this file and of api/opcodes.lock (the generator's numbers) is the
 # api_hash the library and the binding compare at start. docs/PROTOCOLS.md explains every class and the ranges reserved for the generator
 # (element ops, call ops and node types from 256, shapes from 64).
@@ -119,7 +119,7 @@ call TEST_SOURCE_TAKE 25
 call TEST_FIRE_SHAPE 26
 
 # --- rows family (track T, docs/PROTOCOLS.md section 9.5): lists, tables and trees over row
-# sources, core/src/shim_rows.rs and odin/gk/kit_rows.odin. Reserved: call 48-63, shape
+# sources, core/src/shim_rows.rs and go/gk/rt_rows.go. Reserved: call 48-63, shape
 # 16-19, node 12-15.
 # a list's, a table's events and requests (List_Event, Table_Event: one flat record each)
 shape LIST_EVENT 16
@@ -139,7 +139,7 @@ call TREE_ENTRY 53
 call TABLE_SOURCE_COLUMNS 55
 
 # --- input family (track I, docs/PROTOCOLS.md section 9.6): the editor's providers over a
-# row source's request channel, core/src/shim_input.rs and odin/gk/kit_input.odin. Reserved:
+# row source's request channel, core/src/shim_input.rs and go/gk. Reserved:
 # call 32-47, shape 14-15, node 10-11.
 # a provider's request: u64 id, u16 variant, then Completions {str text, u64 offset,
 # u8 trigger kind, opt<str> trigger} | Hover {str text, u64 offset}
@@ -154,7 +154,7 @@ call EDITOR_PROVIDERS 32
 node INPUT_EDITOR 10
 
 # --- app track (actions, key bindings, timers, windows, clipboard, dock; docs/PROTOCOLS.md
-# section 11): core/src/app.rs and odin/gk/rt_app.odin. Reserved: call 64-111, shape 20-27,
+# section 11): core/src/app.rs and go/gk/rt_app.go. Reserved: call 64-111, shape 20-27,
 # node 16-23, hkind 9-10.
 # a timer (cx->after, cx->every): releasing it cancels it
 hkind TASK 9
@@ -205,7 +205,7 @@ call QUIT_ON_LAST_WINDOW 81
 
 # --- handles track (round 3, docs/PROTOCOLS.md section 13): library objects that are not
 # entities, behind handles; values built outside a view. core/src/objects.rs,
-# odin/gk/rt_handles.odin. Reserved: call 112-127, shape 28-31, node 24-27, hkind 8.
+# go/gk. Reserved: call 112-127, shape 28-31, node 24-27, hkind 8.
 hkind OBJ 8
 # u64 object: a temporary handle (a read's, a call's or an event's result) is kept until
 # gk.release (immediate)
@@ -217,7 +217,7 @@ call OBJ_TEST_TEMPS 113
 # their own (section 13.6); immediate when the state is 0, buffered otherwise
 call TABLE_COLUMN_VALUES 114
 # --- data and plots track (docs/PROTOCOLS.md section 12): the app's rows for generic charts
-# and plot shapes, described plots. core/src/data.rs, core/src/plot.rs, odin/gk/rt_data.odin.
+# and plot shapes, described plots. core/src/data.rs, core/src/plot.rs, go/gk/rt_data.go.
 # Reserved: call 128-143, shape 32-35, node 28-31.
 # u32 n, u32 value node each (a part: a value type that paints itself; generated::paint_part)
 node PLOT 28
@@ -229,14 +229,14 @@ node PLOT_PATH 29
 # f32 x, f32 y, f32 width, f32 height, f32 corner radius, the fill, f32 border width, the border colour
 node PLOT_QUAD 30
 # --- overlays and dock track (round 2, docs/PROTOCOLS.md 11.6 and 11.7): view-built closures,
-# described values, dock panels. core/src/overlay.rs, core/src/dock.rs, odin/gk/rt_overlay.odin,
-# odin/gk/rt_dock.odin. Reserved: call 144-175, shape 36-43, node 32-39, hkind 11.
+# described values, dock panels. core/src/overlay.rs, core/src/dock.rs, go/gk/rt_built.go,
+# go/gk/rt_dock.go. Reserved: call 144-175, shape 36-43, node 32-39, hkind 11.
 # u32 button node, u32 menu node (a PopupMenu described value): the kit's Button with a
 # dropdown menu built from the node each time it opens
 node DROPDOWN_BUTTON 32
 # u64 view, str name, opt<str> tab name, str title, u8 flags (1 not closable, 2 not zoomable,
 # 4 hidden, 8 no inner padding, 16 no title bar), u32 slot, u32 generation (0, 0: no events)
-# -> u64 panel (kind STATE, crate::dock::GkPanel): an Odin view as a dock panel
+# -> u64 panel (kind STATE, crate::dock::GkPanel): an app view as a dock panel
 call PANEL_NEW 144
 # u64 panel, the same data (buffered)
 call PANEL_SET 145
@@ -304,7 +304,7 @@ call DOCK_TOGGLE_SUBSCRIBE 163
 shape DOCK_TOGGLE 39
 # --- values (docs/PROTOCOLS.md sections 13.8 to 13.12):
 # values nothing accepted, objects inside records, generic calculators, results, theming.
-# core/src/values.rs, odin/gk/rt_values.odin. Reserved: call 208-239, shape 52-59, node 48-55,
+# core/src/values.rs, go/gk. Reserved: call 208-239, shape 52-59, node 48-55,
 # hkind 13.
 # a kit action value (a value node whose type implements Action, made like any value) as an
 # action id: u32 length, the value's tape (section 13.6) -> u32 action id (immediate)
@@ -316,8 +316,8 @@ call OBJ_PIN 209
 call VALUES_TEST 210
 # --- lists and editor track (round 2, docs/PROTOCOLS.md sections 9.9 to 9.12): searchable
 # lists, selects and comboboxes over a row source, table delegate data, the editor's providers,
-# data closures. core/src/shim_select.rs, core/src/shim_editor.rs, odin/gk/kit_select.odin,
-# odin/gk/kit_editor.odin. Reserved: call 176-207, shape 44-51, node 40-47, hkind 12.
+# data closures. core/src/shim_select.rs, core/src/shim_editor.rs, go/gk/rt_select.go,
+# go/gk/rt_editor.go. Reserved: call 176-207, shape 44-51, node 40-47, hkind 12.
 # a select's or combobox's search request: u64 id, str query
 shape SEARCH_EVENT 44
 # the items of a searchable source: u64 source, u8 flags (1 rows draw the items, 2 searches
@@ -334,7 +334,7 @@ call TABLE_ROW_LABELS 178
 # last column view; header style, row style (each a value tape, u32 length 0: none) (buffered)
 call TABLE_LOOK 179
 # round 3 (docs/PROTOCOLS.md 9.13, 9.14): data closures answered between frames.
-# core/src/shim_text.rs, odin/gk/kit_text.odin.
+# core/src/shim_text.rs, go/gk.
 # an ask's request: u64 id, u64 ask (its row source), the closure's arguments (its key)
 shape ASK_EVENT 45
 # a row source becomes an ask: u64 source (immediate)
@@ -343,7 +343,7 @@ call ASK_NEW 180
 call ASK_TEST 181
 # round 4 (docs/PROTOCOLS.md 9.16 to 9.18): element closures over a context, objects lent by kit
 # state, delegates answered between frames. core/src/source.rs, core/src/shim_editor.rs,
-# odin/gk/rt_source.odin, odin/gk/kit_editor.odin.
+# go/gk/rt_source.go, go/gk/rt_editor.go.
 # the values an element closure over a context last handed a row: u64 source, u32 section, u32 row
 # -> the values in their wire types (immediate; allowed in a view procedure)
 call CTX_GET 182
@@ -355,10 +355,10 @@ call HIGHLIGHTER_NEW 184
 # alias, str name) each (immediate)
 call LANGUAGES_NEW 185
 # round 5, the editor track (docs/PROTOCOLS.md 9.20 to 9.26): core/src/editor_text.rs,
-# odin/gk/kit_editor_text.odin.
+# go/gk.
 # the tests': -> u64 Markdown nodes the data plugins claimed, u64 view rows made for distinct values
 call EDITOR_TEST 186
-# round 6, the editor track (docs/PROTOCOLS.md 9.30 onward): core/src/editor_text.rs, odin/gk/kit_editor_text.odin.
+# round 6, the editor track (docs/PROTOCOLS.md 9.30 onward): core/src/editor_text.rs, go/gk.
 # the editor host: str id; u32 n, BlockNode each; u32 n, (u8 has, u32 FlowPosition value node) each; u8 has,
 # u32 RenderContext value node; u32 n, (u64 leaf key, ranges as RenderContext::with_foreground_ranges') each;
 # u8 has, u32 handler (shape LEAF_GEOMETRY)
@@ -369,7 +369,7 @@ shape LEAF_GEOMETRY 46
 call EDITOR_HOST_TEST 187
 # (end of the lists and editor track's block)
 # --- values track, round 4 (docs/PROTOCOLS.md 13.19 onward): value cells, settings fields.
-# core/src/values.rs, odin/gk/rt_values.odin (reserved block: call 208-239, shape 52-59, node 48-55).
+# core/src/values.rs, go/gk (reserved block: call 208-239, shape 52-59, node 48-55).
 # a value cell: u32 length, the value's bytes in its wire type -> u64 cell (kind OBJ, kept; immediate)
 call CELL_NEW 211
 # u64 cell, u32 length, the value's bytes (buffered: lands with the turn's writes; every window redraws)
@@ -383,8 +383,8 @@ call HANDLES_TEST 214
 # (end of the values track's round 4 block)
 # --- platform and motion track (round 5, docs/PROTOCOLS.md 11.30 and 13.30): requests that answer
 # later (completions, delivered by a DONE turn), file dialogs, prompts, the native menu bar, URLs;
-# animations and motion values. core/src/platform.rs, core/src/motion.rs, odin/gk/rt_platform.odin,
-# odin/gk/rt_motion.odin. In the app block (call 64-111, shape 20-27) and the values block (node 48-55).
+# animations and motion values. core/src/platform.rs, core/src/motion.rs, go/gk/rt_platform.go,
+# go/gk/rt_motion.go. In the app block (call 64-111, shape 20-27) and the values block (node 48-55).
 # a file dialog's or a new path's answer: Paths_Done {u8 status (0 answered, 1 cancelled, 2 failed),
 # list<str> paths, str error}
 shape PATHS 22
@@ -420,7 +420,7 @@ call PLATFORM_LOG 89
 node ANIMATED 48
 # (end of the platform and motion track's block)
 # --- components track, round 6 (docs/PROTOCOLS.md 11.17 to 11.28): core/src/shim_rows.rs,
-# shim_select.rs, values.rs, odin/gk/kit_rows.odin, kit_select.odin. In the overlays block (call
+# shim_select.rs, values.rs, go/gk/rt_rows.go, rt_select.go. In the overlays block (call
 # 144-175, shape 36-43, node 32-39).
 # u32 child node, u32 menu node (a described PopupMenu, 11.6): an element that carries its row's
 # menu (TableDelegate::context_menu, Tree::context_menu, 11.24), drawn as its child
@@ -430,7 +430,7 @@ node ROW_MENU 38
 call SEARCH_RULES 164
 # (end of the components track's round 6 block)
 # --- platform track, round 6 (docs/PROTOCOLS.md 13.31): gpui's element leftovers. core/src/platform.rs,
-# core/src/source.rs, core/src/motion.rs, odin/gk/rt_platform.odin, rt_source.odin, rt_motion.odin. In the
+# core/src/source.rs, core/src/motion.rs, go/gk/rt_platform.go, rt_source.go, rt_motion.go. In the
 # app block (call 64-111, node 16-23).
 # -> u64 image cache (kind OBJ, kept; immediate): gpui's RetainAllImageCache::new
 call IMAGE_CACHE_NEW 90
@@ -450,12 +450,12 @@ call PLATFORM_TEST 94
 # 1 horizontal), u32 n, n x (f32 width, f32 height); then the list's style ops
 node VIRTUAL_LIST 16
 # (end of the platform track's round 6 block)
-# --- usability round 1 (docs/PROTOCOLS.md 11.33): core/src/app.rs, odin/gk/rt_app.odin. In the app block.
+# --- usability round 1 (docs/PROTOCOLS.md 11.33): core/src/app.rs, go/gk/rt_app.go. In the app block.
 # (immediate, in a handler) GPUI's App::stop_propagation: the event goes no further than this handler's element
 call STOP_PROPAGATION 95
 # (end of the usability round 1 block)
 # --- the port round (docs/PROTOCOLS.md 11.38): a window's close asked of the app, the app's quit,
-# reduced motion. core/src/app.rs, odin/gk/rt_app.odin, go/gk/rt_state.go. In the app block.
+# reduced motion. core/src/app.rs, go/gk/rt_app.go, go/gk/rt_state.go. In the app block.
 # u64 window (0: the turn's), u32 slot, u32 generation (a kept handler of shape UNIT_BOOL) -> u64
 # listener (kind SUB): asked when the user closes the window (Window::on_window_should_close); a
 # handler that returns false keeps it open. Released, or stale: it no longer holds the window.
@@ -468,7 +468,7 @@ call REDUCE_MOTION 98
 # u8 reduce (buffered): App::set_reduce_motion (every window redraws)
 call SET_REDUCE_MOTION 99
 # (end of the port round's block)
-# --- item procedures (docs/PROTOCOLS.md 9.41): core/src/items.rs, odin/gk/rt_items.odin, gen/gk_items.py.
+# --- item procedures (docs/PROTOCOLS.md 9.41): core/src/items.rs, go/gk, gen/gk_items.py.
 # In the lists and editor block (call 176-207, shape 44-51, node 40-47).
 # u8 index: the view upstream handed an item procedure's closure (a tooltip's content), placed by the row
 node KIT_VIEW 41

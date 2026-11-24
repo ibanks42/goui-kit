@@ -1,5 +1,4 @@
-// editor2: the protocol tests of docs/PROTOCOLS.md 9.30 to 9.37 (the port of
-// core/tests/editor2/round6.odin).
+// editor2: the protocol tests of docs/PROTOCOLS.md 9.30 to 9.37.
 //
 //	GK_PROTO=host        the editor host: the app's blocks (a heading, a paragraph of inline nodes,
 //	                     a list of list items, a code block: recursive variants) and Markdown parsed

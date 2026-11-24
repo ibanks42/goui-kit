@@ -1,7 +1,7 @@
-//! Dock panels as Odin views (docs/PROTOCOLS.md section 11.7).
+//! Dock panels as app views (docs/PROTOCOLS.md section 11.7).
 //!
 //! `GkPanel` is the library's one implementation of the kit's `Panel` traits (gpui-base's and the
-//! component layer's): an entity behind a state handle (`gk.Dock_Panel`) that draws an Odin view
+//! component layer's): an entity behind a state handle (`gk.DockPanel`) that draws an app view
 //! and answers every question the dock asks while it draws (name, tab name, title, closable,
 //! zoomable, visible, padding, title bar) from data the app pushed (`gk.panel_set`), never by
 //! calling the app. What the dock tells a panel (made active, zoomed, added to a tab group,
@@ -89,7 +89,7 @@ pub struct GkPanel {
     group: Option<WeakEntity<TabGroup>>,
 }
 
-/// Panel_Event kinds (odin/gk/rt_dock.odin).
+/// PanelEvent kinds (go/gk/rt_dock.go).
 const EV_ACTIVE: u8 = 0;
 const EV_ZOOMED: u8 = 1;
 const EV_ADDED: u8 = 2;
@@ -456,7 +456,7 @@ pub fn put_entity<E: AsEntity>(e: &E, out: &mut Vec<u8>) {
     out.put_u64(e.handle());
 }
 
-/// A duration read back: i64 nanoseconds (Odin's time.Duration).
+/// A duration read back: i64 nanoseconds (Go's time.Duration).
 pub fn put_ms(d: &std::time::Duration, out: &mut Vec<u8>) {
     out.extend_from_slice(&(d.as_nanos().min(i64::MAX as u128) as i64).to_le_bytes());
 }
@@ -945,7 +945,7 @@ fn skin_call(r: &mut R, c: &mut Call) -> GkResult<()> {
     let h = r.u64();
     genapi::state::<DockArea>(h)?;
     let skin = SKINS.with(|s| s.borrow().get(&h).cloned()).ok_or_else(|| {
-        genapi::GkErr(ERR_BAD_OP, "this dock area has no skin (make it with gk.dock_area_skinned)".into())
+        genapi::GkErr(ERR_BAD_OP, "this dock area has no skin (make it with gk.NewDockAreaSkinned)".into())
     })?;
     match r.u8() {
         0 => c.out.put_u16(match skin.panel_style() {
@@ -1163,7 +1163,7 @@ impl GkRenderer {
                 _ => {
                     eprintln!(
                         "gk: the view a dock renderer gave for a frame hook returned a node of type {ty}: a frame is a \
-                         gk.div() (or gk.h_flex(), gk.v_flex()), whose styles and children upstream's frame takes"
+                         gk.Div() (or gk.HFlex(), gk.VFlex()), whose styles and children upstream's frame takes"
                     );
                     std::process::exit(2);
                 }

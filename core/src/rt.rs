@@ -658,7 +658,7 @@ pub fn process_reply(reply: &mut Reply, kind: u32, mut window: Option<&mut Windo
     }
     match kind {
         K_VIEWS | K_ROWS => eprintln!(
-            "gk: {} write(s) from a view procedure were refused: a view procedure may not write",
+            "gk: {} write(s) from a view function were refused: a view function may not write",
             deferred.len()
         ),
         K_EVENT => {
@@ -967,7 +967,7 @@ pub fn describe(wh: u64, views: &[u64], window: &mut Window, cx: &mut App) {
         if let Err(GkErr(code, msg)) = accept(wh, view, generation, bytes, row.map(|r| r.1), cx) {
             eprintln!(
                 "gk: a view's description was refused ({msg}; error {code}); the view keeps what it showed. \
-                 The app's odin/ package and the library are from different downloads, or this is a bug in the binding."
+                 The app's go/ folder and the library are from different downloads, or this is a bug in the binding."
             );
         } else if let Some((src, decoded, had_tape)) = row {
             let list = if had_tape || !decoded { &mut sources } else { &mut first };

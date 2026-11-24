@@ -104,7 +104,7 @@ fn count(src: u64, section: u32) -> usize {
 
 // --- lists -----------------------------------------------------------------------------------
 
-/// List_Event kinds (shape LIST_EVENT): the `kind` field of the Odin record.
+/// List_Event kinds (shape LIST_EVENT): the `kind` field of the app's record.
 const LE_SELECT: u16 = 0;
 const LE_RIGHT_CLICK: u16 = 1;
 const LE_CONFIRM: u16 = 2;
@@ -351,7 +351,7 @@ fn list_loading_default() -> AnyElement {
 
 // --- tables ----------------------------------------------------------------------------------
 
-/// Table_Delegate_Event kinds (shape TABLE_EVENT): the `kind` field of the Odin record. The
+/// Table_Delegate_Event kinds (shape TABLE_EVENT): the `kind` field of the app's record. The
 /// table's own events (selection, double clicks, widths) are TableState's, subscribed to with
 /// the generated `on_table_event`.
 const TE_SORT: u16 = 0;

@@ -1,7 +1,7 @@
 //! Item procedures (docs/PROTOCOLS.md 9.41): the element closures upstream calls while it draws
 //! a part of a component for one item (a calendar's day, a time field's segment, a tree's entry,
 //! a nav stack's page, a popover's content, a notification's action button), described by an
-//! Odin procedure between frames.
+//! app function between frames.
 //!
 //! Each call of such a closure in a frame is a row of a row source (`source::ctx_key`, the
 //! bookkeeping of the element closures over a context of 9.16): the values upstream hands in are
@@ -40,8 +40,8 @@ pub fn handed<T: 'static>(i: u8) -> T {
         Some(Ok(b)) => *b,
         _ => {
             eprintln!(
-                "gk: the {} an item procedure is handed was placed twice, or outside its own row: \
-                 an item's element can be used once, in the procedure that received it",
+                "gk: the {} an item function is handed was placed twice, or outside its own row: \
+                 an item's element can be used once, in the function that received it",
                 std::any::type_name::<T>()
             );
             std::process::exit(2);

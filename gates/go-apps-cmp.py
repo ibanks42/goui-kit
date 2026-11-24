@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""go-apps-cmp.py DIR NAME [BOX[;BOX..]]: the reader's verdict for gates/go-apps.sh. DIR holds odin/, odin2/
-(the Odin app run a second time, the session's own noise) and go/. An image passes when Go's is
-byte-identical to Odin's, or when every pixel that differs lies inside a BOX (x0,y0,x1,y1 in image
-pixels: for the reader, the load toast's "in N ms", a time each app measures, and the list's
-scrollbar, whose fade is timed by the wall clock, not the script's clock: two Odin runs differ
-there now and then) or inside the box where the two Odin runs of this session differ.
+"""go-apps-cmp.py --labels REF,REF2,CAND DIR NAME [BOX[;BOX..]]: the reader's verdict for
+gates/go-apps.sh. DIR holds REF/, REF2/ (the reference run a second time, the session's own noise)
+and CAND/. An image passes when the candidate's is byte-identical to the reference's, or when every
+pixel that differs lies inside a BOX (x0,y0,x1,y1 in image pixels: for the reader, the load
+toast's "in N ms", a time each app measures, and the list's scrollbar, whose fade is timed by the
+wall clock, not the script's clock: two reference runs differ there now and then) or inside the
+box where the two reference runs of this session differ.
 Prints one GATE line and the reason for every image that is not byte-identical."""
 import os
 import struct
@@ -12,9 +13,9 @@ import sys
 import zlib
 
 args = sys.argv[1:]
-# --labels REF,REF2,CAND: the folders compared (default odin,odin2,go; gates/go-apps.sh without
-# Odin passes go,go2,go3: the Go app against itself, three runs of one session).
-ref, ref2, cand = "odin", "odin2", "go"
+# --labels REF,REF2,CAND: the folders compared (default rust,rust2,go, what gates/go-apps.sh
+# passes: the Go app against the Rust reference run twice).
+ref, ref2, cand = "rust", "rust2", "go"
 if "--labels" in args:
     i = args.index("--labels")
     ref, ref2, cand = args[i + 1].split(",")
@@ -95,7 +96,7 @@ for f in files:
         ok += 1
         continue
     noise = diff(os.path.join(d, ref, f), os.path.join(d, ref2, f)) or set()
-    # each differing pixel lies in the load time's text, or near where Odin differs from itself
+    # each differing pixel lies in the load time's text, or near where the reference differs from itself
     nb = bbox(noise)
     rest = [p for p in px if not any(inside(p, b) for b in boxes) and not (noise and inside(p, nb))]
     if not rest:

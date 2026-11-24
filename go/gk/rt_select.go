@@ -1,7 +1,7 @@
 package gk
 
-// The searchable-list family of the delegate protocol (docs/PROTOCOLS.md section 9.9), the port of
-// odin/gk/kit_select.odin: the kit's Select and Combobox, whose states are generic over a
+// The searchable-list family of the delegate protocol (docs/PROTOCOLS.md section 9.9):
+// the kit's Select and Combobox, whose states are generic over a
 // delegate the app implements upstream. The binding's delegate lives in the library over a row
 // source; the app gives it items as data, and optionally a row function that draws each item,
 // header rows for groups, and a handler that answers searches.
@@ -63,7 +63,7 @@ func SearchRow(row func(cx *Cx, at RowAt) Element) SearchOption {
 	return func(o *searchOpts) { o.row = row }
 }
 
-// SearchHeaders has the row function also describe each group's header row (at.Row is the header's marker, as in Odin's gk.HEADER).
+// SearchHeaders has the row function also describe each group's header row (at.Row is the header's marker, HeaderRow).
 func SearchHeaders() SearchOption { return func(o *searchOpts) { o.headers = true } }
 
 // SearchRequests makes searches requests to the app (SearchRequest).

@@ -2,7 +2,7 @@
 spans removed) and classifies every public function of the kit crates by rule. The result is
 the language-neutral interface description (api/gk.api.json.gz) the emitters read.
 
-Nothing here decides that an item compiles: rustc and the Odin compiler are the judges.
+Nothing here decides that an item compiles: rustc and the Go compiler are the judges.
 Standard library only. See docs/DESIGN.md section 13 and gen/README.md.
 """
 import json
@@ -691,9 +691,8 @@ class Model:
             raise first_err or Unsup("norule", f"impl Into<{rdj.ty(target)}> with no bindable member")
         if len(uniq) == 2 and uniq[0][1] is None and uniq[0][0][0] == "node" and uniq[1][0][0] == "enum":
             # An element made from an enum (Icon from an IconName): the parameter takes the enum
-            # alone, so `->icon(.Search)` keeps working (Odin infers `.Search` for an enum, never
-            # for a union); the element itself is made with its constructor (gk.icon(.Search))
-            # where a child is wanted.
+            # alone, so `.Icon(gk.IconSearch)` keeps working; the element itself is made with
+            # its constructor (gk.Icon(gk.IconSearch)) where a child is wanted.
             uniq = uniq[1:]
         single = uniq[0][0] if uniq[0][1] is None else ["from", uniq[0][0], rt, uniq[0][1]]
         self.intos[rt] = {"target": rt, "name": name, "single": single,

@@ -198,7 +198,7 @@ fn color_of(kind: u8, r: &mut R, cx: &App) -> Hsla {
         }
         COLOR_GRADIENT => {
             // Only a Fill takes a gradient; the front ends' types keep one from anywhere else
-            // (Odin's gk.Fill, Go's gk.Fill). Read past it all the same, and draw its first stop.
+            // (Go's gk.Fill). Read past it all the same, and draw its first stop.
             let (_, _, from, _) = gradient_parts(r, cx);
             eprintln!("gk: a gradient was given where the kit takes one colour: its first stop is drawn");
             from.color
@@ -640,7 +640,7 @@ impl<'a> Call<'a> {
             Some(window) => Ok(window),
             None => err(
                 ERR_NO_CONTEXT,
-                "this call needs a window: make it in a view's init procedure or in a handler",
+                "this call needs a window: make it in a view's init function or in a handler",
             ),
         }
     }
@@ -730,13 +730,13 @@ pub fn released_shown(msg: &str, what: &str) -> ! {
         eprintln!(
             "    The handle is zero: the kit state (or row source) this element shows was never made. \
              Make it once in init, keep the handle in your state struct, and give that field to the \
-             element, as in gk.input(a.search)."
+             element, as in gk.Input(a.search)."
         );
     } else {
         eprintln!(
             "    The element cannot be drawn. Release kit state only after every view that shows it \
              has been described without it: a handler that releases it marks its own view for \
-             redraw, gk.notify marks any other."
+             redraw, gk.Notify marks any other."
         );
     }
     std::process::exit(2);
@@ -744,7 +744,7 @@ pub fn released_shown(msg: &str, what: &str) -> ! {
 
 /// A Rust type name as an app developer reads it: the module paths left out
 /// (`gpui_base::input::state::InputBaseState<gpui_base::input::kind::InputMode>` is
-/// `InputBaseState<InputMode>`), the upstream name the API guide maps to the Odin one.
+/// `InputBaseState<InputMode>`), the upstream name the API guide maps to the Go one.
 pub fn app_type_name(t: &str) -> String {
     let mut out = String::with_capacity(t.len());
     let mut seg = String::new();

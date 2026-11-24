@@ -2,7 +2,7 @@
 //! the way a Rust GPUI-kit app writes them: a Select over a SearchableVec of its own item type, a
 //! searchable Select over groups, a Select whose delegate draws its own rows and group headers,
 //! a multiple Combobox, and a table whose delegate gives group headers, a header and a row style
-//! and a group header cell of its own. The Odin twin is examples/odin/gallery/lists2_pages.odin,
+//! and a group header cell of its own. The Go twin is examples/go/gallery/lists2_pages.go,
 //! over the library's search delegate and table shim; the pages' lines are in
 //! ref/gallery/pages.txt. Each page has its own state, made once when the gallery starts.
 use crate::Gallery;
@@ -20,7 +20,7 @@ use gpui_kit::{
     Pixels, SharedString, Stateful, Styled, Task, Window, div, px,
 };
 
-/// An item as the Odin pages give one (gk.Search_Item): value, title, a trigger display, a
+/// An item: value, title, a trigger display, a
 /// disabled flag.
 #[derive(Clone)]
 pub struct Fruit {
@@ -133,7 +133,7 @@ impl Lists2Pages {
             s
         });
         let editor = cx.new(|cx| {
-            let mut s = gpui_kit::base::input::EditorState::new(window, cx).language("odin").default_value(EDITOR_DIAG_TEXT);
+            let mut s = gpui_kit::base::input::EditorState::new(window, cx).language("demo").default_value(EDITOR_DIAG_TEXT);
             s.set_highlighter_factory(std::rc::Rc::new(|_lang: &str| Some(Box::new(Keywords::default()) as Box<dyn gpui_kit::base::input::InputHighlighter>)), cx);
             if let Some(d) = s.diagnostics_mut() {
                 d.push(gpui_kit::base::input::Diagnostic::new(
@@ -262,8 +262,8 @@ pub fn page(id: &str, g: &Gallery) -> Option<AnyElement> {
 }
 
 /// text-highlight: a Markdown code block highlighted by the app's closure: "proc" and "return"
-/// in red (the Odin page answers the same between frames, docs/PROTOCOLS.md 9.14).
-const TEXT_HIGHLIGHT_MD: &str = "# Code\n\n```odin\nmain :: proc() {\n    return\n}\n```\n";
+/// in red (docs/PROTOCOLS.md 9.14).
+const TEXT_HIGHLIGHT_MD: &str = "# Code\n\n```demo\nmain :: proc() {\n    return\n}\n```\n";
 
 fn text_highlight_spans(code: &str) -> Vec<(std::ops::Range<usize>, gpui_kit::HighlightStyle)> {
     let b = code.as_bytes();
@@ -287,7 +287,7 @@ fn text_highlight_spans(code: &str) -> Vec<(std::ops::Range<usize>, gpui_kit::Hi
 }
 
 /// diff-view: a patch parsed by the kit, shown by its Diff.
-const DIFF_VIEW_PATCH: &str = "diff --git a/hello.odin b/hello.odin\n--- a/hello.odin\n+++ b/hello.odin\n@@ -1,4 +1,4 @@\n package hello\n \n-main :: proc() {}\n+main :: proc() { run() }\n // end\n";
+const DIFF_VIEW_PATCH: &str = "diff --git a/hello.demo b/hello.demo\n--- a/hello.demo\n+++ b/hello.demo\n@@ -1,4 +1,4 @@\n package hello\n \n-main :: proc() {}\n+main :: proc() { run() }\n // end\n";
 
 // --- docs/PROTOCOLS.md 9.16 to 9.18 ---------------------------------------------------
 
@@ -296,8 +296,8 @@ const DIFF_VIEW_PATCH: &str = "diff --git a/hello.odin b/hello.odin\n--- a/hello
 pub const EDITOR_DIAG_TEXT: &str = "main :: proc() {\n    helper()\n    return\n}\n";
 
 /// A highlighter as a Rust app writes one: "proc" and "return" are "keyword" runs, resolved by the
-/// editor's resolver (the theme's syntax colours); the Odin page answers the same runs between
-/// frames (gk.highlighter).
+/// editor's resolver (the theme's syntax colours); the Go page answers the same runs between
+/// frames (gk.NewHighlighter).
 #[derive(Default)]
 pub struct Keywords {
     text: String,
@@ -326,7 +326,7 @@ pub fn keyword_runs(text: &str) -> Vec<(std::ops::Range<usize>, &'static str)> {
 
 impl gpui_kit::base::input::InputHighlighter for Keywords {
     fn language(&self) -> SharedString {
-        "odin".into()
+        "demo".into()
     }
     fn update(
         &mut self,

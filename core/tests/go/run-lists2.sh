@@ -1,7 +1,7 @@
 # run-lists2.sh: the protocol tests of the searchable lists and the
 # table delegate's data (docs/PROTOCOLS.md sections 9.9 and 9.10), sourced by core/tests/go/run.sh.
 # The app is core/tests/go/lists2: the kit's Select and Combobox over the library's search delegate
-# and a table's texts and looks, offscreen under gk-meter scripts. Odin twin: core/tests/run-lists2.sh.
+# and a table's texts and looks, offscreen under gk-meter scripts.
 build lists2-go lists2
 # Logs of their own: run.sh keeps a mode's log by its name, and rows, table, providers and released
 # are also modes of the rows and input apps (their logs were read for these checks).
@@ -87,7 +87,7 @@ GK_PROTO_BIN=lists2-go run status-colors 0 \
   'lists2 status syntax keyword=false index0=false'
 # Data closures answered between frames: a code block's highlights and an image's source, each
 # asked once, cached, then answered from the cache.
-GK_PROTO_BIN=lists2-go run ask 0 'lists2 ask highlight lang=odin code="proc x' 'lists2 ask image uri=pic.png' \
+GK_PROTO_BIN=lists2-go run ask 0 'lists2 ask highlight lang=demo code="proc x' 'lists2 ask image uri=pic.png' \
   'lists2 ask counts asked=2 answered=2 highlight=1 image=1 gets_more=true'
 # A static that makes several values (DiffFile::parse): its count, a patch that does not parse
 # (the kit's error), and each file by its index given to a diff state (PROTOCOLS.md 9.15).
@@ -104,14 +104,14 @@ GK_PROTO_BIN=lists2-go run ctx-token 0 \
 GK_PROTO_BIN=lists2-go run lend 0 'lists2 lend got=true empty=true' 'lists2 lend after len=2 lent=1 given_back=1'
 # A delegate answered between frames: the editor's highlighter asks the app's styles and folds
 # functions with the language, the text and a range, answered from the cache afterwards.
-GK_PROTO_BIN=lists2-go run highlight 0 'lists2 highlight lang=odin range=Range\{lo = [0-9]+, hi = [0-9]+\} text="main :: proc' \
-  'lists2 highlight folds lang=odin lines=3' 'lists2 highlight counts styles=true folds=true asked=[1-9][0-9]* answered=[1-9][0-9]* gets_more=true'
+GK_PROTO_BIN=lists2-go run highlight 0 'lists2 highlight lang=demo range=Range\{lo = [0-9]+, hi = [0-9]+\} text="main :: proc' \
+  'lists2 highlight folds lang=demo lines=3' 'lists2 highlight counts styles=true folds=true asked=[1-9][0-9]* answered=[1-9][0-9]* gets_more=true'
 # The app's language service: the syntax function is asked where a typed quote sits.
-GK_PROTO_BIN=lists2-go run languages 0 'lists2 syntax asked lang=odin offset=[0-9]+' 'lists2 languages syntax_asked=true'
+GK_PROTO_BIN=lists2-go run languages 0 'lists2 syntax asked lang=demo offset=[0-9]+' 'lists2 languages syntax_asked=true'
 # Misuse: a lent object used after the turn that lent it.
-# Go: the app's line is in round4.go (Odin round4.odin).
+# Go: the app's line is in round4.go.
 GK_PROTO_BIN=lists2-go run bad-lend 2 'lists2 bad-lend using the lent handle' 'was released' 'at .*lists2/round4.go:[0-9]+'
-# Odin's bad-ctx (gk.row_context for a row no closure drew, exit 2) has no Go twin: an item function
+# There is no bad-ctx mode (a row's context read for a row no closure drew): an item function
 # is handed its context's values (gk.Items), so there is no read of a context to misuse; not counted.
 # Small rules (PROTOCOLS.md 9.19): a patch that does not parse gives the kit's DiffParseError (its line
 # and message), a good one none; BaseHighlightPrefix over an LSP item; a tree's scroll handle is gpui's

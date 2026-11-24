@@ -1,5 +1,4 @@
-// editor2: the protocol tests of docs/PROTOCOLS.md 9.38 to 9.40 (the port of
-// core/tests/editor2/round7.odin).
+// editor2: the protocol tests of docs/PROTOCOLS.md 9.38 to 9.40.
 //
 //	GK_PROTO=custom      a parsed Custom block (the kit's frontmatter plugin claims the document's
 //	                     YAML: BlockNode::Custom wrapping the parser's MarkdownNode, a held value)

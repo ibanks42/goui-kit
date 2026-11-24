@@ -1,7 +1,7 @@
 package gk
 
-// Tables and trees of the rows family (docs/PROTOCOLS.md 9.5, 9.10, 11.24), ported from
-// odin/gk/kit_rows.odin. A table's row source holds its cells: each cell is a view of its own,
+// Tables and trees of the rows family (docs/PROTOCOLS.md 9.5, 9.10, 11.24).
+// A table's row source holds its cells: each cell is a view of its own,
 // described once by the app's cell function and retained.
 //
 //	src := gk.NewTableSource(cx, 100_000, columns, a.cell, gk.TableEvents(a.tableEvent))

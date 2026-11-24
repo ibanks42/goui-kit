@@ -239,8 +239,8 @@ func (a *App) mayClose(cx *gk.Cx) bool {
 	return a.allow
 }
 
-// saysYes: Go's types leave no handler without an answer (Odin's twin has one, says_nothing,
-// which lets the window close); this one answers yes, which is what that comes to.
+// saysYes: Go's types leave no handler without an answer; this one answers yes, which lets the
+// window close.
 func (a *App) saysYes(cx *gk.Cx) bool {
 	a.asked++
 	fmt.Printf("app asked by a second handler n=%d\n", a.asked)

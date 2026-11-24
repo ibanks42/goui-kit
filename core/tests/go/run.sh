@@ -1,10 +1,10 @@
 #!/bin/bash
-# run.sh [MODE...]: the runtime's protocol tests of the families (docs/PROTOCOLS.md), in Go: the
-# port of the Odin suites core/tests/run-FAMILY.sh. Each family is one Go test app,
+# run.sh [MODE...]: the runtime's protocol tests of the families (docs/PROTOCOLS.md), in Go.
+# Each family is one Go test app,
 # core/tests/go/FAMILY (module gpuikit.dev/coretests), built against the diag library and run
 # offscreen (no display, no compositor) in one mode per check; a check is the mode's exit code and
-# the lines it printed, the same lines the Odin twin prints. The core protocol tests in Go
-# (examples/go/proto, the port of core/tests/proto) are gates/go-proto.sh; `make go-proto-all`
+# the lines it printed. The core protocol tests in Go
+# (examples/go/proto) are gates/go-proto.sh; `make go-proto-all`
 # runs both.
 #
 # Prints one line per check and "GATE proto-families go PASS|FAIL n of m" at the end; exit 0 only
@@ -62,7 +62,7 @@ run() { mode_name=$1; if wanted; then check "$@"; fi; }
 only=("$@")
 
 # Each family: core/tests/go/run-FAMILY.sh, sourced here; it builds its app with `build NAME DIR`
-# and checks it with `GK_PROTO_BIN=NAME run MODE EXIT PATTERN...` (Odin: core/tests/run-FAMILY.sh).
+# and checks it with `GK_PROTO_BIN=NAME run MODE EXIT PATTERN...`.
 families=${GK_FAMILIES:-$(cd "$here" && ls run-*.sh | sed 's/^run-//; s/\.sh$//')}
 for fam in $families; do
   [ -f "$here/run-$fam.sh" ] && . "$here/run-$fam.sh"

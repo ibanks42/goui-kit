@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
-"""gk_apidoc.py [--check]: the component indexes of docs/API.md and docs/API-GO.md, read from the
-generated Odin and Go packages.
+"""gk_apidoc.py [--check]: the component index of docs/API-GO.md, read from the generated Go
+package.
 
-Each index is written between two markers in its guide. It is read from the files an app compiles
-against (odin/gk/gen_*.odin, go/gk/gen_*.go), not from the generator's model, so what it names is
-what exists: every element type, value type and kit state type of the kit's component and base
-modules, its upstream type, its constructor as an app calls it, and the builders, reads, writes and
-events it has beyond the styling every element shares (the methods of gk.div(), gk.Div()).
+The index is written between two markers in the guide. It is read from the files an app compiles
+against (go/gk/gen_*.go), not from the generator's model, so what it names is what exists: every
+element type, value type and kit state type of the kit's component and base modules, its upstream
+type, its constructor as an app calls it, and the builders, reads, writes and events it has beyond
+the styling every element shares (the methods of gk.Div()).
 
-    python3 gen/gk_apidoc.py           rewrite both indexes (make gen runs it)
-    python3 gen/gk_apidoc.py --check   exit 1 if a guide's index is not what its package says
-                                       (gates/docs.sh)
+    python3 gen/gk_apidoc.py           rewrite the index (make gen runs it)
+    python3 gen/gk_apidoc.py --check   exit 1 if the guide's index is not what the package says
+                                       (gates/docs-go.sh)
 Python 3 standard library only.
 """
 import os
@@ -18,9 +18,6 @@ import re
 import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-PKG = os.path.join(REPO, "odin", "gk")
-DOC = os.path.join(REPO, "docs", "API.md")
-BEGIN = "<!-- index:begin (written by gen/gk_apidoc.py from odin/gk/gen_*.odin; do not edit) -->"
 END = "<!-- index:end -->"
 
 # Builders an index line shows first when a type has them: what an app reaches for.
@@ -29,91 +26,12 @@ FIRST = ["label", "title", "text", "child", "children", "value", "checked", "sel
          "primary", "ghost", "outline", "small", "large", "disabled"]
 SHOWN = 8  # builder names per line before "…"
 
-DECL = re.compile(r"^// (\w+) is (?:a handle to )?(`?)([\w:<>, ]+?)\2(?:[.,]| \()", re.M)
-STRUCT = re.compile(r"^(\w+) :: struct \{\n((?:\t.*\n)*?)\}", re.M)
-PROC = re.compile(r"^(\w+) :: proc\((.*)\) -> (\w+) \{", re.M)
-GROUP = re.compile(r"^(\w+) :: proc\{([^}]*)\}", re.M)
-# Non-greedy parameters: a greedy (.*) swallowed a return type that ends in a parenthesis
-# (`-> Maybe(Base_Index_Path)`), so reads such as Select_State's selected_index were listed as writes.
-FIELD = re.compile(r"^\t(\w+): proc\((.*?)\)(?: -> (.+?))?,$", re.M)
-# A kit state whose constructor takes a Row_Source (upstream's delegate) is made over a source the
-# app makes first; the index shows that call in its place. A state with a Row_Source parameter
-# that is not named here fails the index, so a new one cannot be listed as an opaque `delegate`.
-SOURCES = {
-    "Combobox_State": "gk.search_source(cx, a, items)",
-    "List_State": "gk.list_source(cx, a, count, row)",
-    "Select_State": "gk.search_source(cx, a, items)",
-    "Table_State": "gk.table_source(cx, a, rows, columns, cell)",
-}
-# A state's or object's procedure, low_NAME(s: T, cx: ^Cx, ..) (gk_odin.state_body).
-SPROC = re.compile(r"^(\w+) :: proc\(s: (\w+), cx: \^Cx(.*?)\)(?: -> (.+?))? \{$", re.M)
-USING = re.compile(r"^\tusing t_\w+: \^(\w+)_Trait\(", re.M)
-TRAIT = re.compile(r"^(\w+)_Trait :: struct\(\$T: typeid\) \{\n((?:\t.*\n)*?)\}", re.M)
 # Trait tables whose builders every element has (styling, events, children, scrolling, focus,
-# accessibility): an index line leaves them out. Other tables (Button_Variants: ->primary, Sizable:
-# ->small) are the type's own vocabulary and are listed with its builders.
+# accessibility): an index line leaves them out. Other tables (ButtonVariants: .Primary, Sizable:
+# .Small) are the type's own vocabulary and are listed with its builders.
 SHARED_TRAITS = {"Styled", "Interactive_Element", "Stateful_Interactive_Element", "Parent_Element",
                  "Scrollable_Element", "Element_Ext", "Styled_Ext", "Focusable_Ext", "Theme_Styled",
                  "Theme_Styled_Parent_Element", "Accessible", "Accessibility_Ext"}
-SHARED_PREFIX = ("a11y_", "accessibility_", "aria_")
-
-
-def read_package():
-    """Every gen_*.odin file's text, by file name."""
-    out = {}
-    for fn in sorted(os.listdir(PKG)):
-        if fn.startswith("gen_") and fn.endswith(".odin"):
-            out[fn] = open(os.path.join(PKG, fn)).read()
-    return out
-
-
-def params(sig):
-    """The parameters an app writes: names, without the style flags and the caller location."""
-    out = []
-    depth, cur = 0, ""
-    for ch in sig:
-        if ch in "([{":
-            depth += 1
-        elif ch in ")]}":
-            depth -= 1
-        if ch == "," and depth == 0:
-            out.append(cur.strip())
-            cur = ""
-        else:
-            cur += ch
-    if cur.strip():
-        out.append(cur.strip())
-    names = []
-    for p in out:
-        name = p.split(":")[0].strip()
-        if name in ("loc", "flags") or p.startswith("flags:"):
-            continue
-        names.append(name)
-    return names
-
-
-def vt_fields(structs, name):
-    """(own fields, trait tables) of a VT struct."""
-    body = structs.get(name + "_VT", "")
-    fields = [m.group(1) for m in FIELD.finditer(body)]
-    traits = [m.group(1) for m in USING.finditer(body)]
-    return fields, traits
-
-
-def collect(files):
-    structs, procs, groups, decls = {}, {}, {}, []
-    for fn, text in files.items():
-        for m in STRUCT.finditer(text):
-            structs[m.group(1)] = m.group(2)
-        for m in TRAIT.finditer(text):
-            structs[m.group(1) + "_Trait"] = m.group(2)
-        for m in PROC.finditer(text):
-            procs.setdefault(m.group(3), []).append((m.group(1), m.group(2), fn))
-        for m in GROUP.finditer(text):
-            groups[m.group(1)] = [x.strip() for x in m.group(2).split(",") if x.strip()]
-        for m in DECL.finditer(text):
-            decls.append((m.group(1), m.group(3), fn))
-    return structs, procs, groups, decls
 
 
 def module_of(path):
@@ -125,173 +43,17 @@ def module_of(path):
     return None
 
 
-def pick(names):
-    first = [n for n in FIRST if n in names]
-    rest = sorted(n for n in names if n not in first)
-    return first + rest
-
-
 def short(path):
     return re.sub(r"\w+::", "", path)
 
 
-def index(files):
-    structs, procs, groups, decls = collect(files)
-    sprocs = {}
-    for text in files.values():
-        for m in SPROC.finditer(text):
-            sprocs.setdefault(m.group(2), []).append((m.group(1), m.group(4)))
-    shared, _ = vt_fields(structs, "Div")
-    shared = set(shared)
-    for t in SHARED_TRAITS:
-        shared |= {m.group(1) for m in FIELD.finditer(structs.get(t + "_Trait", ""))}
-    shared.add("style")
-    # constructor name -> the group that offers it to the app under a shorter name
-    in_group = {m: g for g, ms in groups.items() for m in ms}
-    sections = {}
-    states_shown = {}
-    for typ, path, fn in decls:
-        body = structs.get(typ)
-        if body is None:
-            continue
-        mod = module_of(path)
-        if mod is None:
-            continue
-        if "using el: Element" in body:
-            kind = "element"
-        elif "using state: State" in body:
-            kind = "state"
-        else:
-            kind = "value"
-        if fn == "gen_base_actions.odin" or (kind == "value" and "_default" in " ".join(p for p, _, _ in procs.get(typ, []))
-                                             and not vt_fields(structs, typ)[0]):
-            continue  # an action or a unit value: listed by the API guide's actions section, not here
-        entry = {"type": typ, "path": path, "kind": kind}
-        if kind == "state":
-            builder = typ + "_Builder"
-            ctors = procs.get(builder, [])
-            fields, _ = vt_fields(structs, typ)
-            reads, writes, events = [], [], []
-            low = typ.lower() + "_"
-            for name, ret in sprocs.get(typ, []):
-                if not name.startswith(low):
-                    continue
-                meth = name[len(low):]
-                shown = meth if name in groups.get(meth, []) else name  # gk.value or gk.input_state_value
-                if meth.startswith("on_") and ret == "Subscription":
-                    events.append(shown)
-                elif ret:
-                    reads.append(shown)
-                else:
-                    writes.append(shown)
-            bfields = [f for f in vt_fields(structs, builder)[0] if f != "build"]
-            entry.update(ctors=ctors, reads=reads, writes=writes, events=events, builders=bfields)
-            if not ctors and not reads and not writes:
-                continue
-        else:
-            ctors = [c for c in procs.get(typ, []) if not c[0].startswith("_")]
-            own, traits = vt_fields(structs, typ)
-            direct = set(own)
-            for t in traits:
-                if t not in SHARED_TRAITS:
-                    own += [m.group(1) for m in FIELD.finditer(structs.get(t + "_Trait", "")) if m.group(1) not in own]
-            if kind == "element":
-                # a type's own on_click, child or tooltip is listed although every element has one
-                own = [f for f in own if (f in FIRST and f in direct) or (f not in shared and not f.startswith(SHARED_PREFIX))]
-            entry.update(ctors=ctors, builders=own, traits=traits)
-            if not ctors:
-                continue  # handed to the app only (an item procedure's argument)
-            for c in ctors:
-                for p in c[1].split(","):
-                    pm = re.match(r"\s*(\w+): (\w+)$", p)
-                    if pm and pm.group(2).endswith("_State"):
-                        states_shown.setdefault(pm.group(2), []).append(in_group.get(c[0], c[0]))
-        sections.setdefault(mod, []).append(entry)
-    return sections, states_shown, in_group
-
-
-def ctor_text(c, in_group, state=False, typ=""):
-    name, sig, _ = c
-    shown = in_group.get(name, name)
-    ps = params(sig)
-    if state:
-        for p in sig.split(","):
-            pm = re.match(r"\s*(\w+): Row_Source$", p)
-            if pm:
-                if typ not in SOURCES:
-                    raise SystemExit(f"gk_apidoc: {typ}'s constructor {name} takes a Row_Source; name the call "
-                                     "that makes it in SOURCES")
-                ps = [SOURCES[typ] if x == pm.group(1) else x for x in ps]
-        return f"gk.{shown}({', '.join(ps)})->…->build()"
-    return f"gk.{shown}({', '.join(ps)})"
-
-
-def names_text(names, prefix="->"):
-    names = pick(names)
-    if not names:
-        return ""
-    head = ", ".join(f"`{prefix}{n}`" for n in names[:SHOWN])
-    more = len(names) - SHOWN
-    return head + (f" and {more} more" if more > 0 else "")
-
-
-def render(files):
-    sections, states_shown, in_group = index(files)
-    out = [BEGIN, ""]
-    total = {"element": 0, "value": 0, "state": 0}
-    order = sorted(sections, key=lambda m: (not m.startswith("component"), m))
-    for mod in order:
-        entries = sorted(sections[mod], key=lambda e: ({"element": 0, "state": 1, "value": 2}[e["kind"]], e["type"]))
-        out += [f"### {mod}", ""]
-        for e in entries:
-            total[e["kind"]] += 1
-            seen, ctors = set(), []
-            for c in sorted(e["ctors"], key=lambda c: (len(params(c[1])), c[0])):
-                t = ctor_text(c, in_group, e["kind"] == "state", e["type"])
-                if t not in seen:
-                    seen.add(t)
-                    ctors.append(t)
-            usage = " or ".join(f"`{t}`" for t in ctors[:3]) + (f" (and {len(ctors) - 3} more)" if len(ctors) > 3 else "")
-            if not usage:
-                usage = "handed out by the kit (no constructor)"
-            line = f"- **`gk.{e['type']}`** ({short(e['path'])}"
-            if e["kind"] == "state":
-                line += ", kit state): " + usage
-                shown = states_shown.get(e["type"])
-                if shown:
-                    line += "; shown by " + ", ".join(f"`gk.{s}(state)`" for s in sorted(set(shown)))
-                parts = []
-                if e["builders"]:
-                    parts.append("built with " + names_text(e["builders"]))
-                if e["reads"]:
-                    parts.append("reads " + names_text(e["reads"], "gk."))
-                if e["writes"]:
-                    parts.append("writes " + names_text(e["writes"], "gk."))
-                if e["events"]:
-                    parts.append("events " + ", ".join(f"`gk.{n}(s, cx, gk.on(p))`" for n in e["events"]))
-                if parts:
-                    line += "; " + "; ".join(parts)
-            else:
-                line += ", " + ("element" if e["kind"] == "element" else "value") + "): " + usage
-                if e["builders"]:
-                    line += "; " + names_text(e["builders"])
-            out.append(line)
-        out.append("")
-    out.insert(2, f"{total['element']} element types, {total['state']} kit state types and {total['value']} value types, "
-                  f"in {len(sections)} upstream modules. Styling builders every element has (`->bg`, `->w`, "
-                  "`->p`, `->border_color`, … and the style tokens) are not repeated per type.")
-    out.insert(3, "")
-    out.append(END)
-    return "\n".join(out)
-
-
 # ---- The Go index (docs/API-GO.md), read from go/gk/gen_*.go ------------------------------------
 #
-# The same entries as the Odin index, read from the Go files: a type is declared by its doc comment
+# A type is declared by its doc comment
 # (`// ButtonEl is gpui_kit::component::button::Button.`) and a struct holding a node (an element,
 # or a value when it has valueNode) or a handle (kit state). Builders are its exported methods; a
 # method whose body calls a trait function (tStyledBg) belongs to that trait, and the shared traits
-# are left out as in Odin. Read before or after gofmt alike (spacing is not significant).
+# are left out. Read before or after gofmt alike (spacing is not significant).
 
 GO_PKG = os.path.join(REPO, "go", "gk")
 GO_DOC = os.path.join(REPO, "docs", "API-GO.md")
@@ -302,11 +64,11 @@ GO_FUNC = re.compile(r"^func (?:\((\w+) (\w+)\) )?(\w+)\(", re.M)
 GO_TRAITFN = re.compile(r"^// (t[A-Z]\w*): ([\w:<>, ]+)::(\w+)\.$", re.M)
 # putText and slotView are the Go package's .Text and .ChildView, which every parent element has.
 GO_TRAITCALL = re.compile(r"\b(t[A-Z]\w*|putText|slotView)\(e\.n\b")
-# Go's names for the shared trait tables (the Odin names without underscores, as upstream spells them).
+# Go's names for the shared trait tables (without underscores, as upstream spells them).
 GO_SHARED_TRAITS = {t.replace("_", "") for t in SHARED_TRAITS}
 GO_SHARED_PREFIX = ("A11y", "Accessibility", "Aria")
 GO_FIRST = ["".join(w.capitalize() for w in n.split("_")) for n in FIRST]
-# The call that makes the row source a kit state's constructor takes (Odin: SOURCES).
+# The call that makes the row source a kit state's constructor takes.
 GO_SOURCES = {
     "ComboboxState": "gk.NewSearchSource(cx, items)",
     "ListState": "gk.NewListSource(cx, count, row)",
@@ -559,10 +321,7 @@ def write(doc, begin, text, check):
 
 def main(argv):
     check = "--check" in argv
-    rc = write(DOC, BEGIN, render(read_package()), check)
-    if os.path.isfile(GO_DOC):
-        rc = write(GO_DOC, GO_BEGIN, go_render(go_read_package()), check) or rc
-    return rc
+    return write(GO_DOC, GO_BEGIN, go_render(go_read_package()), check)
 
 
 if __name__ == "__main__":

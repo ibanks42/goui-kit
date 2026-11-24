@@ -5,7 +5,7 @@ by hand: `make gen` rewrites the coverage block from `api/coverage.json` (which 
 generator writes on every run), and `gates/status.py` writes the gate block from the last
 run of `make gates`.
 
-The Odin package in `odin/gk`, the Go package in `go/gk` and the decoders in `core/src/gen` are
+The Go package in `go/gk` and the decoders in `core/src/gen` are
 the generator's output; every example, the gallery and the protocol tests use them. "Bound" does
 not yet mean "seen working": that is the verified column, which counts what a gallery page that
 is byte-identical to the Rust reference shows.
@@ -32,19 +32,19 @@ The rows are every public type, trait and module of functions of gpui-component 
 gpui-base, the gpui traits and types the kit's elements are made of, and the style table. A
 trait's methods are counted once, in the trait's row, and bound for every implementor through
 one shared table. "Bound" and "bridged" mean generated and accepted by rustc (in the release
-build of the library) and by the Odin compiler. A bridged function goes through a protocol
+build of the library) and by the Go compiler. A bridged function goes through a protocol
 of the runtime (a handler, a fragment, a state behind a handle); handlers and state run and
 are tested, fragments and actions are generated and not tested (see "Runtime protocols").
 The skipped column names its reasons. Verified is counted by the generator from
 `gates/verified.json`, which `gates/gallery.sh --record` writes from a passing gallery run.
 
 Not in the table because the generator does not emit them: the hand-written bridges of
-`core/src/hand.rs` and `odin/gk/kit_bridges.odin` (a uniform list over rows kept in the
+`core/src/hand.rs` and `go/gk/rt_source.go` (a uniform list over rows kept in the
 library, and `gk.text`, a string as an element). Upstream's `InputBaseState<M>` is
 instantiated by the generator (`[instantiate] states` in `api/overrides.toml`) as
 `InputState`, `EditorState` and `TextareaState`, and its row `base::InputBaseState` counts a
 function as bridged when one of the three binds it. The editor's completion and hover
-providers are the input family's shims (`core/src/shim_input.rs`, `odin/gk/kit_input.odin`),
+providers are the input family's shims (`core/src/shim_input.rs`, `go/gk/rt_editor.go`),
 not counted here.
 
 ## Coverage
@@ -795,54 +795,90 @@ so the ratios, not the absolute times, are what carries from one machine to anot
 frame-cost noise term is the Rust-against-Rust difference or the standard error of its median,
 whichever is larger. A run where another job disturbs the machine says so and asks to be run
 again. The table scene's p95 sits near its limit because of the kit's own full redraw of the
-table about every 126 frames, and the Odin rebuild time grows with the generated package; both
-are listed in `gates/expected.txt`.
+table about every 126 frames; it is listed in `gates/expected.txt`.
 
 <!-- gates:begin -->
-Last run of `gates/all.sh`: 12 November 2026, 09:54 (Odin dev-2026-11-nightly:9a69916). XFAIL is a gate known to fail today (`gates/expected.txt`).
+Last run of `gates/all.sh`: 23 November 2026, 18:00 (go1.27.4-X:nodwarf5). XFAIL is a gate known to fail today (`gates/expected.txt`).
 
-Tier full: 17 passed, 5 failed, 0 failing as expected, 0 passing unexpectedly; 2154 s in all. Judged: the ship library of 12 Nov 09:17 (sha256 3b5f8d3952be); Odin package and examples at commit 943e4d4.
+Tier quick: 57 passed, 2 failed, 0 failing as expected, 0 passing unexpectedly, 0 pending a Go binding; 272 s in all. Judged: library lib/ship/libgpuikit.so of 23 Nov 17:51 (sha256 67601e022a23), copied at 17:56; Go package and examples at commit df15ea2.
 
 | gate | subject | result | detail |
 |---|---|---|---|
-| rebuild | odin | FAIL | median 1.25 s after a one-line edit (limit 1.16 s: twice the baseline package's rebuild measured in the same run; 2.16 x baseline) |
-| misuse | odin | FAIL | 68 of 69 cases |
-| proto | odin | FAIL | 180 of 181 protocol tests |
-| gensample | odin | PASS | 28931 calls in 428 node types, run 1; built in 10.0 s |
-| pixels | counter | PASS | 3 of 3 images byte-identical to Rust |
-| pixels | writerule | PASS | 4 of 4 images byte-identical to Rust |
-| pixels | notes | PASS | 25 of 25 images byte-identical to Rust |
-| pixels | files | PASS | 11 of 11 images byte-identical to Rust |
-| conformance | generated | PASS | 740 pages, 740 of them in Odin; current |
-| gallery | pixels | PASS | 867 of 867 pages byte-identical to Rust (1000 images), 0 differ, 0 not bound in Odin yet, 0 unstable in Rust; of the 740 generated one-function pages 740 identical; 1409 of 1409 upstream functions shown are verified |
-| counter | click | PASS | 7 clicks, shown [1] frame(s) after the click, Rust [1] |
-| readme | example | PASS | 36 lines, as in README.md; builds and draws 30 frames |
-| fps | panels-60-64-0-ship-60hz | PASS | odin-speed: 2 of 10 rounds left out as disturbed, p50 0.997 (limit 1.045), p95 0.998 (limit 1.054), missed 0 against Rust's 0, crossings per frame 0 |
-| fps | panels-60-64-2-ship-60hz | FAIL | odin-speed: the measurement was disturbed, only 9 of 20 rounds had the two Rust runs within 5% of each other (another job was running): run it again; 11 of 20 rounds left out as disturbed, p50 1.016 (limit 1.046), p95 1.072 (limit 1.054), missed 0 against Rust's 0 |
-| fps | counter-click-every-frame-ship-60hz | PASS | odin-speed: 10 of 20 rounds left out as disturbed, p50 1.026 (limit 1.039), p95 1.017 (limit 1.050), missed 0 against Rust's 0 |
-| fps | table-scroll-ship-60hz | FAIL | odin-speed: 5 of 10 rounds left out as disturbed, p50 0.997 (limit 1.041), p95 1.100 (limit 1.051), missed 0 against Rust's 0; cpu_p95_us 1.100 over 1.051 |
-| memory | gallery | PASS | 101087 frames: rust 217.0 -> 217.8 MB (+812 kB, peak 217.8 MB, 15.9 s), odin 245.6 -> 247.3 MB (+1744 kB, peak 247.3 MB, 19.4 s), Odin over Rust +932 kB (+19 bytes a frame; limit 2048 kB) |
-| memory | panels-60-64-2 | PASS | 6000 frames: rust 257.4 -> 258.0 MB (+572 kB, peak 258.0 MB, 97.3 s), odin 273.3 -> 273.9 MB (+580 kB, peak 274.0 MB, 97.3 s), Odin over Rust +8 kB (+3 bytes a frame; limit 2048 kB) |
-| memory | counter-clicks | PASS | 6000 frames: rust 216.8 -> 217.5 MB (+732 kB, peak 217.8 MB, 97.3 s), odin 230.9 -> 231.6 MB (+728 kB, peak 231.7 MB, 97.2 s), Odin over Rust -4 kB (-1 bytes a frame; limit 2048 kB) |
-| memory | selftest | PASS | a leak of 512 bytes a view build is refused: 101087 frames: rust 218.3 -> 219.1 MB (+904 kB, peak 219.1 MB, 17.1 s), odin 254.4 -> 266.4 MB (+12232 kB, peak 266.8 MB, 20.2 s), Odin over Rust +11328 kB (+230 bytes a frame; limit 2048 kB); the Odin app grows more than the Rust reference |
-| coverage | all | PASS | 5127 bound, 1807 bridged, 703 skipped, 0 failed, 0 not yet of 7637; 1114 verified |
-| coverage | ratchet | PASS | 674 components against 674 recorded: bound + bridged 6934 -> 6934, verified 1114 -> 1114, failed 0 -> 0 |
+| build | go | PASS | 21 programs in 11.7 s (go build, GOCACHE kept) |
+| misuse | go | PASS | 91 of 91 cases |
+| pixels | counter-go | PASS | 3 of 3 images byte-identical to Rust |
+| pixels | panels-go | PASS | 3 of 3 images byte-identical to Rust |
+| pixels | paint-go | PASS | 1 of 1 images byte-identical to Rust |
+| pixels | writerule-go | PASS | 4 of 4 images byte-identical to Rust |
+| pixels | files-go | PASS | 11 of 11 images byte-identical to Rust |
+| todo | session-go | PASS | 16 images, two starts, the saved state as the session left it |
+| reader | session-go | PASS | 15 images |
+| docs | guides-go | PASS | 14 Go blocks in 3 guides found in their programs, 12 programs build and 12 run offscreen, the last step's session (8 images), the API-GO.md index current |
+| conformance | generated | PASS | 753 pages, 753 of them in Go; current |
+| gallery-go | pixels | PASS | 884 of 884 pages byte-identical to Rust (1023 images), 0 differ, 0 pending (wait for a Go binding, gallery-go-pending.txt), 0 not bound in Go yet, 0 unstable in Rust; of the 753 generated one-function pages 753 identical; 1433 of 1433 upstream functions shown are verified |
+| counter | click-go | PASS | 7 clicks, shown [1] frame(s) after the click, Rust [1] |
+| readme | example-go | PASS | 37 lines, all in examples/go/hello/main.go; builds and draws 30 frames |
+| fps | panels-60-64-0-go-ship-1000hz | PASS | go: 1 of 5 rounds left out as disturbed, p50 0.981 (limit 1.044), p95 0.995 (limit 1.044), missed 0 against Rust's 0, crossings per frame 0 |
+| fps | panels-60-64-2-go-ship-1000hz | PASS | go: p50 1.019 (limit 1.033), p95 1.018 (limit 1.031), missed 300 against Rust's 300 |
+| fps | table-scroll-go-ship-1000hz | FAIL | go: p50 1.018 (limit 1.033), p95 1.029 (limit 1.034), missed 111 against Rust's 105; more missed frames than Rust |
+| readme | go | PASS | README.md's Go block is examples/go/hello/main.go's |
+| hello | go | PASS | 30 frames offscreen, exit 0 |
+| proto | go | PASS | 51 of 51 protocol tests |
+| rebuild | go | PASS | after a one-line edit: median 254 ms of 256 254 253 (go build , no flags); cold 7279 ms |
+| proto-families | go | FAIL | 183 of 184 protocol tests |
+| gensample | go | PASS | 32659 calls in 434 node types, run 1; built in 1.96 s |
+| go-apps | build | PASS | 4 apps and 9 tutorial steps in Go in 2.2 s |
+| pixels | notes-go | PASS | 25 of 25 images byte-identical to Rust |
+| go-apps | todo | PASS | 16 of 16 images byte-identical, go and rust |
+| go-apps | todo-state | PASS | the Go app's saved state is what the session leaves |
+| go-apps | reader | PASS | 13 of 15 images byte-identical, 2 differing only in the boxes of wall-clock time or where rust differs from itself, 0 otherwise |
+| go-apps | expenses | PASS | 11 of 11 images byte-identical, go and rust |
+| go-apps | tutorial-01 | PASS | 1 of 1 images byte-identical, go and go2 |
+| go-apps | tutorial-02 | PASS | 1 of 1 images byte-identical, go and go2 |
+| go-apps | tutorial-03 | PASS | 1 of 1 images byte-identical, go and go2 |
+| go-apps | tutorial-04 | PASS | 1 of 1 images byte-identical, go and go2 |
+| go-apps | tutorial-05 | PASS | 1 of 1 images byte-identical, go and go2 |
+| go-apps | tutorial-06 | PASS | 1 of 1 images byte-identical, go and go2 |
+| go-apps | tutorial-07 | PASS | 1 of 1 images byte-identical, go and go2 |
+| go-apps | tutorial-08 | PASS | 1 of 1 images byte-identical, go and go2 |
+| go-apps | tutorial-09 | PASS | 1 of 1 images byte-identical, go and go2 |
+| go-apps | tutorial-session | PASS | 8 of 8 images byte-identical, go and rust |
+| pixels | notes-go | PASS | 25 of 25 images byte-identical to Rust |
+| go-apps | todo | PASS | 16 of 16 images byte-identical, go and rust |
+| go-apps | todo-state | PASS | the Go app's saved state is what the session leaves |
+| go-apps | reader | PASS | 14 of 15 images byte-identical, 1 differing only in the boxes of wall-clock time or where rust differs from itself, 0 otherwise |
+| go-apps | expenses | PASS | 11 of 11 images byte-identical, go and rust |
+| go-apps | tutorial-01 | PASS | 1 of 1 images byte-identical, go and go2 |
+| go-apps | tutorial-02 | PASS | 1 of 1 images byte-identical, go and go2 |
+| go-apps | tutorial-03 | PASS | 1 of 1 images byte-identical, go and go2 |
+| go-apps | tutorial-04 | PASS | 1 of 1 images byte-identical, go and go2 |
+| go-apps | tutorial-05 | PASS | 1 of 1 images byte-identical, go and go2 |
+| go-apps | tutorial-06 | PASS | 1 of 1 images byte-identical, go and go2 |
+| go-apps | tutorial-07 | PASS | 1 of 1 images byte-identical, go and go2 |
+| go-apps | tutorial-08 | PASS | 1 of 1 images byte-identical, go and go2 |
+| go-apps | tutorial-09 | PASS | 1 of 1 images byte-identical, go and go2 |
+| go-apps | tutorial-session | PASS | 8 of 8 images byte-identical, go and rust |
+| memory | gallery-go | PASS | 31536 frames: rust 127.9 -> 128.2 MB (+360 kB, peak 128.3 MB, 3.8 s), go 152.3 -> 153.3 MB (+1076 kB, peak 153.5 MB, 4.5 s), Go over Rust +716 kB (+46 bytes a frame; limit 2048 kB) |
+| memory | panels-60-64-2-go | PASS | 2000 frames: rust 135.3 -> 135.2 MB (-130 kB, peak 135.7 MB, 4.2 s), go 153.5 -> 154.1 MB (+632 kB, peak 154.2 MB, 4.2 s), Go over Rust +762 kB (+780 bytes a frame; limit 2048 kB) |
+| memory | counter-clicks-go | PASS | 2000 frames: rust 101.2 -> 101.4 MB (+206 kB, peak 101.5 MB, 2.1 s), go 116.5 -> 116.7 MB (+202 kB, peak 116.7 MB, 2.1 s), Go over Rust -4 kB (-4 bytes a frame; limit 2048 kB) |
+| coverage | all | PASS | 5199 bound, 1881 bridged, 682 skipped, 0 failed, 3 not yet of 7765; 1232 verified |
+| coverage | ratchet | PASS | 682 components against 674 recorded: bound + bridged 6934 -> 7080, verified 1209 -> 1232, failed 0 -> 0 |
 
-Seconds per step: build 97.6, rebuild 11.0, misuse 14.2, proto 68.6, gensample 10.3, pixels 3.1, conformance 0.2, gallery 18.2, counter 10.4, readme 2.2, fps-60 730.6, fps-click 483.3, fps-table 241.3, memory 425.1, memory-selftest 37.7, coverage 0.1.
+Seconds per step: build-go 11.7, misuse-go 10.7, pixels-go 0.9, todo-go 4.8, reader-go 0.9, docs-go 18.6, conformance 0.2, gallery-go 8.6, counter-go 10.4, readme-go 1.1, fps-go-1000 19.6, fps-table-go 9.1, go 19.4, go-proto-families 26.1, go-gensample 2.0, go-apps 34.5, go-apps-static 72.2, memory-go 21.5, coverage 0.0.
 
 Frame cost in full (ship library, 300 measured frames a round; medians over all rounds, `rust2` is the Rust reference run a second time in each round; the verdict is paired by round and leaves out rounds another job disturbed, so it can differ from these columns):
 
-| scene | output | rounds | Rust CPU p50 | rust2 / Rust | Odin `-o:minimal` / Rust (p50, p95) | Odin `-o:speed` / Rust (p50, p95) | frames per second shown (Rust, Odin) | verdict |
-|---|---|---|---|---|---|---|---|---|
-| counter-click-every-frame | 60 Hz | 20 | 868.4 µs | 1.001 | 1.041, 1.240 | 1.021, 1.031 | 62, 62 | PASS |
-| panels-60-64-0 | 60 Hz | 10 | 2933.5 µs | 1.003 | 1.023, 1.044 | 0.996, 0.988 | 62, 62 | PASS |
-| panels-60-64-2 | 60 Hz | 20 | 3555.4 µs | 0.998 | 1.009, 0.991 | 1.031, 1.112 | 62, 62 | FAIL |
-| table-scroll | 60 Hz | 10 | 2215.4 µs | 1.007 | 1.167, 1.146 | 1.001, 1.018 | 62, 62 | FAIL |
+| scene | output | rounds | Rust CPU p50 | rust2 / Rust | Go / Rust (p50, p95) | frames per second shown (Rust, Go) | verdict |
+|---|---|---|---|---|---|---|---|
+| panels-60-64-0-go | 1000 Hz | 5 | 494.8 µs | 1.001 | 0.994, 1.003 | 1000, 1000 | PASS |
+| panels-60-64-2-go | 1000 Hz | 5 | 1383.5 µs | 0.997 | 1.019, 1.018 | 500, 500 | PASS |
+| table-scroll-go | 1000 Hz | 5 | 737.9 µs | 0.998 | 1.018, 1.017 | 1000, 1000 | PASS |
 
-The gallery, page by page (hand-written pages, then the pages `gates/conformance.py` generates, one per bound function):
+The Go gallery, page by page (hand-written pages, then the pages `gates/conformance.py` generates, one per bound function):
 
-| page | Odin against Rust | images | functions shown |
+| page | Go against Rust | images | functions shown |
 |---|---|---|---|
+| elem-image | identical | 1 | 4 |
 | label-basic | identical | 1 | 6 |
 | div-style | identical | 1 | 14 |
 | div-hover | identical | 2 | 1 |
@@ -948,6 +984,10 @@ The gallery, page by page (hand-written pages, then the pages `gates/conformance
 | editor5-plugin | identical | 2 | 8 |
 | editor5-tooltip | identical | 3 | 1 |
 | editor6-host | identical | 1 | 9 |
+| editor7-number | identical | 1 | 3 |
+| editor7-scroller | identical | 3 | 3 |
+| editor7-lsp | identical | 3 | 3 |
+| editor7-diagnostic | identical | 3 | 1 |
 | motion-animation | identical | 4 | 1 |
 | motion-chain | identical | 5 | 0 |
 | motion-effect | identical | 3 | 5 |
@@ -957,7 +997,6 @@ The gallery, page by page (hand-written pages, then the pages `gates/conformance
 | motion-presence | identical | 4 | 4 |
 | motion-focus-trap | identical | 1 | 1 |
 | elem-drop | identical | 3 | 4 |
-| elem-image | identical | 1 | 4 |
 | elem-scope | identical | 1 | 5 |
 | elem-vlist | identical | 1 | 2 |
 | comp6-tooltip | identical | 3 | 2 |
@@ -970,9 +1009,9 @@ The gallery, page by page (hand-written pages, then the pages `gates/conformance
 | comp6-sankey-labels | identical | 1 | 4 |
 | comp6-bar-gradient | identical | 1 | 1 |
 | comp6-bar-labels | identical | 1 | 1 |
-| **127 pages** | **127 identical, 0 differ, 0 not bound** | **260** | **673** |
+| **131 pages** | **131 identical, 0 differ, 0 pending, 0 not bound** | **270** | **684** |
 
-| type | generated one-function pages | identical | differ | not bound in Odin yet |
+| type | generated one-function pages | identical | differ | not bound in Go yet |
 |---|---|---|---|---|
 | AccordionPanel | 4 | 4 | 0 | 0 |
 | AccordionTrigger | 3 | 3 | 0 | 0 |
@@ -1005,7 +1044,7 @@ The gallery, page by page (hand-written pages, then the pages `gates/conformance
 | CarouselPagination | 2 | 2 | 0 | 0 |
 | CheckboxIndicator | 5 | 5 | 0 | 0 |
 | ChildElement | 1 | 1 | 0 | 0 |
-| Clipboard | 5 | 5 | 0 | 0 |
+| Clipboard | 6 | 6 | 0 | 0 |
 | Collapsible | 1 | 1 | 0 | 0 |
 | ColorSwatch | 6 | 6 | 0 | 0 |
 | DescriptionList | 8 | 8 | 0 | 0 |
@@ -1019,6 +1058,7 @@ The gallery, page by page (hand-written pages, then the pages `gates/conformance
 | Disableable | 1 | 1 | 0 | 0 |
 | Div | 3 | 3 | 0 | 0 |
 | DropdownButton | 3 | 3 | 0 | 0 |
+| ElementExt | 1 | 1 | 0 | 0 |
 | Empty | 2 | 2 | 0 | 0 |
 | EmptyContent | 2 | 2 | 0 | 0 |
 | EmptyDescription | 2 | 2 | 0 | 0 |
@@ -1030,14 +1070,16 @@ The gallery, page by page (hand-written pages, then the pages `gates/conformance
 | Form | 11 | 11 | 0 | 0 |
 | GroupBox | 4 | 4 | 0 | 0 |
 | GroupBoxVariants | 4 | 4 | 0 | 0 |
+| Icon | 3 | 3 | 0 | 0 |
 | InputBase | 4 | 4 | 0 | 0 |
 | InputGroup | 5 | 5 | 0 | 0 |
 | InputGroupAddon | 2 | 2 | 0 | 0 |
 | InputGroupButton | 9 | 9 | 0 | 0 |
 | InputGroupText | 2 | 2 | 0 | 0 |
 | InteractiveElement | 7 | 7 | 0 | 0 |
-| Label | 3 | 3 | 0 | 0 |
+| Label | 4 | 4 | 0 | 0 |
 | ListItem | 6 | 6 | 0 | 0 |
+| LogicalStyledExt | 2 | 2 | 0 | 0 |
 | Marker | 7 | 7 | 0 | 0 |
 | MarkerContent | 3 | 3 | 0 | 0 |
 | MarkerIcon | 2 | 2 | 0 | 0 |
@@ -1082,7 +1124,7 @@ The gallery, page by page (hand-written pages, then the pages `gates/conformance
 | SwitchTrack | 3 | 3 | 0 | 0 |
 | TabBar | 13 | 13 | 0 | 0 |
 | TableFooter | 1 | 1 | 0 | 0 |
-| Tabs | 1 | 1 | 0 | 0 |
+| Tabs | 2 | 2 | 0 | 0 |
 | Tag | 12 | 12 | 0 | 0 |
 | TitleBar | 1 | 1 | 0 | 0 |
 | Toast | 2 | 2 | 0 | 0 |
@@ -1115,7 +1157,7 @@ The gallery, page by page (hand-written pages, then the pages `gates/conformance
 | base::TableHead | 1 | 1 | 0 | 0 |
 | base::TableHeader | 1 | 1 | 0 | 0 |
 | base::TableRow | 1 | 1 | 0 | 0 |
-| base::TextView | 7 | 7 | 0 | 0 |
+| base::TextView | 8 | 8 | 0 | 0 |
 | base::Toggle | 6 | 6 | 0 | 0 |
 | base::ToggleGroup | 2 | 2 | 0 | 0 |
 | base::Toolbar | 3 | 3 | 0 | 0 |
@@ -1124,8 +1166,8 @@ The gallery, page by page (hand-written pages, then the pages `gates/conformance
 | component::Accordion | 4 | 4 | 0 | 0 |
 | component::AccordionItem | 4 | 4 | 0 | 0 |
 | component::Avatar | 2 | 2 | 0 | 0 |
-| component::Button | 14 | 14 | 0 | 0 |
-| component::Checkbox | 7 | 7 | 0 | 0 |
+| component::Button | 15 | 15 | 0 | 0 |
+| component::Checkbox | 8 | 8 | 0 | 0 |
 | component::Collapsible | 4 | 4 | 0 | 0 |
 | component::DialogClose | 1 | 1 | 0 | 0 |
 | component::DialogDescription | 1 | 1 | 0 | 0 |
@@ -1146,26 +1188,26 @@ The gallery, page by page (hand-written pages, then the pages `gates/conformance
 | component::TableCell | 4 | 4 | 0 | 0 |
 | component::TableHead | 4 | 4 | 0 | 0 |
 | component::TableHeader | 1 | 1 | 0 | 0 |
-| component::TableRow | 1 | 1 | 0 | 0 |
+| component::TableRow | 2 | 2 | 0 | 0 |
 | component::TextView | 8 | 8 | 0 | 0 |
 | component::Toggle | 5 | 5 | 0 | 0 |
 | component::ToggleGroup | 3 | 3 | 0 | 0 |
 | component::Toolbar | 3 | 3 | 0 | 0 |
 | component::ToolbarGroup | 3 | 3 | 0 | 0 |
 | 0 other types and trait tables | 0 | 0 | 0 | 0 |
-| **all** | **740** | **740** | **0** | **0** |
+| **all** | **753** | **753** | **0** | **0** |
 <!-- gates:end -->
 
 | gate | script | passes when |
 |---|---|---|
-| frame cost | `gates/fps.sh [--hz N] SCENE ARGS` | the Odin app (`-o:speed`) costs at most 1.03 times Rust's main-thread CPU per frame (median and p95) plus the Rust-against-Rust difference of the run, misses no more frames than Rust, and crosses into the app 0 times on frames with nothing changing. The ratio is the median over rounds of the ratio inside each round; a round whose two Rust runs differ by more than 5 % was disturbed by another job and is left out. Scenes: 60 panels with 0 and with 2 changing, at 60, 240 and 1,000 Hz; the counter with a click on every frame, at 60 Hz |
+| frame cost | `gates/fps.sh [--hz N] SCENE ARGS` | the Go app costs at most 1.03 times Rust's main-thread CPU per frame (median and p95) plus the Rust-against-Rust difference of the run, misses no more frames than Rust, and crosses into the app 0 times on frames with nothing changing. The ratio is the median over rounds of the ratio inside each round; a round whose two Rust runs differ by more than 5 % was disturbed by another job and is left out. Scenes: 60 panels with 0 and with 2 changing, at 60, 240 and 1,000 Hz; the counter with a click on every frame, at 60 Hz |
 | counter | `gates/counter.sh` | a click shows in the same frame as in Rust and costs 1 `EVENT` turn and at most 1 `VIEWS` turn |
-| pixels | `gates/pixels.sh [APP]` | offscreen PNGs of the Odin app are byte-identical to the Rust reference's, rendered in the same run. Apps: `counter`; `writerule` (a per-frame handler's write is in the pixels of its own frame) |
-| gallery | `gates/gallery.sh [--record]` | every page the Odin gallery has is byte-identical to the Rust gallery's, step by step; no page differs between two runs of the Rust reference; no page listed in `gates/verified.json` stopped being identical |
+| pixels | `gates/pixels.sh [APP]` | offscreen PNGs of the Go app are byte-identical to the Rust reference's, rendered in the same run. Apps: `counter`; `writerule` (a per-frame handler's write is in the pixels of its own frame) |
+| gallery | `gates/gallery.sh [--record]` | every page the Go gallery has is byte-identical to the Rust gallery's, step by step; no page differs between two runs of the Rust reference; no page listed in `gates/verified.json` stopped being identical |
 | conformance | `gates/conformance.py --check` | the generated one-function pages of the two galleries and their list agree with each other (it also says when they are behind the description) |
-| memory | `gates/memory.sh` | over 100,000 offscreen gallery frames, 6,000 frames of the 60-panel scene and 6,000 of the counter with clicks, the Odin app's resident set grows at most 2,048 kB more than the Rust reference's from the middle of the run to its end; `--selftest` proves a leak of 512 bytes a view build is refused |
-| misuse | `gates/misuse.sh` | the 18 run-time misuse cases (`examples/odin/negative`, and `negative_rows` for the delegate protocol and InputState) are correct or stop with their message, and one more does not compile |
-| rebuild | `gates/rebuild.sh` | an Odin rebuild after a one-line edit takes at most twice the rebuild of a fixed baseline package measured in the same run, so it can be judged on any machine (`GK_REBUILD_BREAKDOWN=1` adds the compiler's phases and the package sizes) |
+| memory | `gates/memory.sh` | over 100,000 offscreen gallery frames, 6,000 frames of the 60-panel scene and 6,000 of the counter with clicks, the Go app's resident set grows at most 2,048 kB more than the Rust reference's from the middle of the run to its end; `--selftest` proves a leak of 512 bytes a view build is refused |
+| misuse | `gates/go-misuse.sh` | the run-time misuse cases (`examples/go/misuse` and its `misuse_*` siblings) are correct or stop with their message, and the compile-time cases (`examples/go/misuse_compile`) do not build |
+| rebuild | `gates/go-rebuild.sh` | a Go rebuild of `examples/go/counter` after a one-line edit takes at most 5 s (median of three) |
 | coverage | `gates/coverage.sh [--accept]` | every function has a status, every row adds up, this file is current, and against `gates/coverage-baseline.json` no row is lost, has less bound + bridged or verified, or more failed |
 
 `gates/all.sh quick` (`make gates-quick`) runs all of them in a few minutes with
@@ -1186,9 +1228,9 @@ is removed. After a full run, `gates/status.py` rewrites the block above.
 - Handlers and state types: every handler shape the package registers is fired once through
   the library by the generated `shapes` test, and every generated state type with a
   constructor is made, read, written, called, subscribed and released by the generated `states`
-  test (`core/tests/gen`). That proves the calls arrive and decode; it does not check that each
+  test (`core/tests/go/gen`). That proves the calls arrive and decode; it does not check that each
   write has the effect upstream gives it, except where a family's own test or page does.
-- The sample (`gates/gensample.sh`) proves every generated Odin procedure exists and writes a
+- The sample (`gates/go-gensample.sh`) proves every generated Go function exists and writes a
   tape the runtime accepts; it does not hand those calls to the library's decoders.
 - Most usable real functions are not yet shown by a byte-identical page (the verified column
   above).
@@ -1199,18 +1241,18 @@ is removed. After a full run, `gates/status.py` rewrites the block above.
 - Typing into an Input on every frame as a frame-cost scene: the meter injects clicks and
   scrolls into a real window, not keys.
 - A real window's title on Linux is read back from what the app gave, not from the window
-  system (GPUI reads titles back only on macOS); `core/tests/overlay` checks the X11 title with
+  system (GPUI reads titles back only on macOS); `core/tests/go/overlay` checks the X11 title with
   `xwininfo` once.
-- macOS and Windows: CI builds the library and runs the hello example in both languages
+- macOS and Windows: CI builds the library and runs the hello example
   offscreen (macOS) or for a few frames (Windows); the pixel, frame-cost and memory gates run on
   Linux only.
 
 ## Runtime protocols
 
 The contract is [PROTOCOLS.md](PROTOCOLS.md) and its section 8
-lists the tests. `make proto` (`core/tests/run.sh`) runs them offscreen in about 20 s.
+lists the tests. `make proto` (`gates/go-proto.sh` and `core/tests/go/run.sh`) runs them offscreen.
 
-| protocol | state | test (mode of `core/tests/proto`) |
+| protocol | state | test (mode of `examples/go/proto`) |
 |---|---|---|
 | handlers: any closure shape, payload by `Wire`, typed return, owned data, redraw of the owning view, `gk.quiet` | built | `handlers`, `shape`, `state-type` |
 | kit state behind handles: constructor chain, reads, writes, subscriptions, release, generation and type checks | built | `state`, `stale`, `stale-write`, `wrong-type` |
@@ -1221,26 +1263,23 @@ lists the tests. `make proto` (`core/tests/run.sh`) runs them offscreen in about
 | what the binding holds for the app: handler values freed with their tables, posted messages the procedure's, a warning past 16 MB | built | `post-memory`: 300,000 lines queued hold 34.7 MB (warnings at 16 and 32 MB), 0 after delivery, a second round grows the process by 0 MB; `handler-memory`: 600 builds of 100 handler values, 7 kB held |
 | a view that still shows released kit state stops (exit 2) | built | `released-shown` |
 | row sources (`ROWS`, PROTOCOLS.md section 9): rows as views, pulled while drawing, bound before the next frame | built | `rows`: 20 rows before the first frame, a jump to 5000 with 1 placeholder frame and 1 ROWS turn, a row handler, 50 rows described once each, a count, a request answered |
-| the rows family (PROTOCOLS.md 9.5): the kit's list, table and tree over row sources, their states and elements generated over the delegate shims | built | `core/tests/rows` (`run-rows.sh`): `list`, `list-search`, `list-sections`, `list-states`, `table`, `table-scroll`, `tree`, `released`; gallery pages `rows-list`, `rows-table`, `rows-tree` byte-identical; frame cost `fps-table` |
-| every handler shape and every generated state type, generated (`gen/gk_tests.py`) | built | `core/tests/gen` (`run-gen.sh`): `shapes` 45 of 45 (36 typed, 9 raw), `states` 25 of 27 types (13 events) |
-| attacks on the C interface by a raw client: a truncated, an unknown, an empty and a null request; made-up, wrong-kind and twice-released handles; a call from another thread; `gk_reply` with a returned callback's `gk_cb`; a reply whose counts run past its bytes | built | `core/tests/attack` (`run-attack.sh`): `truncated` (exit 1, poisoned, message), `unknown-op`, `forged`, `stale-cb` (refused, the program goes on), `bad-reply` (exit 1, message) |
-| panics at the boundary | built | `panic-odin` (exit 2), `panic-call`, `panic-later` (exit 1), `thread` |
+| the rows family (PROTOCOLS.md 9.5): the kit's list, table and tree over row sources, their states and elements generated over the delegate shims | built | `core/tests/go/rows` (`run-rows.sh`): `list`, `list-search`, `list-sections`, `list-states`, `table`, `table-scroll`, `tree`, `released`; gallery pages `rows-list`, `rows-table`, `rows-tree` byte-identical; frame cost `fps-table` |
+| every handler shape and every generated state type, generated (`gen/gk_tests.py`) | built | `core/tests/go/gen` (`run-gen.sh`): `shapes` 45 of 45 (36 typed, 9 raw), `states` 25 of 27 types (13 events) |
+| attacks on the C interface by a raw client: a truncated, an unknown, an empty and a null request; made-up, wrong-kind and twice-released handles; a call from another thread; `gk_reply` with a returned callback's `gk_cb`; a reply whose counts run past its bytes | built | `core/tests/go/attack` (`run-attack.sh`): `truncated` (exit 1, poisoned, message), `unknown-op`, `forged`, `stale-cb` (refused, the program goes on), `bad-reply` (exit 1, message) |
+| panics at the boundary | built | `panic-go` (exit 2), `panic-call`, `panic-later` (exit 1), `thread` |
 | version check, both sides | built | `version` (5 refusals by the library), `version-lib` (the binding's) |
-| library objects behind handles (PROTOCOLS.md section 13): kit values that are not entities, kept, temporary (swept when the next frame begins, `gk.retain`) or a kit global; reads, buffered writes, calls, statics; objects as arguments and results | built | `core/tests/handles` (`run-handles.sh`): `obj-objects`, `obj-temps`, `obj-stale-temp` (exit 2), `obj-global`, `obj-dialog`, `obj-list`, `obj-given-away`; every object type with a constructor in the generated `states` test |
+| library objects behind handles (PROTOCOLS.md section 13): kit values that are not entities, kept, temporary (swept when the next frame begins, `gk.retain`) or a kit global; reads, buffered writes, calls, statics; objects as arguments and results | built | `core/tests/go/handles` (`run-handles.sh`): `obj-objects`, `obj-temps`, `obj-stale-temp` (exit 2), `obj-global`, `obj-dialog`, `obj-list`, `obj-given-away`; every object type with a constructor in the generated `states` test |
 | builder values made outside a view, given to call ops as tapes of their own (PROTOCOLS.md 13.6); a builder type that is a plain record (`IndexPath`) as the record: a list selected and scrolled from code | built | `obj-values` (a tree's items, a grid's areas), `obj-stale-value` (exit 2), `obj-list`, `obj-columns` (a table's columns as `Column` values) |
 | fragments (`Dx::frag`) | built in Rust and used by generated code, no test: no gallery page draws one; handlers inside a fragment that outlives two re-descriptions of its view are dropped | - |
-| actions and key bindings (PROTOCOLS.md 11.1), timers (11.2), several windows (11.3), the clipboard (11.4), ambient calls (11.5) | built (`core/src/app.rs`, `odin/gk/rt_app.odin`) | `core/tests/app` (`run-app.sh`): `actions`, `timers` (the simulated clock), `windows` (several, offscreen), `clipboard`, `ambient` (every ambient call once); misuse `builtin-app-listener`, `builtin-on-action`, `bad-keys` (exit 2) |
+| actions and key bindings (PROTOCOLS.md 11.1), timers (11.2), several windows (11.3), the clipboard (11.4), ambient calls (11.5) | built (`core/src/app.rs`, `go/gk/rt_app.go`) | `core/tests/go/app` (`run-app.sh`): `actions`, `timers` (the simulated clock), `windows` (several, offscreen), `clipboard`, `ambient` (every ambient call once); misuse `builtin-app-listener`, `builtin-on-action`, `bad-keys` (exit 2) |
 | `DONE` turns, focus-in and focus-out listeners | not built | - |
-| windows and app lifecycle (PROTOCOLS.md 11.38, 12.17): a window's close asked of the app (`ON_WINDOW_SHOULD_CLOSE`), the quit hook, reduced motion read and written, a window's icon (PNG) and app id, gradients wherever the kit takes a Fill, plot paths and quads of the binding's own; in Go also Odin's plots, drag and drop, element tooltips, image sources and menu bar | built (`core/src/app.rs`, `plot.rs`, `genapi.rs`; `odin/gk/rt_app.odin`, `rt_emit.odin`, `rt_data.odin`; `go/gk/rt_state.go`, `rt_emit.go`, `rt_data.go`, `rt_platform.go`) | `core/tests/app` (`run-app.sh`): `close-veto`, `quit-hook`, `reduce-motion`, `window-icon`, `bad-icon`; `examples/go/port` (`gates/go-proto.sh`): the same five and `drag`, `menus`, `menu-no-action`, `images`, `bad-pixels`, `tooltip`, `plot`, `fill-nil`; `gates/pixels.sh paint` (Rust, Odin and Go); `gates/go-misuse.sh` `fill_token`, `gradient_color` |
-| value cells and handed-out entities (PROTOCOLS.md 13.19, 13.20): value cells (`gk.Cell`) read while the kit draws and written between frames, settings fields over them, drag and drop of the library's drag value, box_shadow read back, one table of handed-out entities, the window's own Root, focus handles read back | built | `core/tests/values` (`run-values.sh`): `val-cells`, `val-one-handle`, `val-box-shadow`, `val-drag`, `val-settings`, `val-quest-events`; gallery `values-settings`, `values-drag`, `values-shadow`, `values-resizable`, `values-scrollbar-div`, `values-toolbar` |
-| observations and value calls (PROTOCOLS.md 11.14 to 11.16): observations (closures upstream calls while it lays out, delivered after the frame once per new value), value calls (a `&self` computation over a value the app builds, as an ambient call), PopupMenu::submenu_with_icon, PopupMenuItem as a value, sidebar groups | built | `core/tests/overlay` (`run-overlay.sh`): `observe` (two positions of a positioner, one of a popup, none again), `values` (a dock's clamp, a pointer's size, a sankey's layers and a refused layout); every value call in `core/tests/app` `ambient`; gallery `views-sidebar-groups`, `views-submenu-icon`, `views-menu-items` byte-identical to Rust |
-| the editor family (PROTOCOLS.md 9.20 to 9.29): typed fragments, predicates as key sets, tables by index, element closures without a window and view closures over values (rows), Markdown plugins as data drawn by the app's rows, ElementId read back, EntityId from an input handle, objects a read-back value hands out, records with colours and actions in call ops, one-method data delegates (an ask), reads through a borrow, variants made by a constructor | built | `core/tests/editor2` (`run-editor2.sh`, 14): `plugin`, `tooltip`, `surface`, `history`, `conflict`, `annotation`, `fold`, `owner`, `bad-owner` (exit 2), `decorations`, `editor-style`, `display-map`, `route`, `mask-variant`; misuse `ed-ok`, `ed-owner`, `ed-owner-released`, `ed-plugin-freed`; gallery `editor5-surface`, `editor5-heading`, `editor5-plugin`, `editor5-tooltip` byte-identical to Rust |
-| dates, scroll handles and read-back values (PROTOCOLS.md 12.14, 13.13 to 13.18): chrono's dates and times both ways, durations read back, gpui's ScrollHandle as a library object (and a generic `H: ScrollbarHandle`), kit values read back with their reads, objects inside a state's events, kit state a read hands out, ambient reads on App, plot options, closures that return a view | built | `core/tests/values` (`run-values.sh`): `val-dates`, `val-bad-date`, `val-scroll`, `val-readback`, `val-handed`, `val-ambient`, `val-tooltip`; misuse `val-bad-time`, `val-scroll-freed`; gallery `calendar-date`, `values-scroll`; window titles in `core/tests/app` `windows` |
-
-Time inside the app per frame with 2 of 60 panels re-described: 7.4 µs at `-o:speed`,
-18.0 µs at `-o:minimal`; decoding the two tapes in the library: about 33 µs.
+| windows and app lifecycle (PROTOCOLS.md 11.38, 12.17): a window's close asked of the app (`ON_WINDOW_SHOULD_CLOSE`), the quit hook, reduced motion read and written, a window's icon (PNG) and app id, gradients wherever the kit takes a Fill, plot paths and quads of the binding's own, plots, drag and drop, element tooltips, image sources and menu bar | built (`core/src/app.rs`, `plot.rs`, `genapi.rs`; `go/gk/rt_state.go`, `rt_emit.go`, `rt_data.go`, `rt_platform.go`) | `core/tests/go/app` (`run-app.sh`): `close-veto`, `quit-hook`, `reduce-motion`, `window-icon`, `bad-icon`; `examples/go/port` (`gates/go-proto.sh`): the same five and `drag`, `menus`, `menu-no-action`, `images`, `bad-pixels`, `tooltip`, `plot`, `fill-nil`; `gates/pixels.sh paint` (Rust and Go); `gates/go-misuse.sh` `fill_token`, `gradient_color` |
+| value cells and handed-out entities (PROTOCOLS.md 13.19, 13.20): value cells (`gk.Cell`) read while the kit draws and written between frames, settings fields over them, drag and drop of the library's drag value, box_shadow read back, one table of handed-out entities, the window's own Root, focus handles read back | built | `core/tests/go/values` (`run-values.sh`): `val-cells`, `val-one-handle`, `val-box-shadow`, `val-drag`, `val-settings`, `val-quest-events`; gallery `values-settings`, `values-drag`, `values-shadow`, `values-resizable`, `values-scrollbar-div`, `values-toolbar` |
+| observations and value calls (PROTOCOLS.md 11.14 to 11.16): observations (closures upstream calls while it lays out, delivered after the frame once per new value), value calls (a `&self` computation over a value the app builds, as an ambient call), PopupMenu::submenu_with_icon, PopupMenuItem as a value, sidebar groups | built | `core/tests/go/overlay` (`run-overlay.sh`): `observe` (two positions of a positioner, one of a popup, none again), `values` (a dock's clamp, a pointer's size, a sankey's layers and a refused layout); every value call in `core/tests/go/app` `ambient`; gallery `views-sidebar-groups`, `views-submenu-icon`, `views-menu-items` byte-identical to Rust |
+| the editor family (PROTOCOLS.md 9.20 to 9.29): typed fragments, predicates as key sets, tables by index, element closures without a window and view closures over values (rows), Markdown plugins as data drawn by the app's rows, ElementId read back, EntityId from an input handle, objects a read-back value hands out, records with colours and actions in call ops, one-method data delegates (an ask), reads through a borrow, variants made by a constructor | built | `core/tests/go/editor2` (`run-editor2.sh`, 14): `plugin`, `tooltip`, `surface`, `history`, `conflict`, `annotation`, `fold`, `owner`, `bad-owner` (exit 2), `decorations`, `editor-style`, `display-map`, `route`, `mask-variant`; misuse `ed-ok`, `ed-owner`, `ed-owner-released`, `ed-plugin-freed`; gallery `editor5-surface`, `editor5-heading`, `editor5-plugin`, `editor5-tooltip` byte-identical to Rust |
+| dates, scroll handles and read-back values (PROTOCOLS.md 12.14, 13.13 to 13.18): chrono's dates and times both ways, durations read back, gpui's ScrollHandle as a library object (and a generic `H: ScrollbarHandle`), kit values read back with their reads, objects inside a state's events, kit state a read hands out, ambient reads on App, plot options, closures that return a view | built | `core/tests/go/values` (`run-values.sh`): `val-dates`, `val-bad-date`, `val-scroll`, `val-readback`, `val-handed`, `val-ambient`, `val-tooltip`; misuse `val-bad-time`, `val-scroll-freed`; gallery `calendar-date`, `values-scroll`; window titles in `core/tests/go/app` `windows` |
 
 The table scene (100,000 rows of six columns scrolled by 24 px before every frame): rows arrive
 in batches of 300 to 400 cells, one ROWS and one VIEWS turn about every 70 rows; rows bound
 ahead of the scroll do not make the table redraw. What is left in its p95 is the kit's own full
-redraw of the table about every 126 frames, where the Odin app spends about 400 µs more a frame.
+redraw of the table about every 126 frames.

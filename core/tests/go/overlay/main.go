@@ -109,8 +109,7 @@ func bump(a *App, cx *gk.Cx) {
 	gk.Notify(cx, a.first.View) // described again while open
 }
 
-// Go: gk.NewBuilt makes a new view on every call (Odin's gk.built gives the same handle for the
-// same procedure and state); the app keeps the one it made and opens it again, so "again" is the
+// Go: gk.NewBuilt makes a new view on every call; the app keeps the one it made and opens it again, so "again" is the
 // kept Built, the same view the dialog was first opened on.
 func reopen(a *App, cx *gk.Cx) {
 	again := a.first
@@ -202,7 +201,7 @@ func items(dup bool) []gk.QuestionnaireItemDefinition {
 	return []gk.QuestionnaireItemDefinition{color, size}
 }
 
-// errText is an error's text ("" for none), as Odin prints a Maybe(string) error.
+// errText is an error's text ("" for none), as the checks expect.
 func errText(err error) string {
 	if err == nil {
 		return ""
@@ -228,7 +227,7 @@ func questionnaire(a *App, cx *gk.Cx) {
 
 // --- the dock: two Go views as panels ---------------------------------------------------------
 
-// panelKind prints a PanelEventKind as Odin's %v does (the variant's name).
+// panelKind prints a PanelEventKind as the checks expect (the variant's name).
 func panelKind(k gk.PanelEventKind) string {
 	names := []string{"Active", "Zoomed", "Added", "Removed"}
 	if int(k) < len(names) {
@@ -361,7 +360,7 @@ func (a *App) observeRoot(cx *gk.Cx) gk.Element {
 	return gk.Div(s.SizeFull).Child(pos).Child(gk.Div(s.P4).Child(pop))
 }
 
-// placementName prints an optional Placement as Odin's %v of a Maybe does (nil, or the name).
+// placementName prints an optional Placement as the checks expect (nil, or the name).
 func placementName(p gk.Option[gk.Placement]) string {
 	v, ok := p.Get()
 	if !ok {

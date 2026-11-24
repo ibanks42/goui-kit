@@ -1,4 +1,4 @@
-// hello: the README's first app in Go (examples/odin/hello is the same app in Odin).
+// hello: the README's first app.
 package main
 
 import (

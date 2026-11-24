@@ -1,7 +1,7 @@
 package gk
 
-// The editor family's values the generator's descriptor kinds carry (ported from
-// odin/gk/kit_editor.odin and kit_editor_text.odin; docs/PROTOCOLS.md 9.11, 9.12, 9.23, 9.24, 9.32):
+// The editor family's values the generator's descriptor kinds carry
+// (docs/PROTOCOLS.md 9.11, 9.12, 9.23, 9.24, 9.32):
 // a font, expression closures, Markdown data plugins, entity ids and decorators.
 
 import "fmt"

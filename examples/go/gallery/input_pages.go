@@ -1,5 +1,5 @@
-// The input family's gallery pages, the Go twin of ref/src/bin/gallery/input_pages.rs (and of
-// examples/odin/gallery/input_pages.odin), call for call: an input edited by keys, a multi-line
+// The input family's gallery pages, the Go twin of ref/src/bin/gallery/input_pages.rs,
+// call for call: an input edited by keys, a multi-line
 // textarea, the code editor without grammars, a number input, an OTP input, a masked input and
 // the editor's completion menu filled by the app's provider (gk.EditorProviders). Each page has its own state, made once in init, so a page shows
 // only what its own steps did.

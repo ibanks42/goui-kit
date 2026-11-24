@@ -1,10 +1,8 @@
 # How the Go package works
 
-The Go package (`gpuikit.dev/gk`) and the Odin package (`gpuikit:gk`) are two front ends on the
-same library. Both are generated from the same description of GPUI-kit's API, and both talk to the
-library through the same small C interface (seven C functions and one callback). Nothing in that
-interface is specific to Go, so the two packages have the same features and the same behaviour;
-only the names and the idioms differ.
+The Go package (`gpuikit.dev/gk`) is the front end on the library. It is generated from a
+description of GPUI-kit's API, and talks to the library through a small C interface (seven C
+functions and one callback). Nothing in that interface is specific to Go.
 
 This page is for when you want to know how the Go side fits together: where things live, how the
 names are made, and what rules the package follows. To write your first app, start with
@@ -15,7 +13,7 @@ names are made, and what rules the package follows. To write your first app, sta
 ```
 go/go.mod                     module gpuikit.dev (Go 1.27, cgo)
 go/gk/                        package gk: everything an app imports
-go/gk/rt_*.go                 the runtime, written by hand (it mirrors odin/gk/rt_*.odin);
+go/gk/rt_*.go                 the runtime, written by hand;
                               rt_thread_{linux,darwin,windows}.go hold what differs per system
 go/gk/capi.c                  the C side of the one exported callback (cgo)
 go/gk/cgo_required.go         built only without cgo: the first build error says to install gcc
@@ -24,7 +22,7 @@ go/gk/s/gen_s.go              package s: the style tokens (s.Gap3, s.SizeFull)
 go/gk/theme/gen_theme.go      package theme: the theme's colours (theme.Background)
 go/gk/palette/gen_palette.go  package palette: the kit's fixed colours (palette.Blue500)
 examples/go/                  module gpuikit.dev/examples: hello, counter, notes, todo, reader,
-                              expenses (the same apps as the Odin examples)
+                              expenses
 docs/tutorial-go/             the tutorial's nine steps (module gpuikit.dev/tutorial)
 ```
 
@@ -36,25 +34,25 @@ the Xcode command-line tools on macOS, or MinGW-w64 gcc on Windows.
 
 ## 2. Names
 
-Every Go name is made from the Odin name by fixed rules, so the two packages stay side by side
-and the Odin API index (docs/API.md) translates mechanically.
+Every Go name is made from the upstream (Rust) name by fixed rules, so GPUI-kit's documentation
+translates mechanically.
 
-| Odin | Go | rule |
+| upstream | Go | rule |
 |---|---|---|
-| `Ada_Case` type `Input_State`, `Base_Index_Path` | `InputState`, `BaseIndexPath` | drop underscores; a digit group after a digit group keeps one `_` (`Neg_1_2` -> `Neg1_2`, `Neg_12` -> `Neg12`) |
-| procedure `on_click`, `text_color`, `scroll_to_item` | method `OnClick`, `TextColor`, `ScrollToItem` | CamelCase of snake_case |
+| type `InputState`, `base::IndexPath` | `InputState`, `BaseIndexPath` | CamelCase; a digit group after a digit group keeps one `_` (`Neg1_2`, but `Neg12`) |
+| method `on_click`, `text_color`, `scroll_to_item` | method `OnClick`, `TextColor`, `ScrollToItem` | CamelCase of snake_case |
 | initialisms `id`, `url`, `uri`, `json`, `html`, `http`, `svg`, `css`, `api`, `ascii`, `utf8` | `ID`, `URL`, ... | Go's initialisms (`element_id` -> `ElementID`) |
-| element constructor `gk.button("x")`, `gk.v_flex(..)` | `gk.Button("x")`, `gk.VFlex(..)` | the type of the element gets `El`: `gk.ButtonEl` (Go has one namespace for types and functions) |
-| value or state constructor `gk.column(..)`, `gk.input_state(cx)` | `gk.NewColumn(..)`, `gk.NewInputState(cx)` | `New` + type name; the type keeps its name |
-| enum value `.Primary` of `Button_Variant` | `gk.ButtonVariantPrimary` | type name + variant; `[go] enum_prefix` in `api/overrides.toml` shortens a few (`IconName` -> `Icon`: `gk.IconStarFill`) |
-| union with data (`Button_Variant`, `Size`, `Input_Event`) | an interface: a struct type per variant with data (`gk.ButtonVariantCustom{Value: ..}`); the variants without data of a union the app gives to the kit are constants of one `Kind` type, as Odin's `_Kind` enum (`gk.ButtonVariantDanger`, `gk.SizeLarge` of `gk.SizeKind`) | an event's variants stay types, for a type switch (`case gk.InputEventChange:`) |
-| style token `.Gap_3` | `s.Gap3` | package `s` |
-| `gk.theme(.Background)`, `gk.palette(.Blue_500)` | `theme.Background`, `palette.Blue500` | packages `theme` and `palette`, values of type `gk.Color` |
+| element constructor `Button::new("x")`, `v_flex(..)` | `gk.Button("x")`, `gk.VFlex(..)` | the type of the element gets `El`: `gk.ButtonEl` (Go has one namespace for types and functions) |
+| value or state constructor `Column::new(..)`, `InputState::new(cx)` | `gk.NewColumn(..)`, `gk.NewInputState(cx)` | `New` + type name; the type keeps its name |
+| enum value `ButtonVariant::Primary` | `gk.ButtonVariantPrimary` | type name + variant; `[go] enum_prefix` in `api/overrides.toml` shortens a few (`IconName` -> `Icon`: `gk.IconStarFill`) |
+| enum with data (`ButtonVariant`, `Size`, `InputEvent`) | an interface: a struct type per variant with data (`gk.ButtonVariantCustom{Value: ..}`); the variants without data of a union the app gives to the kit are constants of one `Kind` type (`gk.ButtonVariantDanger`, `gk.SizeLarge` of `gk.SizeKind`) | an event's variants stay types, for a type switch (`case gk.InputEventChange:`) |
+| style token `gap_3()` | `s.Gap3` | package `s` |
+| theme color `background`, palette color `blue_500` | `theme.Background`, `palette.Blue500` | packages `theme` and `palette`, values of type `gk.Color` |
 | record field `row`, `is_today` | `Row`, `IsToday` | exported CamelCase |
 | parameter that is a Go keyword (`type`, `range`, `func`) | `type_`, `range_` | trailing underscore |
 
-If two upstream items still map to the same name after these rules, they get the crate prefix
-the Odin side already uses (`Base`, `Gpui`, `Kit`) and then a number. The generator reports every
+If two upstream items still map to the same name after these rules, they get a crate prefix
+(`Base`, `Gpui`, `Kit`) and then a number. The generator reports every
 such case, so none of them is silent.
 
 ## 3. What app code looks like
@@ -91,7 +89,7 @@ func main() {
 
 - **Elements** are values with methods; a builder returns the element so calls chain. An
   element is one pointer into a node block of the view build that made it (so giving it to
-  `Child` as a `gk.Element` interface does not allocate); a kept one is caught, as in Odin.
+  `Child` as a `gk.Element` interface does not allocate); a kept one is caught.
 - **Style tokens** are typed constants in package `s` given to a constructor or to
   `.Style(...)`. Styled methods with arguments stay methods (`.W(gk.Px(240))`).
 - **Options and defaults**: upstream's `self -> Self` chain is the Go chain; plain records are
@@ -110,8 +108,7 @@ func main() {
 
 - A **handler** is any Go function of the builder's shape: `OnClick(func(cx *gk.Cx, e gk.ClickEvent))`,
   a method value (`a.add`) or a closure. Closures capture what they need; the collector keeps it
-  alive, so Go needs no handler-data rule (Odin's own-and-copy rule exists because Odin has no
-  collector). The view that registered a handler is marked dirty when it returns;
+  alive, so Go needs no handler-data rule. The view that registered a handler is marked dirty when it returns;
   `gk.Quiet(cx)` inside the handler opts out.
 - **Typed state**: `gk.Model[T]` holds a value and the views that read it: `m.Get()` in a view
   records the view, `m.Set(cx, v)` / `m.Update(cx, func(*T))` mark exactly those views,
@@ -139,7 +136,7 @@ func main() {
 - **Menus**: `gk.DropdownMenu(gk.Button("file").Label("File"), gk.NewPopupMenu().Menu("New", a.newAction))`.
 - **Docks**: `gk.NewDockAreaSkinned(cx, id)`, `gk.NewPanel(cx, view, gk.PanelData{Name: .., Title: ..})`,
   `dock.SetCenter(cx, gk.NewDockLayoutTabs().PanelView(p))`, `gk.DockView(dock)` in a view.
-- **Saved layouts and the rest of the dock** (go/gk/rt_dock.go, from rt_dock.odin): `dock.Dump(cx)`
+- **Saved layouts and the rest of the dock** (go/gk/rt_dock.go): `dock.Dump(cx)`
   gives a `gk.DockAreaState`, `dock.Load(cx, saved)` rebuilds panels through `gk.RegisterPanel(cx,
   name, f)` (f gets a `gk.PanelBuild` and answers with `gk.PanelFill`); `gk.PanelGroup`, `gk.PanelID`,
   `gk.PaneNodeKind`, `gk.PaneNodeWalk`, `gk.PaneTreeToState`, `gk.PaneTreeFromState`, `gk.BuildPanel`;
@@ -147,7 +144,7 @@ func main() {
   `gk.SetDockSkinCollapsedTabBarVisible`, `gk.SetDockSkinSplitDividerLineVisible`, ...; renderers
   `gk.NewDockRenderer(cx, gk.DockHooks(gk.HookDock), f)`, `gk.DockRenderAnswer`, `gk.DockSlot()`;
   `gk.OnDockToggle`.
-- **Tables and trees** (go/gk/rt_table.go, from kit_rows.odin): `gk.NewTableSource(cx, rows,
+- **Tables and trees** (go/gk/rt_table.go): `gk.NewTableSource(cx, rows,
   []gk.TableColumn{gk.NewTableColumn("name", "Name")}, cell, gk.TableEvents(f))`, `gk.SetTableRows`,
   `gk.InvalidateTable`, `gk.SetTableColumns`, `gk.SetTableTexts`, `gk.SetTableRowLabels`,
   `gk.SetTableLook`, `gk.RowMenu(el, menu)`; `gk.SetTreeItems`, `gk.TreeEntryAt`, `gk.NewTreeSource`;
@@ -164,7 +161,7 @@ func main() {
 - **Effects**: `gk.Effect(el, gk.NewEffectTransition(d).Fade(0, 1), key)`; el is a
   `gk.AnimatableElement` (checked by the compiler).
 - **Items** (a calendar's days, a tree's entries): a typed Go function given with the builder
-  that takes it, run between frames as in Odin.
+  that takes it, run between frames.
 - **Requests that answer later** (file dialogs, prompts): a call takes a `func(cx, answer)` that
   runs on the UI thread once the answer is there; releasing the returned handle cancels.
 - **Windows**: `gk.OpenWindow(cx, title, w, h, root)`; `gk.OpenWindowWith(cx, gk.WindowConfig{..}, root)`
@@ -209,36 +206,32 @@ func main() {
 - **GK_FRAMES=5,30**: the app draws 30 frames (after 5 to warm up) and exits, for a CI check that
   it starts. **GK_SCRIPT=file** runs it offscreen under a script of clicks and keys; that needs
   the diagnostic library, which only this repository's tests build (CONTRIBUTING.md).
-- **Version check**: the package carries `ABI_MAJOR`, `ABI_MINOR` and `API_HASH` from the same
-  generated tables as Odin and refuses a library with another hash before `gk_run`.
+- **Version check**: the package carries `ABI_MAJOR`, `ABI_MINOR` and `API_HASH` from the
+  generated tables and refuses a library with another hash before `gk_run`.
 
 ## 6. What the Go package covers
 
-The Go package covers 7,133 of the 7,599 functions the Odin package binds. The generator
-(`gen/gk_go.py`) writes the Go files from the same model the Odin package comes from, after the
-Odin side has named everything; an item the Go side cannot bind yet is listed in
-`gen/out/go-report.md` of the source repository with the reason. [API-GO.md](API-GO.md), "Not in
-Go yet", summarises what is missing, and [STATUS.md](STATUS.md) counts coverage per family.
+The generator (`gen/gk_go.py`) writes the Go files. [STATUS.md](STATUS.md) lists every upstream
+item that is not bound yet, with the reason, and counts coverage per family.
 
 ## 7. Drawing, drag and drop, and windows
 
-These features came later than the rest and are worth a table of their own. Each one exists in
-both packages:
+These features came later than the rest and are worth a table of their own:
 
-| what | Go | Odin |
-|---|---|---|
-| a described plot | `gk.Plot(parts ...gk.PlotPart)`, `gk.PlotWith(gk.PlotOptions{ID, NotInteractive, Appear}, parts...)` | `gk.plot`, `gk.plot_with` |
-| a stroked polyline, a filled polygon, a quad in a plot | `gk.NewPlotLine(points [][2]float32, width float32, fill gk.Fill)`, `gk.NewPlotArea(points, fill)`, `gk.NewPlotQuad(x, y, w, h float32, fill gk.Fill, gk.QuadStyle{CornerRadius, BorderWidth, BorderColor})` | `gk.plot_line(points, width, fill)`, `gk.plot_area(points, fill)`, `gk.plot_quad({x, y, w, h}, fill, gk.Quad_Style{..})` |
-| a gradient where the kit takes a Fill (`.Bg`, plot paths and quads) | `gk.NewLinearGradient(angle float32, from, to gk.LinearColorStop) gk.LinearGradient`, `.InOklab()`, `gk.NewLinearColorStop(c gk.Color, at float32)`; `gk.Fill` is a `gk.Color` or a `gk.LinearGradient` | `gk.linear_gradient(angle, from, to, oklab = false)`, `gk.linear_color_stop(c, at)`; `gk.Fill :: union {Color, Linear_Gradient}` |
-| drag and drop | `.OnDrag(gk.DragValue{ID uint64; Text string}, preview gk.View)`, `.OnDrop(func(cx *gk.Cx, d gk.DragValue))`, `.DragOver(gk.StyleRefinement)`, `.CanDrop(gk.DropAccept{Values bool; IDs []uint64; Paths bool})` | `->on_drag(gk.Drag_Value{..}, view)`, `->on_drop`, `->drag_over`, `->can_drop` |
-| an element's tooltip | `.Tooltip(gk.ViewOrTooltip)`: a `gk.View`, `gk.NewKitTooltip(text)` or `gk.NewKitTooltipElement(el)`; `.HoverableTooltip` the same | `->tooltip(gk.View_Or_Tooltip)` |
-| images from bytes and pixels | `gk.Img(gk.ImageSourceImage{Value: gk.ImageBytes{Format, Bytes}})`; `img := gk.NewRenderImage(cx, gk.PixelImage{Width, Height, RGBA})` once (in init or a handler), then `gk.ImageSourceRender{Value: img}` or `gk.ImageSourceCustom{Value: img}` on every frame, `gk.Release(cx, img)` when no view shows it (gpui keeps one texture per image until then) | `gk.Image_Bytes`; `gk.render_image(cx, gk.Pixel_Image{..}) -> gk.Render_Image` |
-| the menu bar | `gk.SetMenus(cx, menus ...gk.Menu)`, `gk.Menus(cx) []gk.Menu`; items `gk.MenuAction{Name, Action, OsAction, Checked, Disabled}`, `gk.MenuSeparator{}`, `gk.MenuSubmenu{Menu}`, `gk.MenuServices{Name}` | `gk.set_menus`, `gk.menus` |
-| ask before a window closes | `gk.OnWindowShouldClose(cx, w gk.Window, f func(cx *gk.Cx) bool) gk.ActionListener` | `gk.on_window_should_close(cx, w, gk.on(ask)) -> gk.Action_Listener` |
-| run code as the app quits | `gk.OnAppQuit(cx, f func(cx *gk.Cx)) gk.ActionListener` | `gk.on_app_quit(cx, gk.on(quitting))` |
-| reduced motion | `gk.ReduceMotion(cx) bool`, `gk.SetReduceMotion(cx, on bool)` | `gk.reduce_motion(cx)`, `gk.set_reduce_motion(cx, on)` |
-| the window's icon and app id | `gk.WindowConfig{.., AppID: "notes", Icon: pngBytes}` | `gk.Window_Config{.., app_id = "notes", icon = png}` |
-| tests' hooks | `gk.TestShouldClose(cx, w)`, `gk.TestRenderImage`, `gk.TestImagesShown`, `gk.TestDropAccept` | `gk.test_should_close`, `gk.test_render_image`, `gk.test_images_shown`, `gk.test_drop_accept` |
+| what | Go |
+|---|---|
+| a described plot | `gk.Plot(parts ...gk.PlotPart)`, `gk.PlotWith(gk.PlotOptions{ID, NotInteractive, Appear}, parts...)` |
+| a stroked polyline, a filled polygon, a quad in a plot | `gk.NewPlotLine(points [][2]float32, width float32, fill gk.Fill)`, `gk.NewPlotArea(points, fill)`, `gk.NewPlotQuad(x, y, w, h float32, fill gk.Fill, gk.QuadStyle{CornerRadius, BorderWidth, BorderColor})` |
+| a gradient where the kit takes a Fill (`.Bg`, plot paths and quads) | `gk.NewLinearGradient(angle float32, from, to gk.LinearColorStop) gk.LinearGradient`, `.InOklab()`, `gk.NewLinearColorStop(c gk.Color, at float32)`; `gk.Fill` is a `gk.Color` or a `gk.LinearGradient` |
+| drag and drop | `.OnDrag(gk.DragValue{ID uint64; Text string}, preview gk.View)`, `.OnDrop(func(cx *gk.Cx, d gk.DragValue))`, `.DragOver(gk.StyleRefinement)`, `.CanDrop(gk.DropAccept{Values bool; IDs []uint64; Paths bool})` |
+| an element's tooltip | `.Tooltip(gk.ViewOrTooltip)`: a `gk.View`, `gk.NewKitTooltip(text)` or `gk.NewKitTooltipElement(el)`; `.HoverableTooltip` the same |
+| images from bytes and pixels | `gk.Img(gk.ImageSourceImage{Value: gk.ImageBytes{Format, Bytes}})`; `img := gk.NewRenderImage(cx, gk.PixelImage{Width, Height, RGBA})` once (in init or a handler), then `gk.ImageSourceRender{Value: img}` or `gk.ImageSourceCustom{Value: img}` on every frame, `gk.Release(cx, img)` when no view shows it (gpui keeps one texture per image until then) |
+| the menu bar | `gk.SetMenus(cx, menus ...gk.Menu)`, `gk.Menus(cx) []gk.Menu`; items `gk.MenuAction{Name, Action, OsAction, Checked, Disabled}`, `gk.MenuSeparator{}`, `gk.MenuSubmenu{Menu}`, `gk.MenuServices{Name}` |
+| ask before a window closes | `gk.OnWindowShouldClose(cx, w gk.Window, f func(cx *gk.Cx) bool) gk.ActionListener` |
+| run code as the app quits | `gk.OnAppQuit(cx, f func(cx *gk.Cx)) gk.ActionListener` |
+| reduced motion | `gk.ReduceMotion(cx) bool`, `gk.SetReduceMotion(cx, on bool)` |
+| the window's icon and app id | `gk.WindowConfig{.., AppID: "notes", Icon: pngBytes}` |
+| tests' hooks | `gk.TestShouldClose(cx, w)`, `gk.TestRenderImage`, `gk.TestImagesShown`, `gk.TestDropAccept` |
 
 For example, a draggable band, a plot with a gradient line, and asking before a window closes:
 
@@ -317,7 +310,7 @@ Other things to know:
 - `-tags gkshared` links the shared library instead (`libgpuikit.so`, `libgpuikit.dylib` or
   `gpuikit.dll`, which the program then loads at run time). Only a build from source has it (the
   download ships the static library); the repository's own tests use it, so one build can run
-  against either library variant. Odin's equivalent is `-define:GK_SHARED=true`.
+  against either library variant.
 - If the library ever reports that a family is "used but not linked", a generated function is
   missing its `useX()` call. That's a bug in the bindings; `gk.LinkAll()` works around it.
 

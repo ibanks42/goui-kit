@@ -4,8 +4,7 @@ Written by `gen/gkgen.py gen`. Counts are functions.
 
 - 7765 functions in 682 rows: 5199 bound, 1881 bridged, 682 skipped, 0 failed, 3 not attempted yet.
 - 489 node types (263 elements), 22 builder traits, 122 enums, 60 enums with data, 103 records, 27 Into sets, 68 handler shapes, 3146 style tokens, 244 palette colours, 140 theme colours.
-- The Odin sample calls 32659 generated procedures; 144 have an argument the sample cannot make.
-- Odin names that collided: 5.
+- Names that collided: 5.
 
 ## Compiler rounds
 

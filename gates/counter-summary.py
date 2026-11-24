@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 """counter-summary.py DIR [FRONT]: the verdict of gates/counter.sh.
 
-DIR holds rust.csv and FRONT.csv (FRONT odin, the default, or go; the GATE line of go is
-"counter click-go") (one row per measured frame, diag library). For every
+DIR holds rust.csv and FRONT.csv (FRONT go, the default; the GATE line is "counter
+click-go") (one row per measured frame, diag library). For every
 injected click (a row with click=1: the click arrived during that frame's interval), finds
 the later frame in which gpui-fast built more views than usual, and what the click cost in
-turns. Prints one line "GATE counter click PASS|FAIL ...". Exit 0 on pass."""
+turns. Prints one line "GATE counter click-go PASS|FAIL ...". Exit 0 on pass."""
 import csv
 import statistics
 import sys
 
 out = sys.argv[1]
-front = sys.argv[2] if len(sys.argv) > 2 else "odin"
+front = sys.argv[2] if len(sys.argv) > 2 else "go"
 res = {}
 for b in ("rust", front):
     try:
@@ -44,7 +44,7 @@ if sorted(set(ro), key=str) != sorted(set(oo), key=str):
     why.append("the change is not in the same frame as in Rust")
 if any(c[0] != 1 or c[1] > 1 for c in res[front][1]):
     why.append("a click cost more than 1 EVENT and 1 VIEWS turn")
-print(f"GATE counter click{'' if front == 'odin' else '-' + front} {'FAIL' if why else 'PASS'} {len(oo)} clicks, shown "
+print(f"GATE counter click-{front} {'FAIL' if why else 'PASS'} {len(oo)} clicks, shown "
       f"{sorted(set(oo), key=str)} frame(s) after the click, Rust {sorted(set(ro), key=str)}"
       + ("; " + "; ".join(why) if why else ""))
 sys.exit(1 if why else 0)

@@ -1,4 +1,4 @@
-// expenses: a small expense tracker, the Go twin of examples/odin/expenses. A form with
+// expenses: a small expense tracker. A form with
 // validation adds an expense (what, amount, category); the list shows them with a delete button
 // each; a bar chart shows the total per category.
 //

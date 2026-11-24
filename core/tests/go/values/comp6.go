@@ -1,5 +1,4 @@
-// The component protocol tests (docs/PROTOCOLS.md 11.18 to 11.26), in the values test app (the port
-// of core/tests/values/comp6.odin):
+// The component protocol tests (docs/PROTOCOLS.md 11.18 to 11.26), in the values test app:
 //
 //	c6-background   try_parse_background read back as gk.BackgroundValue (11.23; background.go)
 //	c6-matcher      a calendar's disabled matcher of every variant, written and read back (11.21;

@@ -1,5 +1,5 @@
 # run-review3.sh: five attacks on the protocols built since milestone 2 (core/tests/go/review3),
-# sourced by core/tests/go/run.sh, which defines build and run. Odin twin: core/tests/run-review3.sh.
+# sourced by core/tests/go/run.sh, which defines build and run.
 # Each must end correctly or stop with a message: never a crash, a hang, or app code run against a
 # view that is gone. Run alone: core/tests/go/run.sh timer-after-view close-own-window ...
 build review3-go review3

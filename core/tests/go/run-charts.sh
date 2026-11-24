@@ -1,7 +1,7 @@
 # run-charts.sh: the charts' calculators over the app's rows (docs/PROTOCOLS.md 12.15), sourced by
 # core/tests/go/run.sh, which defines build and run. The app is core/tests/go/charts, offscreen.
-# Odin twin: core/tests/run-charts.sh. Go names a column by its struct field (docs/GO.md: Charts over
-# the app's rows), so the keys are Apples and Pears where Odin's are apples and pears.
+# Go names a column by its struct field (docs/GO.md: Charts over
+# the app's rows), so the keys are Apples and Pears.
 build charts-go charts
 
 # A pie over three rows: one arc per row, each its row's index, the angles summing to a turn, the

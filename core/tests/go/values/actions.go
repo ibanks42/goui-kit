@@ -1,5 +1,4 @@
-// val-actions and val-action-in-view: the kit's own action values named as actions (gk.ActionOf;
-// Odin's gk.action_of, rt_values.odin).
+// val-actions and val-action-in-view: the kit's own action values named as actions (gk.ActionOf).
 package main
 
 import (

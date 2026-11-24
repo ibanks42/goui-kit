@@ -1,5 +1,5 @@
 //! The gallery's pages, written the way a Rust GPUI-kit app writes them. One function per
-//! line of ref/gallery/pages.txt; the Odin twin (examples/odin/gallery/pages.odin) has the
+//! line of ref/gallery/pages.txt; the Go twin (examples/go/gallery/pages.go) has the
 //! same pages in the same order, call for call. Change a page in both files in one commit.
 //!
 //! Rules that keep a page comparable: fixed sizes and fixed text, nothing animated (no

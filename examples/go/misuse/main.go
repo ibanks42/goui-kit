@@ -1,5 +1,5 @@
-// misuse: the mistakes the Go API must make impossible or loud (docs/GO.md section 5), the
-// port of examples/odin/negative. Each mode is one mistake; gates/go-misuse.sh holds the
+// misuse: the mistakes the Go API must make impossible or loud (docs/GO.md section 5).
+// Each mode is one mistake; gates/go-misuse.sh holds the
 // expected outcome. Runs offscreen under a script that clicks the first button a few times.
 // The mistakes Go's compiler catches are in examples/go/misuse_compile.
 //

@@ -1,6 +1,5 @@
 # run-gen.sh: the generated protocol tests in Go (core/tests/go/gen, written by `make gen` from
-# gen/gk_tests_go.py), sourced by core/tests/go/run.sh, which defines build and run. Odin twin:
-# core/tests/run-gen.sh, the same modes and patterns.
+# gen/gk_tests_go.py), sourced by core/tests/go/run.sh, which defines build and run.
 #   shapes  every handler shape the package registers, fired once through the library (call op
 #           TEST_FIRE_SHAPE): typed where the library can build the payload as the Rust types a
 #           listener hands over (through their own Wire impls), raw otherwise; the handler gets

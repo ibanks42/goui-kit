@@ -1,6 +1,6 @@
 # run-attack.sh: attacks on the C interface by a raw client (core/tests/go/attack: its own callback,
 # requests and replies through cgo, no Go package checks in between), sourced by
-# core/tests/go/run.sh, which defines build and run. Odin twin: core/tests/run-attack.sh. Each must
+# core/tests/go/run.sh, which defines build and run. Each must
 # end in an error code or a stop with the message: never a crash, a hang, or memory written where
 # it must not be.
 build attack-go attack

@@ -11,7 +11,7 @@
 #       gpuikit-VERSION-macos-universal.tar.zst
 #       gpuikit-VERSION-windows-x86_64.zip
 #   - each download's VERSIONS says `gpuikit VERSION for PLATFORM`, states the interface hash of
-#     this checkout (odin/gk/ops.odin's API_HASH: the three agree with each other and with the
+#     this checkout (go/gk/gen_ops.go's apiHash: the three agree with each other and with the
 #     source), and the sha256 of the library inside that archive;
 #   - macOS: the library is a universal static archive of exactly an arm64 and an x86_64 slice
 #     (tools/macho.py reads it, as there is no lipo here), and VERSIONS's `architectures:` line
@@ -24,8 +24,8 @@ ver=${1:?usage: release-assets.sh VERSION DIR [COMMIT]}; dir=${2:?DIR}; commit=$
 fail() { echo "release-assets: FAIL: $*" >&2; exit 1; }
 want=$(grep -m1 '^version' "$repo/Cargo.toml" | cut -d'"' -f2)
 [ "$ver" = "$want" ] || fail "version $ver, but tools/dist.sh writes $want (Cargo.toml): tag v$want, or change the version first"
-hash=$(grep -m1 API_HASH "$repo/odin/gk/ops.odin" | grep -o '0x[0-9a-f]*')
-[ -n "$hash" ] || fail "no API_HASH in odin/gk/ops.odin"
+hash=$(grep -m1 'const apiHash' "$repo/go/gk/gen_ops.go" | grep -o '0x[0-9a-f]*')
+[ -n "$hash" ] || fail "no apiHash in go/gk/gen_ops.go"
 platforms=(linux-x86_64 macos-universal windows-x86_64)
 expected=()
 for p in "${platforms[@]}"; do

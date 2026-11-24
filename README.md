@@ -1,17 +1,17 @@
 # gpui-kit-bindings
 
-Write desktop apps in **Go** or **Odin** with [GPUI](https://www.gpui.rs) and
+Write desktop apps in **Go** with [GPUI](https://www.gpui.rs) and
 [GPUI-kit](https://gpui-kit.com), the GPU-accelerated UI framework from the Zed editor and the
 component library built on it.
 
 GPUI and GPUI-kit are Rust. This project wraps them in one prebuilt library with a small C
-interface (`libgpuikit`) and puts a native package for each language on top: `gpuikit:gk` for
-Odin and `gpuikit.dev/gk` for Go. Both packages are generated from GPUI-kit's own API, so you get
+interface (`libgpuikit`) and puts a native Go package on top: `gpuikit.dev/gk`. The package is
+generated from GPUI-kit's own API, so you get
 the kit's whole component set (buttons, inputs, lists, tables, dialogs, menus, docks, charts,
 editors and more) under names that follow fixed rules from the Rust documentation.
 
 **You don't need Rust.** You download the library, point your compiler at it, and write ordinary
-Go or Odin.
+Go.
 
 The prebuilt library runs GPUI-kit on gpui-fast, the alternative GPUI engine the kit supports
 through a Cargo feature. If you'd rather use upstream GPUI, you can build the library from source
@@ -28,59 +28,18 @@ Supported systems:
 
 ## Start here
 
-Pick your language. Each guide installs what you need, runs an example, and then walks you through
+The guide installs what you need, runs an example, and then walks you through
 building a small app in nine short steps (about 15 minutes).
 
-| | Odin | Go |
-|---|---|---|
-| Getting started and tutorial | [docs/GETTING-STARTED.md](docs/GETTING-STARTED.md) | [docs/GETTING-STARTED-GO.md](docs/GETTING-STARTED-GO.md) |
-| From GPUI-kit's Rust docs to your call, and every component | [docs/API.md](docs/API.md) | [docs/API-GO.md](docs/API-GO.md) |
-| How the Go package works | | [docs/GO.md](docs/GO.md) |
+| | |
+|---|---|
+| Getting started and tutorial | [docs/GETTING-STARTED-GO.md](docs/GETTING-STARTED-GO.md) |
+| From GPUI-kit's Rust docs to your call, and every component | [docs/API-GO.md](docs/API-GO.md) |
+| How the Go package works | [docs/GO.md](docs/GO.md) |
 
 ## Hello, world
 
-In Odin, a window with a button, a counter and a text input:
-
-```odin
-package hello
-
-import "core:fmt"
-import gk "gpuikit:gk"
-
-App :: struct {
-	count: int,
-	name:  gk.Input_State, // a handle to the kit's InputState, which lives in the library
-	root:  gk.View,
-}
-
-init :: proc(a: ^App, cx: ^gk.Cx) {
-	a.name = gk.input_state(cx)->placeholder("Your name")->build()
-}
-
-add :: proc(a: ^App, cx: ^gk.Cx) {
-	a.count += 1 // no notify: a handler marks the view that registered it for redraw
-}
-
-view :: proc(a: ^App, cx: ^gk.Cx) -> gk.Element {
-	return gk.v_flex(.Size_Full, .P_4, .Gap_3)->
-		bg(gk.theme(.Background))->text_color(gk.theme(.Foreground))->
-		child(gk.h_flex(.Gap_2, .Items_Center)->
-			child(gk.button("add")->primary()->label("Add")->on_click(gk.on(add)))->
-			child(gk.label(fmt.tprintf("clicked %d times", a.count))))->
-		child(gk.div()->w(gk.px(240))->child(gk.input(a.name)))->
-		child(gk.label(fmt.tprintf("hello %s", gk.value(a.name, cx)))) // read: redrawn when it changes
-}
-
-main :: proc() {
-	app: App
-	gk.run(&app, proc(a: ^App, cx: ^gk.Cx) {
-		a.root = gk.view(a, init, view)
-		gk.open_window(cx, "Hello", {480, 320}, a.root)
-	})
-}
-```
-
-The same app in Go:
+A window with a button, a counter and a text input:
 
 ```go
 package main
@@ -122,15 +81,15 @@ func main() {
 }
 ```
 
-A few things to notice, the same in both languages:
+A few things to notice:
 
 - **Your state is your own struct.** The binding never copies it or owns it.
 - **A view function describes the window** from that state. It runs again whenever the view is
   redrawn, so it only describes; it never changes anything.
 - **A handler is a plain function** that changes your state. When it returns, the view it belongs
   to is redrawn. There is no `notify` to remember.
-- **Styles are tokens**: `.Gap_3` in Odin, `s.Gap3` in Go. Everything else keeps GPUI-kit's name
-  (`button`, `primary`, `label`, `on_click`).
+- **Styles are tokens**: `s.Gap3`. Everything else keeps GPUI-kit's name, in Go's capitalization
+  (`Button`, `Primary`, `Label`, `OnClick`).
 - **Kit state** (an input's text, a list's selection) lives in the library; your struct keeps a
   handle to it, made once in `init`.
 
@@ -141,16 +100,15 @@ Download the archive for your system from the
 `SHA256SUMS` file to check the download with (`sha256sum -c --ignore-missing SHA256SUMS`, or
 `shasum -a 256 -c --ignore-missing SHA256SUMS` on macOS).
 
-One archive serves both languages. Inside it:
+Inside the archive:
 
 | path | what |
 |---|---|
-| `lib/` | the library, which your app links into itself: `libgpuikit_static.a` (on Windows also `gpuikit_static.lib`, Visual Studio's format, for Odin), with a small helper naming the system libraries it needs |
-| `odin/gk/` | the Odin package, imported as `gpuikit:gk` |
-| `go/` | the Go module `gpuikit.dev` (package `gk`, and `s`, `theme`, `palette` for styles and colours) |
+| `lib/` | the library, which your app links into itself: `libgpuikit_static.a`, with a small helper naming the system libraries it needs |
+| `go/` | the Go module `gpuikit.dev` (package `gk`, and `s`, `theme`, `palette` for styles and colors) |
 | `include/` | the C header, if you want to bind another language |
 | `windows/` | Windows only: the manifest every program needs (see below) |
-| `examples/` | six example apps in Odin, and the same six in Go under `examples/go/`, each with a `build.sh` |
+| `examples/go/` | six example apps, with a `build.sh` |
 | `docs/` | the guides and the tutorial programs |
 | `VERSIONS` | what the library was built from and what it needs |
 | `THIRD_PARTY.md`, `licences/` | the licences of everything compiled into the library |
@@ -163,18 +121,10 @@ Unpack the archive and try an example:
 tar --zstd -xf gpuikit-0.0.2-linux-x86_64.tar.zst
 cd gpuikit-0.0.2-linux-x86_64
 
-examples/build.sh notes && examples/notes.bin          # Odin
-examples/go/build.sh notes && examples/go/notes.bin    # Go
+examples/go/build.sh notes && examples/go/notes.bin
 ```
 
 To build your own app, put its folder next to the unpacked download.
-
-**Odin** (you need the Odin compiler and `clang`):
-
-```sh
-G=gpuikit-0.0.2-linux-x86_64
-odin build myapp -o:minimal -collection:gpuikit=$G/odin "-extra-linker-flags:-L$G/lib" -out:myapp.bin
-```
 
 **Go** (you need Go 1.27 or newer and a C compiler for cgo). Your `go.mod` points `gpuikit.dev` at
 the download, so nothing is fetched from the network:
@@ -190,9 +140,9 @@ CGO_LDFLAGS="-L$PWD/../gpuikit-0.0.2-linux-x86_64/lib" go build -ldflags="-s -w 
 ```
 
 Your app links the library statically, and **only the components it uses** end up in the
-program: call `gk.Button` (`gk.button` in Odin) and the button code is linked in, never call
-`gk.LineChart` and the chart code is left out. There is nothing to list or import for it. Odin
-needs no extra flag for it; in Go the `-ldflags` part tells the linker to drop what isn't used
+program: call `gk.Button` and the button code is linked in, never call
+`gk.LineChart` and the chart code is left out. There is nothing to list or import for it. The
+`-ldflags` part tells the linker to drop what isn't used
 (Go doesn't let a package ask for that itself), and without it the app still works, it just
 carries every component (about 100 MB instead of about 50 MB for a small app). The result is one
 file with nothing to ship next to it. [docs/GO.md](docs/GO.md) section 8 explains how it works.
@@ -206,16 +156,15 @@ Things to know per system (the guides cover each in detail):
   llvm-mingw, or WinLibs' LLVM build), and the flag is
   `-ldflags="-s -w '-extldflags=-fuse-ld=lld -Wl,--gc-sections,-Xlink=-force:multipleres'"`. (GNU ld
   can't drop unused code on Windows, so without lld the app works but carries every component.)
-  The `.exe` has the library and the Windows manifest inside it. An Odin program links with
-  `-linker:lld` and needs the manifest in `windows/gpuikit.manifest`, embedded or copied next to
-  the program as `APP.exe.manifest`; without it the program exits before `main` (the library uses
-  common controls 6, which Windows only loads when a manifest asks for it).
+  The `.exe` has the library and the Windows manifest inside it (without the manifest the program
+  would exit before `main`: the library uses common controls 6, which Windows only loads when a
+  manifest asks for it).
 - The library and the package check each other's version at start. If you mix files from two
   downloads, the app stops with a message saying so instead of misbehaving.
 
 ## Bigger examples
 
-The download includes these apps in both languages:
+The download includes these apps:
 
 - `hello`: the program above.
 - `counter`: a button, an input echoed into a label, and a list of 10,000 rows.
@@ -230,7 +179,7 @@ The download includes these apps in both languages:
 ## Working on the bindings
 
 The rest of this repository is the machinery that produces the download: a generator (Python) that
-reads GPUI-kit's API and writes the Rust, Odin and Go code, the Rust library itself, and tests that
+reads GPUI-kit's API and writes the Rust and Go code, the Rust library itself, and tests that
 compare every example against a pure-Rust twin image by image. If you want to build the library from
 source, regenerate the packages, or contribute, read [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md).
 

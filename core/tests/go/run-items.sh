@@ -1,6 +1,5 @@
 # run-items.sh: item functions (docs/PROTOCOLS.md 9.41), sourced by core/tests/go/run.sh, which defines
-# build and run. The app is core/tests/go/items, offscreen with the diag library. Odin twin:
-# core/tests/run-items.sh.
+# build and run. The app is core/tests/go/items, offscreen with the diag library.
 build items-go items
 # An element the kit built for each day, decorated by the app's function with the record of the
 # day's state; the rows are described in the first frames and kept (none described after them).

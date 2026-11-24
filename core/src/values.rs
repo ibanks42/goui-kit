@@ -20,7 +20,7 @@ use std::rc::Rc;
 
 /// `Result<T, E>` as it travels out: u8 ok, then opt<T> (the value when ok), then str (the
 /// error's text when not ok, else empty: its Debug form, which every error type of the kit has;
-/// some, `DiscreteError`, have no Display). Odin `gk.Fallible(T)`, read by reflection.
+/// some, `DiscreteError`, have no Display). Go `gk.Fallible[T]`.
 pub struct Fallible<T, E>(pub Result<T, E>);
 
 impl<T: Wire, E: std::fmt::Debug> Wire for Fallible<T, E> {
@@ -64,10 +64,10 @@ impl<K: Wire, V: Wire, S> Wire for HashMap<K, V, S> {
 
 // jiff's calendar values (PROTOCOLS.md 13.13): a date is i32 year, u32 month, u32 day; a time
 // u32 hour, minute, second, nanosecond; a date and time both; a weekday a u8 from Monday = 0.
-// Odin's and Go's writers (put_civil_date and the rest) stop on a date or time that does not exist
+// Go's writers (putCivilDate and the rest) stop on a date or time that does not exist
 // or that jiff cannot hold (years -9999 to 9999), so what arrives here is valid; a raw C client that
 // sends one anyway gets jiff's zero date (0000-01-01) or midnight instead (never a panic).
-/// A duration read back: i64 nanoseconds (Odin's `time.Duration`), at most about 292 years.
+/// A duration read back: i64 nanoseconds (Go's `time.Duration`), at most about 292 years.
 impl Wire for std::time::Duration {
     fn put(&self, out: &mut Vec<u8>) {
         out.put_i64(i64::try_from(self.as_nanos()).unwrap_or(i64::MAX));
@@ -217,7 +217,7 @@ pub fn call(op: u16, r: &mut R, c: &mut crate::genapi::Call) -> Option<GkResult<
                     c.out.put_u32(crate::app::id_of(&*action));
                     Ok(())
                 }
-                None => err(ERR_BAD_OP, "gk.action_of: the value is not one of the kit's action types"),
+                None => err(ERR_BAD_OP, "gk.ActionOf: the value is not one of the kit's action types"),
             }
         })()),
         C_OBJ_PIN => {
@@ -363,7 +363,7 @@ impl AnySettingField for AnyField {
 }
 
 /// A colour field of a record the app also writes, read back (PROTOCOLS.md 13.20): the layout of
-/// Odin's gk.Color (u16 theme 0, then h, s, l, a), which is that record's field type there.
+/// the app's gk.Color (u16 theme 0, then h, s, l, a), which is that record's field type there.
 pub fn put_color_field(c: &gpui_kit::Hsla, out: &mut Vec<u8>) {
     out.put_u16(0);
     out.put_f32(c.h);
@@ -450,8 +450,8 @@ impl Wire for gpui_kit::FocusHandle {
 
 /// gpui's Background read back (PROTOCOLS.md 11.23): u8 kind (0 solid, 1 linear gradient, 2 slash
 /// pattern, 3 checkerboard), u8 colour space (0 sRGB, 1 Oklab), the solid colour (Hsla), f32 the
-/// gradient's angle or the pattern's height, then the two stops (Hsla, f32 percentage). Odin
-/// `gk.Background_Value` (rt_values.odin). Its fields are private: the kind, colour space, angle and
+/// gradient's angle or the pattern's height, then the two stops (Hsla, f32 percentage). Go
+/// `gk.BackgroundValue`. Its fields are private: the kind, colour space, angle and
 /// percentages come from its serde form, the colours (at full precision) from its Debug form.
 impl Wire for gpui_kit::Background {
     fn put(&self, out: &mut Vec<u8>) {
@@ -638,8 +638,7 @@ impl<K: 'static> Wire for Box<dyn Fn(&K) -> bool + Send + Sync> {
 
 /// A questionnaire item's validator as rules the app gives in advance (PROTOCOLS.md 11.26): upstream
 /// calls the validator synchronously while the questionnaire updates (an answer set, Next, Submit),
-/// where app code may not run, so the library checks the rules. `gk.Questionnaire_Rules`
-/// (rt_values.odin), by reflection: u32 min_choices, u32 max_choices, u32 min_length, u32 max_length
+/// where app code may not run, so the library checks the rules. `gk.QuestionnaireRules`: u32 min_choices, u32 max_choices, u32 min_length, u32 max_length
 /// (0: no limit; a length counts the free answer's characters, when there is one), u32 n, str one_of
 /// each, u32 n, str not_one_of each (the free answer must, or must not, be one of them; empty: any),
 /// str same_as, str differs_from (another item whose answer this one must equal, or differ from; ""
@@ -722,7 +721,7 @@ pub fn questionnaire_rules(
 }
 
 /// `QuestionnaireItemDefinition::validator` read back (`Option<&QuestionnaireValidator>`): whether
-/// the item has one; a closure has nothing else to read (Odin `Maybe(gk.Questionnaire_Validator)`).
+/// the item has one; a closure has nothing else to read (Go `gk.Option[gk.QuestionnaireValidator]`).
 impl Wire for Rc<dyn Fn(&gpui_kit::base::questionnaire::QuestionnaireValidationContext) -> Result<(), gpui_kit::SharedString>> {
     fn put(&self, _out: &mut Vec<u8>) {}
 }

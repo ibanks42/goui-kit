@@ -1,5 +1,5 @@
-// The rows family's gallery pages, the Go twin of ref/src/bin/gallery/rows_pages.rs (and of
-// examples/odin/gallery/rows_pages.odin), call for call: a list of 10,000 rows, a table of
+// The rows family's gallery pages, the Go twin of ref/src/bin/gallery/rows_pages.rs,
+// call for call: a list of 10,000 rows, a table of
 // 10,000 rows with a sortable column and a tree, over row sources (docs/PROTOCOLS.md section
 // 9.5). Each row or cell is a view described once; the steps of ref/gallery/pages.txt click,
 // press keys and scroll (a far scroll and a jump to the last row draw placeholders for one
@@ -34,8 +34,8 @@ var rowsTree = []gk.TreeNode{
 	{ID: "docs/guide", Label: "guide.md", Depth: 1},
 	{ID: "docs/api", Label: "api.md", Depth: 1},
 	{ID: "src", Label: "src", Depth: 0, Expanded: true},
-	{ID: "src/a", Label: "a.odin", Depth: 1},
-	{ID: "src/b", Label: "b.odin", Depth: 1},
+	{ID: "src/a", Label: "a.demo", Depth: 1},
+	{ID: "src/b", Label: "b.demo", Depth: 1},
 	{ID: "readme", Label: "README", Depth: 0},
 }
 

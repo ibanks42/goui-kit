@@ -1,6 +1,6 @@
 # run-values.sh: the protocol tests (docs/PROTOCOLS.md sections 13.8 to 13.12), sourced by
 # core/tests/go/run.sh, which defines build and run. The app is core/tests/go/values, driven by a
-# gk-meter script offscreen with the diag library. Odin twin: core/tests/run-values.sh.
+# gk-meter script offscreen with the diag library.
 build values-go values
 
 # The plot scales instantiated as library objects: a builder chain in one crossing, reads, the
@@ -33,7 +33,7 @@ GK_PROTO_BIN=values-go run val-pins 0 \
 GK_PROTO_BIN=values-go run val-self-arg 2 'values giving a value to its own builder' \
   'a value was given as an argument to its own builder'
 # Misuse: naming an action in a view procedure stops at its line (exit 2).
-# Go: "a view function" for Odin's "a view procedure", gk.ActionOf for gk.action_of, the line in main.go's twin.
+# Go: "a view function", gk.ActionOf, and the app's line in values/actions.go.
 GK_PROTO_BIN=values-go run val-action-in-view 2 'values naming an action in a view' \
   'gk.ActionOf in a view function' 'at .*values/actions.go:[0-9]+'
 # The clipboard's value closure: a handler that returns text, run by the copy button's click.

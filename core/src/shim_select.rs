@@ -10,7 +10,7 @@
 //!
 //! The states and elements over this delegate are generated (overrides.toml `[instantiate]`,
 //! `SelectState<crate::shim_select::GkSearchDelegate>` and the others): this file holds the
-//! delegate, its item type `GkItem` (`gk.Search_Item` in Odin, a value both ways: the
+//! delegate, its item type `GkItem` (`gk.SearchItem` in Go, a value both ways: the
 //! generator's `libval` rule, gen/gk_lists.py) and the family's call op. Its
 //! numbers: call 176-191, shape 44-47.
 

@@ -1,4 +1,4 @@
-// todo: a small to-do app, the Go twin of examples/odin/todo. Projects in a resizable sidebar, a
+// todo: a small to-do app. Projects in a resizable sidebar, a
 // task list per project with custom rows, add/edit/delete through a dialog, filters and search,
 // keyboard shortcuts, a menu, light and dark themes, state saved to a JSON file, and a goroutine
 // that pretends to sync and posts what it did.

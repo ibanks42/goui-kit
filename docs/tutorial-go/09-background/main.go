@@ -1,6 +1,6 @@
 // Step 9 of docs/GETTING-STARTED-GO.md, the whole app: a shopping list with a list of custom rows,
 // an input, an edit dialog, shortcuts and a menu, a light and a dark theme, and prices looked up on
-// a goroutine. docs/tutorial/09-background is the same app in Odin.
+// a goroutine.
 package main
 
 import (

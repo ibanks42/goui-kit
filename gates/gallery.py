@@ -3,7 +3,7 @@
 
     gallery.py script PAGES.txt [--cycles N]     print the gk-meter script that walks the pages
     gallery.py frames PAGES.txt [--cycles N]     how many frames that script draws
-    gallery.py compare PAGES.txt OUT IDS [--candidate go|odin] [--pending FILE] [--record]
+    gallery.py compare PAGES.txt OUT IDS [--candidate go] [--pending FILE] [--record]
                                                  compare OUT/rust, OUT/rust2 and OUT/CANDIDATE
     gallery.py report OUT                        OUT/result.json as two Markdown tables
 
@@ -11,8 +11,8 @@ The script shows each page (a click on Next at 40,32 between pages), takes a sho
 NNN-id-0.png after its first frame and one more (NNN-id-K.png) after each of its steps. With
 --cycles N it walks the pages N times and takes no shots (the memory gate's workload).
 
-compare prints one line per page and the verdict lines. The candidate is the Go or the Odin
-gallery (--candidate, default odin). A page is
+compare prints one line per page and the verdict lines. The candidate is the Go gallery
+(--candidate, default go). A page is
     identical   every shot of the candidate is byte-identical to the Rust reference's
     DIFFERS     the candidate has the page and a shot differs or is missing (fails the gate)
     pending     the candidate does not have the page and FILE (--pending) names the binding it
@@ -23,13 +23,12 @@ gallery (--candidate, default odin). A page is
 It writes OUT/result.json: per page its state, shots and the upstream functions it shows;
 `verified` lists the functions shown by at least one identical page.
 
-The ratchet: gates/verified.json (committed) lists, per front end (frontends.go,
-frontends.odin), the pages that were byte-identical and the functions they verify. A page
-listed there for the candidate that is not identical in this run fails the gate
-("regressed"), whatever its new state. --record rewrites the candidate's entry from a passing
-run and keeps the other's; the top-level "functions", the union, is the list the coverage
-table's "verified" column is counted from, so a front end can be dropped by deleting its
-entry. Standard library only."""
+The ratchet: gates/verified.json (committed) lists, per front end (frontends.go), the pages
+that were byte-identical and the functions they verify. A page listed there for the candidate
+that is not identical in this run fails the gate ("regressed"), whatever its new state.
+--record rewrites the candidate's entry from a passing run; the top-level "functions", the
+union over the front ends, is the list the coverage table's "verified" column is counted
+from. Standard library only."""
 import json
 import os
 import sys
@@ -100,33 +99,27 @@ def same(a, b):
 
 
 RECORD = os.path.join(os.path.dirname(os.path.abspath(__file__)), "verified.json")
-FRONTS = ("go", "odin")
 
 
 def load_record():
-    """gates/verified.json as {"frontends": {name: {"pages": [...], "functions": [...]}}}. The
-    file of before the Go gallery (one list of pages, Odin's) reads as Odin's."""
+    """gates/verified.json as {"frontends": {name: {"pages": [...], "functions": [...]}}}."""
     if not os.path.exists(RECORD):
         return {"frontends": {}}
-    rec = json.load(open(RECORD))
-    if "frontends" not in rec:
-        rec = {"frontends": {"odin": {"pages": rec.get("pages", []), "functions": rec.get("functions", [])}}}
-    return rec
+    return json.load(open(RECORD))
 
 
 def save_record(rec):
     """Writes the record; its top-level "functions" (what the coverage table's "verified" column
-    counts, gen/gkgen.py) is the union over the front ends, so removing a front end's entry is
-    the one edit dropping that front end needs."""
+    counts, gen/gkgen.py) is the union over the front ends."""
     fronts = {k: rec["frontends"][k] for k in sorted(rec["frontends"])}
     funcs = sorted(set(f for v in fronts.values() for f in v["functions"]))
-    json.dump({"note": "written by gates/gallery.sh FRONTEND --record from a passing run; do not edit by hand. "
+    json.dump({"note": "written by gates/gallery.sh --record from a passing run; do not edit by hand. "
                        "frontends.NAME: the pages byte-identical to Rust in that front end's gallery and the "
                        "functions they show; functions: their union",
                "frontends": fronts, "functions": funcs}, open(RECORD, "w"), indent=1)
 
 
-def compare(path, out, cand_ids, record, cand="odin", pending_file=None):
+def compare(path, out, cand_ids, record, cand="go", pending_file=None):
     have = set(open(cand_ids).read().split())
     pending = {}
     if pending_file and os.path.exists(pending_file):
@@ -134,7 +127,7 @@ def compare(path, out, cand_ids, record, cand="odin", pending_file=None):
             if line.strip() and not line.startswith("#"):
                 pid, _, why = line.partition("|")
                 pending[pid.strip()] = why.strip()
-    name = {"go": "Go", "odin": "Odin"}.get(cand, cand)
+    name = {"go": "Go"}.get(cand, cand)
     ps = pages(path)
     res, counts, verified = [], {}, set()
     for p, names in shots(ps):
@@ -190,7 +183,7 @@ def report(out):
     """The hand-written pages one per row; the generated one-function pages counted per type."""
     full = json.load(open(f"{out}/result.json"))
     res = full["pages"]
-    name = {"go": "Go", "odin": "Odin"}.get(full.get("frontend", "odin"), "the candidate")
+    name = {"go": "Go"}.get(full.get("frontend", "go"), "the candidate")
     hand = [r for r in res if "." not in r["id"]]
     conf = [r for r in res if "." in r["id"]]
     print(f"| page | {name} against Rust | images | functions shown |")
@@ -228,7 +221,7 @@ if __name__ == "__main__":
         print(frames(a[1], int(a[a.index("--cycles") + 1]) if "--cycles" in a else 0))
     elif a and a[0] == "compare":
         sys.exit(compare(a[1], a[2], a[3], "--record" in a,
-                         a[a.index("--candidate") + 1] if "--candidate" in a else "odin",
+                         a[a.index("--candidate") + 1] if "--candidate" in a else "go",
                          a[a.index("--pending") + 1] if "--pending" in a else None))
     else:
         sys.exit(__doc__)

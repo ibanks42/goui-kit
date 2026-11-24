@@ -1,8 +1,8 @@
 package main
 
-// Smoke tests of the Go ports of Odin's hand-written bridges (go/gk/rt_dock.go, rt_table.go,
-// rt_motion.go, rt_kit.go, rt_select.go, rt_editor.go), the Go side of core/tests/overlay (the
-// dock's skin, ids and saved layouts) and core/tests/rows (tables). gates/go-proto.sh checks the
+// Smoke tests of the Go package's hand-written bridges (go/gk/rt_dock.go, rt_table.go,
+// rt_motion.go, rt_kit.go, rt_select.go, rt_editor.go), alongside core/tests/go/overlay (the
+// dock's skin, ids and saved layouts) and core/tests/go/rows (tables). gates/go-proto.sh checks the
 // lines they print (the bridge-* modes).
 //
 //	GK_PROTO=bridge-dock | bridge-kit

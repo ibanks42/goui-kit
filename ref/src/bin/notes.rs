@@ -1,9 +1,9 @@
-//! ref-notes: the Rust reference for examples/odin/notes, written the way a Rust GPUI-kit app is
+//! ref-notes: the Rust reference for examples/go/notes, written the way a Rust GPUI-kit app is
 //! written: the kit's styled dock with two panels (a list of notes over a ListDelegate, an editor
 //! with the kit's Input), a File menu whose items are actions with key bindings, a confirmation
 //! dialog opened with a closure, and the theme switched with `Theme::change`. State is shared by
 //! the app, its panels and the list's delegate through an `Rc<RefCell<..>>`. The actions are heard
-//! app-wide, wherever the focus is (`shortcut`), as the Odin app's `gk.shortcut` does.
+//! app-wide, wherever the focus is (`shortcut`).
 //!
 //!   ref-notes                  a real window
 //!   ref-notes --script FILE    offscreen, driven by a gk-meter script (diag build)

@@ -1,6 +1,6 @@
 // misuse_data: mistakes against the data protocol (docs/PROTOCOLS.md section 12) that must stop
-// with a message naming the column or template, never draw a chart from a wrong column. The port
-// of examples/odin/negative_data; run offscreen with the diag library by gates/go-misuse.sh, one
+// with a message naming the column or template, never draw a chart from a wrong column. Run
+// offscreen with the diag library by gates/go-misuse.sh, one
 // mode per case. A column is an exported field, named as the field is (Month, Desktop):
 //
 //	GK_NEG=data-ok      a line chart over the rows, drawn: correct (exit 0)

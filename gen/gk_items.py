@@ -220,8 +220,8 @@ def reads_record(m, ctx, t, mode, skip_types=()):
             continue
         flipped = [k for k, e in m.denums.items() if e.get("out") and not was_out.get(k)]
         if flipped:
-            # A data enum read back changes its Odin type (gk.Size's Size_Kind becomes unit structs): the
-            # read is left out rather than every app's `with_size(.Small)` changed.
+            # A data enum read back changes its Go type (gk.Size's kind becomes unit structs): the
+            # read is left out rather than every app's `WithSize(gk.SizeSmall)` changed.
             for k in flipped:
                 m.denums[k]["out"] = was_out.get(k, False)
             left[name] = f"{flipped[0].rsplit('::', 1)[-1]}, a data enum the app only writes"
@@ -287,7 +287,7 @@ def post(m):
         elif it["name"] in rc.get("left", {}) and it["status"] in ("todo", "norule"):
             it.update(status="skipped", reason="builder-getter",
                       detail=f"builder-getter: reads back what the app set on the component ({rc['left'][it['name']]}: "
-                             f"read back, its Odin type would change for every app); not a field of {ada(rc['name'])}")
+                             f"read back, its Go type would change for every app); not a field of {ada(rc['name'])}")
     for key in sorted(m.items_handed):
         node = m.nodes[key]
         if any(i.get("handed") for i in node["ctors"]):
@@ -397,131 +397,3 @@ def _wrapped(rs, wrap, ptypes, ret, body):
         ptr = {"rc": "std::rc::Rc", "box": "Box", "arc": "std::sync::Arc"}[wrap]
         return f"{{ let f: {ptr}<dyn Fn({', '.join(ptypes)}) -> {ret}> = {rs.wrap(wrap, body)}; f }}"
     return rs.wrap(wrap, body)
-
-
-# ---------------------------------------------------------------- Odin
-
-
-def odin_type(od, d, out=False):
-    if d[0] == "items":
-        return "Row_Source"
-    if d[0] == "view":
-        return "Kit_View"
-    return None
-
-
-def as_items(d):
-    """An item descriptor, or 9.16's element closure over a context seen as one (its values are
-    all `val`s): both take `gk.items`, so every element closure over values has a typed procedure."""
-    if d[0] == "items":
-        return d
-    if d[0] == "ctxrows":
-        return ["items", d[1], d[2], d[3], [["val", x] for x in d[4]], "el"]
-    return None
-
-
-def odin_put(od, d, v):
-    d = as_items(d)
-    if d is None:
-        return None
-    n = signature(od, d)[0]
-    return [f"put_u64(o, items_check({v}, {n}))"]
-
-
-def _params(od, d):
-    """(Odin parameter list of the procedure, values read with row_context as (field, type), calls
-    that make the handed nodes) of an item descriptor."""
-    m = od.m
-    vals, out = d[4], d[5]
-    ps, reads, makes, args = [], [], [], []
-    hi = 0
-    taken = {"s", "cx"}
-
-    def pname(t, n):
-        base = t.lower() if t[:1].isupper() and not t.startswith(("Maybe", "Temp")) else f"v{n}"
-        nm = base
-        while nm in taken:
-            nm += "_"
-        taken.add(nm)
-        return nm
-    for n, v in enumerate(vals):
-        if v[0] == "val":
-            t = od.otype(v[1], True)
-            reads.append((f"v{n}", t))
-            ps.append((pname(t, n), t))
-            args.append(f"vals.v{n}")
-        elif v[0] == "reads":
-            t = m.records[v[1]]["odin"]
-            reads.append((f"v{n}", t))
-            ps.append((pname(t, n), t))
-            args.append(f"vals.v{n}")
-        elif v[0] == "handed":
-            node = m.nodes[v[1]]
-            ctor = next(i for i in node["ctors"] if i.get("handed"))
-            t = node["odin"]
-            ps.append((pname(t, n), t))
-            makes.append(f"h{n} := {ctor['odin']}({hi})")
-            args.append(f"h{n}")
-            hi += 1
-            if v[2]:
-                rt = m.records[v[2]]["odin"]
-                reads.append((f"v{n}", rt))
-                ps.append((pname(rt, n), rt))
-                args.append(f"vals.v{n}")
-        elif v[0] == "view":
-            ps.append((pname("Kit_View", n), "Kit_View"))
-            makes.append(f"h{n} := kit_view({hi})")
-            args.append(f"h{n}")
-            hi += 1
-    ret = "Element" if out == "el" else m.nodes[out[1]]["odin"]
-    return ps, reads, makes, args, ret
-
-
-def vt_note(od, it):
-    """A comment after a builder's table entry that takes an item procedure's rows: the procedure
-    to write, since `Row_Source` alone does not say."""
-    for a in it.get("args", []):
-        if as_items(a["desc"]):
-            ps, _, _, _, ret = _params(od, as_items(a["desc"]))
-            vals = "".join(f", {nm}: {t}" for nm, t in ps)
-            return f" // gk.items(cx, state, proc(s: ^S, cx: ^Cx{vals}) -> {ret})"
-    return ""
-
-
-def signature(od, d):
-    """(number, Odin procedure type) of an item descriptor's kind; numbers are given in order of
-    first use in a run (the Odin emitter's), so a run makes the same numbers for the same sources."""
-    ps, _, _, _, ret = _params(od, d)
-    ty = f"proc(s: ^S, cx: ^Cx{''.join(f', {nm}: {t}' for nm, t in ps)}) -> {ret}"
-    sigs = od.__dict__.setdefault("item_sigs", {})
-    if ty not in sigs:
-        sigs[ty] = (len(sigs) + 1, d)
-    return sigs[ty][0], ty
-
-
-def odin_emit(od):
-    """gen_items.odin: `gk.items`, one member per kind of item procedure."""
-    sigs = getattr(od, "item_sigs", {})
-    od.open("gen_items.odin", "Item procedures (docs/PROTOCOLS.md 9.41): gk.items, one member per kind of procedure.")
-    names = []
-    lines = []
-    for ty, (n, d) in sorted(sigs.items(), key=lambda x: x[1][0]):
-        ps, reads, makes, args, ret = _params(od, d)
-        name = f"items_{n}"
-        names.append(name)
-        lines += [f"// {name}: {', '.join(t for _, t in ps)} -> {ret}",
-                  f"{name} :: proc(cx: ^Cx, state: ^$S, describe: {ty}, loc := #caller_location) -> Row_Source {{",
-                  "\ttramp :: proc(fn, state: rawptr, cx: ^Cx, at: Row_At) -> Element {"]
-        if reads:
-            lines.append(f"\t\tVals :: struct {{{', '.join(f'{f}: {t}' for f, t in reads)}}}")
-            lines.append("\t\tvals := row_context(cx, Row_Source{build.view.src}, at, Vals)")
-        lines += ["\t\t" + s for s in makes]
-        lines.append(f"\t\treturn (cast({ty})fn)(cast(^S)state, cx{''.join(', ' + a for a in args)})")
-        lines += ["\t}", f"\treturn items_source(cx, state, rawptr(describe), tramp, {n}, loc)", "}", ""]
-    od.add("// items makes the row source of an item procedure: a procedure that describes one item of a component",
-           "// (a calendar's day, a tree's entry, a popover's content), called between frames with the values the",
-           "// kit hands that item. The same (procedure, state) pair gives the same source; it may be called in a view.",
-           "items :: proc {" + ", ".join(names) + "}" if names else "items :: proc {}", "")
-    od.add("@(private)", "ITEMS_KINDS := [?]string{\"\", " + ", ".join(json.dumps(t) for t in sorted(sigs, key=lambda t: sigs[t][0])) + "}", "")
-    od.add(*lines)
-    od.close()

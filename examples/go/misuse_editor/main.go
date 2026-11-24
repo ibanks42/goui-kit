@@ -1,6 +1,6 @@
 // misuse_editor: mistakes against the editor family's protocols (docs/PROTOCOLS.md 9.20 to 9.40)
-// that must stop with a message, never draw wrong content with exit 0. The port of
-// examples/odin/negative_editor; run offscreen with the diag library by gates/go-misuse.sh, one
+// that must stop with a message, never draw wrong content with exit 0. Run
+// offscreen with the diag library by gates/go-misuse.sh, one
 // mode per case:
 //
 //	GK_NEG=ed-ok             a data plugin's rows, a surface and an owned InputBase: correct (exit 0)

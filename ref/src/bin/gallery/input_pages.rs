@@ -2,7 +2,7 @@
 //! (typing, select all, copy, paste, undo, redo, a selection), a multi-line textarea, the code
 //! editor without grammars, the editor's completion menu filled by a provider, a number input,
 //! an OTP input and a masked input, written the way a
-//! Rust GPUI-kit app writes them. The Odin twin is examples/odin/gallery/input_pages.odin, call
+//! Rust GPUI-kit app writes them. The Go twin is examples/go/gallery/input_pages.go, call
 //! for call; the pages' lines are in ref/gallery/pages.txt. Each page has its own state, made
 //! once when the gallery starts, so a page shows only what its own steps did.
 use crate::Gallery;
@@ -30,7 +30,7 @@ pub struct InputPages {
 }
 
 /// The completion provider of the editor-completion page: two fixed items, asked for when a
-/// typed character is a dot. The Odin page answers the same through gk.editor_providers.
+/// typed character is a dot.
 struct Completions;
 
 impl CompletionProvider for Completions {

@@ -1,5 +1,5 @@
-// The lists and editor families' gallery pages, the Go twin of ref/src/bin/gallery/lists2_pages.rs
-// (and of examples/odin/gallery/lists2_pages.odin), call for call: selects and a combobox over
+// The lists and editor families' gallery pages, the Go twin of ref/src/bin/gallery/lists2_pages.rs,
+// call for call: selects and a combobox over
 // the library's search delegate (items as data, rows and group headers as row views) and a
 // table whose looks are data (docs/PROTOCOLS.md sections 9.9 and 9.10), a Markdown code block
 // highlighted by the app (an ask, 9.14), a patch parsed by the kit (DiffFile::parse, 9.15), an
@@ -56,7 +56,7 @@ var lists2Fruit = []gk.SearchItem{
 
 var lists2Veg = []gk.SearchItem{{Value: "kale", Title: "Kale"}, {Value: "leek", Title: "Leek"}}
 
-// lists2HeaderRow is the row a search source's header row is asked at (Odin's gk.HEADER).
+// lists2HeaderRow is the row a search source's header row is asked at (gk.HeaderRow).
 const lists2HeaderRow = 0xffff_fffe
 
 func lists2PagesInit(a *App, cx *gk.Cx) {
@@ -74,7 +74,7 @@ func lists2PagesInit(a *App, cx *gk.Cx) {
 	p.token = gk.NewInputState(cx).DefaultValue("Hello world").Build()
 	_ = p.token.ReplaceRangeWithToken(cx, gk.Range{Lo: 6, Hi: 11}, gk.NewInlineToken("t1", "world").WithLabel("World"))
 	p.keywords = gk.NewHighlighter(cx, editorKeywords, nil)
-	p.editor = gk.NewEditorState(cx).Language("odin").DefaultValue(editorDiagText).Build()
+	p.editor = gk.NewEditorState(cx).Language("demo").DefaultValue(editorDiagText).Build()
 	p.editor.SetHighlighterFactory(cx, p.keywords.Src)
 	if d, ok := p.editor.DiagnosticsMut(cx).Get(); ok {
 		d.Push(cx, gk.NewDiagnostic([2]gk.LspPosition{{Line: 1, Character: 4}, {Line: 1, Character: 10}}, "never called"))
@@ -155,7 +155,7 @@ func lists2TableLook(a *App, cx *gk.Cx) gk.Element {
 // 9.14): "proc" and "return" in red, as the Rust page's closure does.
 var textHighlightWords = []string{"proc", "return"}
 
-const textHighlightMD = "# Code\n\n```odin\nmain :: proc() {\n    return\n}\n```\n"
+const textHighlightMD = "# Code\n\n```demo\nmain :: proc() {\n    return\n}\n```\n"
 
 // keywordRuns finds the keywords of textHighlightWords in text: one range per keyword.
 func keywordRuns(text string) []gk.Range {
@@ -190,7 +190,7 @@ func textHighlight(a *App, cx *gk.Cx) gk.Element {
 }
 
 // diff-view: a patch parsed by the kit (DiffFile::parse) shown by its Diff.
-const diffViewPatch = "diff --git a/hello.odin b/hello.odin\n--- a/hello.odin\n+++ b/hello.odin\n@@ -1,4 +1,4 @@\n package hello\n \n-main :: proc() {}\n+main :: proc() { run() }\n // end\n"
+const diffViewPatch = "diff --git a/hello.demo b/hello.demo\n--- a/hello.demo\n+++ b/hello.demo\n@@ -1,4 +1,4 @@\n package hello\n \n-main :: proc() {}\n+main :: proc() { run() }\n // end\n"
 
 func diffView(a *App, cx *gk.Cx) gk.Element {
 	return gk.Div().W(gk.Px(440)).H(gk.Px(200)).Child(gk.Diff(a.lists2.diff))

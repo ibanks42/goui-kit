@@ -1,10 +1,10 @@
 package gk
 
 // Test hooks of the protocol suites (core/tests/go): reads of the runtime's and the library's
-// bookkeeping that only a test asks for. Odin: the gk.test_* procedures.
+// bookkeeping that only a test asks for.
 
 // TestObjCounts returns the temporary handles waiting for the next frame and the live library
-// objects (core/tests/go/handles). Odin: gk.test_obj_counts.
+// objects (core/tests/go/handles).
 func TestObjCounts(cx *Cx) (temps, live int) {
 	checkCx(cx).flush()
 	o := newReq(cObjTestTemps)
@@ -13,7 +13,7 @@ func TestObjCounts(cx *Cx) (temps, live int) {
 }
 
 // TestValuePins returns the temporary handles pinned by views and the ones waiting for the next
-// sweep (core/tests/go/values). Odin: gk.test_value_pins.
+// sweep (core/tests/go/values).
 func TestValuePins(cx *Cx) (pinned, later int) {
 	checkCx(cx).flush()
 	r := reader{b: mustCall(*newReq(cValuesTest))}
@@ -22,7 +22,7 @@ func TestValuePins(cx *Cx) (pinned, later int) {
 
 // TestEntityHandles reads one entity back through the library's two paths (the values path and
 // the dock's) and again, and returns the three handles and how many distinct handles the table
-// holds for it (core/tests/go/values). Odin: gk.test_entity_handles.
+// holds for it (core/tests/go/values).
 func TestEntityHandles(cx *Cx) (valuesPath, dockPath, again, handles uint64) {
 	checkCx(cx).flush()
 	r := reader{b: mustCall(*newReq(cHandlesTest))}
@@ -30,7 +30,7 @@ func TestEntityHandles(cx *Cx) (valuesPath, dockPath, again, handles uint64) {
 }
 
 // TestDragPayload has the library decode an external drag payload as an element's builder would and
-// returns its files (core/tests/go/platform). Odin: gk.test_drag_payload.
+// returns its files (core/tests/go/platform).
 func TestDragPayload(cx *Cx, p ExternalDragPayload) []ExternalFile {
 	checkCx(cx).flush()
 	o := newReq(cPlatformTest)
@@ -46,7 +46,7 @@ func TestDragPayload(cx *Cx, p ExternalDragPayload) []ExternalFile {
 }
 
 // TestPrepaintOrder has the library decode a dynamic prepaint order and returns it
-// (core/tests/go/platform). Odin: gk.test_prepaint_order.
+// (core/tests/go/platform).
 func TestPrepaintOrder(cx *Cx, order []int) []int {
 	checkCx(cx).flush()
 	o := newReq(cPlatformTest)
@@ -64,7 +64,7 @@ func TestPrepaintOrder(cx *Cx, order []int) []int {
 }
 
 // TestFileDropEntered returns gpui's FileDropEvent::Entered as the library writes a handler's
-// payload (core/tests/go/platform). Odin: gk.test_file_drop_entered.
+// payload (core/tests/go/platform).
 func TestFileDropEntered(cx *Cx) FileDropEvent {
 	checkCx(cx).flush()
 	o := newReq(cPlatformTest)
@@ -75,7 +75,7 @@ func TestFileDropEntered(cx *Cx) FileDropEvent {
 
 // PlatformLog is what the scripted platform recorded (core/tests/go/platform): the URLs opened, the
 // requests made, answers delivered and discarded, requests waiting, and whether the platform is
-// scripted. Odin: gk.Platform_Log.
+// scripted.
 type PlatformLog struct {
 	URLs                           []string
 	Requests, Delivered, Discarded uint64
@@ -83,7 +83,7 @@ type PlatformLog struct {
 	Scripted                       bool
 }
 
-// GetPlatformLog reads the platform's log. Odin: gk.platform_log.
+// GetPlatformLog reads the platform's log.
 func GetPlatformLog(cx *Cx) PlatformLog {
 	checkCx(cx).flush()
 	r := reader{b: mustCall(*newReq(cPlatformLog))}
@@ -99,8 +99,7 @@ func GetPlatformLog(cx *Cx) PlatformLog {
 }
 
 // TestEditorText returns the library's counts of the editor family: Markdown nodes the data plugins
-// claimed, and rows made for the distinct values of view closures (core/tests/go/editor2). Odin:
-// gk.test_editor_text.
+// claimed, and rows made for the distinct values of view closures (core/tests/go/editor2).
 func TestEditorText(cx *Cx) (parsed, viewRows int) {
 	checkCx(cx).flush()
 	r := reader{b: mustCall(*newReq(cEditorTest))}
@@ -108,7 +107,7 @@ func TestEditorText(cx *Cx) (parsed, viewRows int) {
 }
 
 // TestEditorHostCounts returns editor hosts decoded, leaves collected, leaf events delivered,
-// decorators run and lent values edited (core/tests/go/editor2). Odin: gk.test_editor_host_counts.
+// decorators run and lent values edited (core/tests/go/editor2).
 func TestEditorHostCounts(cx *Cx) (hosts, leaves, delivered, decorated, lent int) {
 	checkCx(cx).flush()
 	r := reader{b: mustCall(*newReq(cEditorHostTest))}
@@ -116,5 +115,5 @@ func TestEditorHostCounts(cx *Cx) (hosts, leaves, delivered, decorated, lent int
 }
 
 // TestKeptCount returns the handlers the runtime keeps for the library (subscriptions, timers,
-// handlers given to call ops). Odin: gk.test_kept_count.
+// handlers given to call ops).
 func TestKeptCount() int { return keptLive() }

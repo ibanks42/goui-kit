@@ -9,10 +9,10 @@
 # library loads on older distributions too (tools/zigbuild.sh holds the pinned zig,
 # cargo-zigbuild and link setup; the Rust of rust-toolchain.toml). Then the download
 # (tools/dist.sh), then what a newcomer does
-# first, from the unpacked download (tools/dist-test.sh): the hello example built in Odin and in
-# Go with the download's own build scripts, and each program run in a window for 30 frames
+# first, from the unpacked download (tools/dist-test.sh): the hello example built in Go with the
+# download's own build script, and the program run in a window for 30 frames
 # (Linux: under Xvfb, drawn by Mesa's lavapipe). On macOS also for the other architecture:
-# x86_64 builds of hello in both languages, run under Rosetta 2 when the runner has it, else built
+# an x86_64 build of hello, run under Rosetta 2 when the runner has it, else built
 # and linked only (the log says which). The diagnostic library (offscreen rendering, scripted
 # input) is not built here: it is for the repository's own tests (docs/CONTRIBUTING.md). Each
 # platform's archive is the artifact gpuikit-PLATFORM; the test output is test-PLATFORM.
@@ -30,8 +30,7 @@
 # cache to the ref that saved it, and every ref may read the default branch's): a release saves it
 # for the next release, and a pull request reads it.
 #
-# Needs no secrets: the Odin compiler is fetched from odin-lang/Odin's releases and the release
-# is made with the run's own token (contents: write in the release job only). Signing (Developer
+# Needs no secrets: the release is made with the run's own token (contents: write in the release job only). Signing (Developer
 # ID on macOS, Azure Artifact Signing on Windows) is the app's release workflow's job, not this
 # one's.
 name: platforms
@@ -57,9 +56,8 @@ env:
   # Python reads and writes UTF-8 everywhere (Windows' default is cp1252, which
   # cannot decode cargo metadata's crate descriptions).
   PYTHONUTF8: '1'
-  # The Go and Odin releases the project is tested with (tools/install-odin.sh fetches the same Odin).
+  # The Go release the project is tested with.
   GO_VERSION: '1.27.3'
-  ODIN_RELEASE: dev-2026-11
   CARGO_TERM_COLOR: never
   CARGO_INCREMENTAL: '0'
 
@@ -74,13 +72,10 @@ jobs:
         include:
           - os: ubuntu-26.04
             platform: linux-x86_64
-            odin_asset: '*linux-amd64*'
           - os: macos-latest          # Apple silicon; builds both slices of the universal library
             platform: macos-universal
-            odin_asset: '*macos-arm64*'
           - os: windows-latest
             platform: windows-x86_64
-            odin_asset: '*windows-amd64*'
     defaults:
       run:
         shell: bash
@@ -92,7 +87,7 @@ jobs:
       # What the link and the test run need: the -dev packages of the system libraries the library
       # links (tools/zigbuild.sh's link folder: freetype, fontconfig, xkbcommon, xkbcommon-x11,
       # xcb) and the others a build script could look for; Xvfb, and Mesa's Vulkan (lavapipe) and
-      # EGL for wgpu without a GPU; clang, which Odin links with.
+      # EGL for wgpu without a GPU; clang.
       - name: Linux packages
         if: runner.os == 'Linux'
         run: |
@@ -192,39 +187,12 @@ jobs:
           go-version: ${{ env.GO_VERSION }}
           cache: false
 
-      - name: Odin compiler
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          dir=$RUNNER_TEMP/odin; mkdir -p "$dir"; cd "$dir"
-          gh release download "$ODIN_RELEASE" --repo odin-lang/Odin --pattern '${{ matrix.odin_asset }}'
-          # Some releases wrap the tarball in a zip: unpack until the compiler is there.
-          for _ in 1 2; do
-            for a in *.zip *.tar.gz; do
-              [ -f "$a" ] || continue
-              case $a in *.zip) unzip -q -o "$a" ;; *) tar xzf "$a" ;; esac
-              rm -f "$a"
-            done
-          done
-          odin=$(find "$dir" -type f \( -name odin -o -name odin.exe \) | head -1)
-          [ -n "$odin" ] || { echo "no odin binary in $(find "$dir" | head -40)"; exit 1; }
-          chmod +x "$odin"
-          if ! "$odin" version; then
-            # A macOS build linked against Homebrew's LLVM names the version it needs.
-            need=$(otool -L "$odin" 2>/dev/null | grep -o 'llvm@[0-9]*' | head -1)
-            [ -n "$need" ] && brew install "$need" && "$odin" version
-          fi
-          bindir=$(dirname "$odin")
-          if [ "$RUNNER_OS" = Windows ]; then bindir=$(cygpath -w "$bindir"); odin=$(cygpath -m "$odin"); fi
-          echo "$bindir" >> "$GITHUB_PATH"
-          echo "ODIN=$odin" >> "$GITHUB_ENV"
-
       - name: Download (tools/dist.sh)
         run: |
           GK_PLATFORM=${{ matrix.platform }} tools/dist.sh
           cat dist/gpuikit-*-${{ matrix.platform }}/VERSIONS
 
-      - name: Hello in Odin and Go, from the download, in a window
+      - name: Hello in Go, from the download, in a window
         run: |
           ver=$(grep -m1 '^version' Cargo.toml | cut -d'"' -f2)
           tools/dist-test.sh "dist/gpuikit-$ver-${{ matrix.platform }}"
@@ -292,9 +260,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          hash=$(grep -m1 API_HASH odin/gk/ops.odin | grep -o '0x[0-9a-f]*')
+          hash=$(grep -m1 'const apiHash' go/gk/gen_ops.go | grep -o '0x[0-9a-f]*')
           {
-            echo "gpuikit $VERSION: the prebuilt library, the Odin package, the Go module, examples and guides,"
+            echo "gpuikit $VERSION: the prebuilt library, the Go module, examples and guides,"
             echo "for Linux x86-64 (glibc 2.28 or newer), macOS 11.0 or newer (universal: Apple silicon and Intel)"
             echo "and Windows x86-64."
             echo

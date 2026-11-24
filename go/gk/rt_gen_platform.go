@@ -1,7 +1,7 @@
 package gk
 
-// gpui's element leftovers the generator's descriptor kinds carry (ported from
-// odin/gk/rt_platform.odin; docs/PROTOCOLS.md 13.31): a drag's files outside the window, an
+// gpui's element leftovers the generator's descriptor kinds carry
+// (docs/PROTOCOLS.md 13.31): a drag's files outside the window, an
 // element's drag moves, its prepaint order, synthetic accessibility children, image caches and
 // scroll anchors.
 //

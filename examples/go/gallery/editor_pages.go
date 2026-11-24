@@ -1,5 +1,5 @@
 // The editor family's gallery pages (docs/PROTOCOLS.md 9.20 to 9.40), the Go twin of
-// ref/src/bin/gallery/editor_pages.rs and examples/odin/gallery/editor_pages.odin, call for call:
+// ref/src/bin/gallery/editor_pages.rs, call for call:
 //
 //	editor5-surface   a block surface: the app's Div around a blockquote's blocks (a typed fragment)
 //	editor5-heading   a text style's headings by level (a table the app gives for Fn(u8) -> style)
@@ -152,7 +152,7 @@ func editorHost(a *App, cx *gk.Cx) gk.Element {
 		gk.BlockNodeListItem{Children: two, Checked: gk.Some(true)},
 	}
 	bs = append(bs, gk.BlockNodeList{Children: items})
-	bs = append(bs, gk.BlockNodeCodeBlock{Value: gk.NewBaseCodeBlockFromCode("x := 1", gk.Some("odin")).WithLeafKey(4)})
+	bs = append(bs, gk.BlockNodeCodeBlock{Value: gk.NewBaseCodeBlockFromCode("x := 1", gk.Some("demo")).WithLeafKey(4)})
 	for _, h := range a.editor.held {
 		bs = append(bs, h)
 	}

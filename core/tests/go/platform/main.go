@@ -12,7 +12,7 @@
 //	         unset); context-menu | context-menu-kit (offscreen: an input's right click)
 //	GK_PLATFORM_SCRIPT=FILE   a gk-meter script instead of the mode's (to take shots of what a mode draws)
 //
-// Odin's wrong-payload (a handler whose payload is not the request's) is a compile error in Go
+// A wrong payload (a handler whose payload is not the request's) is a compile error in Go
 // (examples/go/misuse_compile). The modes of the scripted platform's log, the leftovers of 13.31 and
 // the kit's menu bar view are in modes.go.
 package main
@@ -68,7 +68,7 @@ var (
 	views = map[string]func(a *App, cx *gk.Cx) gk.Element{}
 )
 
-// doneName prints a DoneStatus as Odin's %v does (the variant's name).
+// doneName prints a DoneStatus as the checks expect (the variant's name).
 func doneName(d gk.DoneStatus) string {
 	switch d {
 	case gk.DoneAnswered:

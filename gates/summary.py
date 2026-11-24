@@ -57,7 +57,7 @@ for line in open(log, errors="replace"):
             steps[step] += 1
 secs = dict((l.split()[0], float(l.split()[1])) for l in open(times) if l.strip())
 for s, n in steps.items():
-    if n == 0 and s != "build":
+    if n == 0:
         rows.append((s, "-", "FAIL", "the step printed no verdict (see gates/out/all.log)"))
         bad.append(s)
 count = lambda r: sum(1 for x in rows if x[2] == r)

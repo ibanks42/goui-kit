@@ -4,8 +4,8 @@ GPUI-kit is documented for Rust, at gpui-kit.com/docs and in its rustdoc. The Go
 generated from that same API by fixed rules, so the Rust documentation is also the Go
 documentation once you know the rules. This page gives the rules, then an index of every component
 the package has, generated from the package itself so it is always current. If this is your first
-app, read [GETTING-STARTED-GO.md](GETTING-STARTED-GO.md) first. The Odin package has the same API
-under Odin's names ([API.md](API.md)); [GO.md](GO.md) explains how the Go package works.
+app, read [GETTING-STARTED-GO.md](GETTING-STARTED-GO.md) first. [GO.md](GO.md) explains how the Go
+package works.
 
 Every Go call on this page also appears in `docs/snippets-go/api/main.go`, a program that the
 project's tests compile, so none of them is out of date.
@@ -25,13 +25,11 @@ project's tests compile, so none of them is out of date.
   `gk.Shortcut`, `gk.NewListSource` and the other functions that have no single upstream
   counterpart.
 - Not every upstream function is bound yet. Each one that is missing is listed, with the reason,
-  in [STATUS.md](STATUS.md); the Go package also lacks a few that Odin has (see "Not in Go yet"
-  below).
+  in [STATUS.md](STATUS.md).
 
 ## Names
 
-The Go names are the Odin names under fixed rules (docs/GO.md section 2), so this table also
-reads against [API.md](API.md).
+The Go names follow fixed rules (docs/GO.md section 2).
 
 | Rust (gpui-kit.com/docs) | Go | rule |
 |---|---|---|
@@ -158,7 +156,7 @@ method serves a button and its keys.
 | handles: `gk.InputState`, `gk.ListState` and every kit state type, `gk.View`, `gk.Action`, `gk.Window`, `gk.Timer`, row sources | until `gk.Release(cx, a.list)` | keep them in your struct |
 | strings a read or an event hands you (`a.name.Value(cx)`) | always: a Go string is a copy | assign it anywhere |
 | `*gk.Cx` | the call it was given to | never; every function the binding calls gets one |
-| what a closure captures | as long as the closure is kept | nothing to do: the collector keeps it alive (Odin's copy rule has no Go counterpart) |
+| what a closure captures | as long as the closure is kept | nothing to do: the collector keeps it alive |
 | a library object a read or an event hands out (a temporary handle) | until the next frame | `gk.Retain` it |
 
 Only `gk.Post` may be called from another goroutine. Breaking a rule stops the app with a message
@@ -166,21 +164,8 @@ that names it and the line; see "When the app stops" in [GETTING-STARTED-GO.md](
 
 ## Not in Go yet
 
-The Go package has 7,133 of the 7,599 functions the Odin package binds. What it lacks, by family
-(`gen/out/go-report.md` in the source repository lists each item and why):
-
-- Table sources: Odin's `gk.table_source` (the kit's DataTable over the app's rows and columns)
-  has no Go counterpart yet, so `gk.NewTableState` takes a `gk.RowSource` made by hand; the index
-  below shows that parameter as `delegate`.
-- The dock's saved layouts, its pane tree and panel styles: Go has panels, a skinned dock area and
-  its tabs (`gk.NewDockAreaSkinned`, `gk.NewPanel`, `gk.DockView`).
-- Of drag and drop, `on_drag_move` and `external_drag_payload` (drags, drops, drag-over styles and
-  `CanDrop` are there, as are an element's tooltip, image sources and the menu bar: see
-  [GO.md](GO.md) section 7).
-- Callbacks the kit makes to draw or answer per item: a calendar's custom days and its date
-  arithmetic, a hover card's content, Markdown plugins and block renderers, an editor's
-  highlighters, language providers and completion, an input's tokens.
-- A few values: setting fields over `bool` and `f64`, `Styled::font`, image caches, scroll anchors.
+Every upstream function that is not bound yet is listed, with the reason, in
+[STATUS.md](STATUS.md).
 
 A builder whose parameter type Go cannot carry yet is left out of the package, so app code cannot
 call it; the few kept for a record's other fields stop with "... is not carried by the Go package

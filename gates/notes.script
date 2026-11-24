@@ -1,4 +1,4 @@
-# The notes app's scripted session (examples/odin/notes against ref/src/bin/notes.rs, gates/pixels.sh
+# The notes app's scripted session (examples/go/notes against ref/src/bin/notes.rs, gates/pixels.sh
 # notes): every image must be byte-identical between the two. Each step was checked by eye on the
 # first run to show what its comment says, so "identical" means both apps did it. Window coordinates (the images are
 # twice the size): the File button at 30,24, the theme button at 742,24, the list's rows at

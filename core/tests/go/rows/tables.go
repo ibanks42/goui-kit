@@ -1,5 +1,4 @@
-// The modes of the table's and tree's row sources (Odin's kit_rows.odin: table_source,
-// table_invalidate, tree_source, tree_set_items, tree_entry).
+// The modes of the table's and tree's row sources.
 package main
 
 import (
@@ -69,8 +68,8 @@ func (a *App) tableInit(cx *gk.Cx) {
 
 var treeNodes = []gk.TreeNode{
 	{ID: "src", Label: "src", Depth: 0, Expanded: true},
-	{ID: "src/a", Label: "a.odin", Depth: 1},
-	{ID: "src/b", Label: "b.odin", Depth: 1},
+	{ID: "src/a", Label: "a.demo", Depth: 1},
+	{ID: "src/b", Label: "b.demo", Depth: 1},
 	{ID: "docs", Label: "docs", Depth: 0},
 	{ID: "docs/c", Label: "c.md", Depth: 1},
 	{ID: "d", Label: "README", Depth: 0},

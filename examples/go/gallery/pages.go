@@ -1,5 +1,5 @@
-// The gallery's pages in Go: the twin of ref/src/bin/gallery/pages.rs (and of
-// examples/odin/gallery/pages.odin), page for page and call for call.
+// The gallery's pages in Go: the twin of ref/src/bin/gallery/pages.rs,
+// page for page and call for call.
 package main
 
 import (

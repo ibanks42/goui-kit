@@ -1,14 +1,13 @@
 #!/bin/bash
 # go.sh [PHASE...]: the Go front end's gate rows (docs/GO.md). Phases:
-#   build    examples/go/build.sh: every Go example app, the twins of the Odin examples (timed;
-#            GOCACHE reused)
+#   build    examples/go/build.sh: every Go example app (timed; GOCACHE reused)
 #   hello    the README's app in Go offscreen, 30 frames, exit 0
 #   proto    gates/go-proto.sh, the protocol tests in Go
 #   misuse   gates/go-misuse.sh, the misuse cases (run time and compile time)
 #   pixels   counter, panels, paint, writerule and files, Rust against Go, byte for byte
 #            (gates/pixels.sh; notes is gates/go-apps.sh's)
 #   fps      frame cost, panels 60 64 2 and the counter's click on every frame: Rust, Go, Rust
-#            again (gates/fps.sh, judged as Odin was: DESIGN.md 18, 1.03 x Rust; GK_BAR overrides)
+#            again (gates/fps.sh, DESIGN.md 18: 1.03 x Rust; GK_BAR overrides)
 #   rebuild  go build after a one-line edit of an app (the edit loop)
 # Default: build hello proto misuse pixels. Each phase prints lines starting with GATE.
 here=$(cd "$(dirname "$0")" && pwd); repo=$(dirname "$here")

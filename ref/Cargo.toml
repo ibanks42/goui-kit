@@ -58,12 +58,12 @@ path = "src/bin/table.rs"
 name = "ref-notes"
 path = "src/bin/notes.rs"
 
-# The files app's twin (examples/odin/files, gates/pixels.sh files).
+# The files app's twin (examples/go/files, gates/pixels.sh files).
 [[bin]]
 name = "ref-files"
 path = "src/bin/files.rs"
 
-# The paint app's twin (examples/odin/paint, examples/go/paint, gates/pixels.sh paint): gradient
+# The paint app's twin (examples/go/paint, gates/pixels.sh paint): gradient
 # backgrounds and a plot of paths and quads (PROTOCOLS.md 11.38, 12.17).
 [[bin]]
 name = "ref-paint"

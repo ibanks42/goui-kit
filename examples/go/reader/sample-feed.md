@@ -61,9 +61,9 @@ a key that includes too much never hits.
 
 ## Invalidation
 
-```odin
-invalidate :: proc(c: ^Cache, key: string) {
-	delete_key(&c.entries, key)
+```go
+func invalidate(c *Cache, key string) {
+	delete(c.entries, key)
 }
 ```
 

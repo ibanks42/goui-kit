@@ -1,4 +1,4 @@
-// gallery: the Go twin of ref/src/bin/gallery (and of examples/odin/gallery), the app that shows
+// gallery: the Go twin of ref/src/bin/gallery, the app that shows
 // every stateless component in a fixed set of states, one page per component and state group.
 // The pages are named by ref/gallery/pages.txt and ref/gallery/conf.txt (their ids are compiled
 // in through conf.go, which gates/conformance.py writes); gates/gallery.sh go compares this app
@@ -57,8 +57,8 @@ type Page struct {
 	Build func(a *App, cx *gk.Cx) gk.Element
 }
 
-// pageTables are the pages of every file, looked up in this order (as the Odin twin's
-// find_page and the Rust twin's or_else chain), then the pending ones.
+// pageTables are the pages of every file, looked up in this order (as the Rust twin's
+// or_else chain), then the pending ones.
 func pageTables() [][]Page {
 	return append([][]Page{pages, confPages, inputPageTable, rowsPageTable, chartPageTable, lists2PageTable,
 		overlayPageTable, editorPageTable, valuesPageTable, viewsPageTable, motionPageTable}, pendingTables...)
@@ -96,7 +96,7 @@ func (a *App) init(cx *gk.Cx) {
 		all[i] = fmt.Sprintf("row %d", i)
 	}
 	a.rows.Push(cx, all...)
-	// The families in the order of the Odin twin's init and the Rust twin's or_else chain.
+	// The families in the order of the Rust twin's or_else chain.
 	inputPagesInit(a, cx)
 	rowsPagesInit(a, cx)
 	chartPagesInit(a, cx)

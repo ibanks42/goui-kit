@@ -340,11 +340,11 @@ pub fn call(op: u16, r: &mut R, c: &mut genapi::Call) -> Option<GkResult<()>> {
             let any = c.window_handle().ok_or_else(|| {
                 GkErr(
                     ERR_NO_CONTEXT,
-                    "a row source needs a window: make it in a view's init procedure or in a handler".into(),
+                    "a row source needs a window: make it in a view's init function or in a handler".into(),
                 )
             })?;
             let Some(wh) = rt::with(|s| s.window_of(any)) else {
-                return err(ERR_NO_CONTEXT, "a row source needs a window opened by gk.open_window");
+                return err(ERR_NO_CONTEXT, "a row source needs a window opened by gk.OpenWindow");
             };
             let src = rt::with(|s| {
                 let h = s.insert(
@@ -568,7 +568,7 @@ fn ctx_get(r: &mut R, c: &mut genapi::Call) -> GkResult<()> {
         }
         None => err(
             ERR_BAD_OP,
-            format!("row {row} of this row source was never drawn by an element closure over a context (gk.row_context)"),
+            format!("row {row} of this row source was never drawn by an element closure over a context (gk.Items)"),
         ),
     }
 }

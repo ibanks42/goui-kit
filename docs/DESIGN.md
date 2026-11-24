@@ -1,9 +1,8 @@
-# Design: Odin and Go bindings for GPUI-kit
+# Design: Go bindings for GPUI-kit
 
 This document explains how the bindings work and why they are built the way they are. It is
 for people who want to understand or change the binding itself. If you only want to write an
-app, start with [GETTING-STARTED.md](GETTING-STARTED.md) (Odin) or
-[GETTING-STARTED-GO.md](GETTING-STARTED-GO.md) (Go) instead.
+app, start with [GETTING-STARTED-GO.md](GETTING-STARTED-GO.md) instead.
 
 The exact runtime contract (every turn, message and rule, as built) is
 [PROTOCOLS.md](PROTOCOLS.md). The Go front end has its own design notes in [GO.md](GO.md).
@@ -26,26 +25,25 @@ A few words used throughout:
 
 These choices shape everything below. Where a later section seems to disagree, this one wins.
 
-1. **Styles are tokens.** `gk.v_flex(.Size_Full, .Gap_2)`: GPUI's styling methods that take
+1. **Styles are tokens.** `gk.VFlex(s.SizeFull, s.Gap2)`: GPUI's styling methods that take
    no arguments are members of one enum, not thousands of separate methods. Styling methods
-   with arguments stay methods (`->w(gk.px(120))`).
-2. **A handler marks its view for redraw automatically.** `gk.quiet(handler)` opts out. A view
+   with arguments stay methods (`.W(gk.Px(120))`).
+2. **A handler marks its view for redraw automatically.** `gk.Quiet(cx)` inside it opts out. A view
    whose description did not change costs no redraw.
 3. **One frame of placeholder rows after a far scrollbar jump is acceptable**, so that app
    code never runs in the middle of a frame.
 4. **The default library leaves out tree-sitter syntax grammars, speech and `decimal`.** It is
    built with the gpui-kit features `gpui-fast` and `syntect` (`syntect` always; `gpui-fast` by
    default, see choice 9).
-5. **One pinned Odin compiler.** The Odin package is tested against one Odin build
-   (dev-2026-11-nightly:9a69916); `tools/install-odin.sh` and the CI workflow name it.
+5. **One pinned Go release.** The Go package is tested against one Go release (1.27.3); the CI
+   workflow names it.
 6. **One Rust library, one C interface.** The description of the interface names no
-   language. Odin and Go are both generated from it; neither may bend the C interface for its
-   own sake.
+   language. The Go package is generated from it and may not bend the C interface for its own
+   sake.
 7. **Three platforms: Linux x86-64, macOS (one universal library for Apple silicon and
    Intel) and Windows x86-64.** Nothing in the C interface, the wire format or either
-   package's public API is platform-specific. What differs per system sits in one file per
-   platform (`odin/gk/rt_platform_{linux,darwin,windows}.odin` for the guard pages,
-   `go/gk/rt_thread_{linux,darwin,windows}.go` for the thread id and how messages name the
+   the package's public API is platform-specific. What differs per system sits in one file per
+   platform (`go/gk/rt_thread_{linux,darwin,windows}.go` for the thread id and how messages name the
    library). All three libraries are built by CI (section 16). The frame-cost and pixel
    gates run on Linux, where choice 8 is judged; the other platforms run the same code built
    for their target.
@@ -61,9 +59,8 @@ These choices shape everything below. Where a later section seems to disagree, t
    their diagnostics; neither refuses a library built without gpui-fast. The diagnostic variant
    needs gpui-fast, because the retention counters it reads exist only there. The frame-cost
    pass mark (choice 8) is judged on gpui-fast, which is what the published libraries use.
-10. **Go is a first-class front end** on the same library and C interface, generated from the
-    same description and held to the same usability bar as Odin. What Go needs that the
-    interface lacks is added in a language-neutral form, and Odin keeps passing. Go's frame
+10. **Go is the front end** on the library and C interface, generated from the description.
+    What Go needs that the interface lacks is added in a language-neutral form. Go's frame
     cost and rebuild time are measured and reported. Its design is [GO.md](GO.md).
 
 **How progress is counted.** Nothing is hand-written that a rule can generate, nothing is
@@ -124,7 +121,7 @@ Five details matter and are easy to get wrong:
 | requirement | how |
 |---|---|
 | GPUI-kit on gpui-fast by default, upstream GPUI on request | the library's default feature `gpui-fast` enables `gpui-kit/gpui-fast`; `gk_info` reports the engine (section 3) |
-| Odin and Go, both first-class | one language-neutral interface description; one generator with an emitter per language |
+| Go, first-class | one language-neutral interface description; one generator with an emitter per language |
 | frame rate equal to a pure Rust GPUI-kit app, measured | 0 crossings on frames without app-state change; views are separate retained entities; the frame-cost gate against a Rust reference built from the same lock file (section 18) |
 | Linux x86-64, macOS universal and Windows x86-64 | one download per system with the same contents; all three built by CI and published as GitHub releases (section 16) |
 | no Rust toolchain on the app developer's machine | the developer receives a prebuilt shared library and generated source; the generator needs only Python and is never needed by an app developer (section 16) |
@@ -191,7 +188,7 @@ stripped on Linux.
 ## 4. Architecture
 
 ```
- app (Odin or Go)                      | libgpuikit (Rust, prebuilt)
+ app (Go)                              | libgpuikit (Rust, prebuilt)
  --------------------------------------+------------------------------------------
  state: plain structs                  | GkView entities: one per app view, hold a tape
  view procedures -> tape (bytes)   --->| decode tape -> real gpui-kit elements
@@ -255,7 +252,7 @@ Conventions:
 - **Panics.** Every export and every Rust closure that enters the app runs inside
   `catch_unwind`. A caught Rust panic poisons the library (`GK_ERR_POISONED` from then on),
   and the package prints it and exits 1. Nothing unwinds across C: the Go callback recovers,
-  prints the stack and exits 2; Odin traps.
+  prints the stack and exits 2.
 - **Threads.** The thread that calls `gk_run` is the UI thread. `gk_call` and `gk_reply`
   check the thread and that a callback is active (`GK_ERR_WRONG_THREAD`,
   `GK_ERR_NO_CONTEXT`). The callback is only ever invoked on the UI thread. Nested callbacks
@@ -264,12 +261,11 @@ Conventions:
   `core/wire/ops.txt` and `api/opcodes.lock`). Ops are append-only within a major version, so
   `gk_run` accepts an app built against an older minor and refuses a different major or a
   newer minor, naming both versions.
-- **Naming.** C: `gk_`, `GK_OP_<OWNER>_<METHOD>`, `GK_ENUM_<TYPE>_<VARIANT>`. Odin: package
-  `gk`, the Rust snake_case names unchanged, types in `Ada_Case`. Go: package `gk`, the Odin
-  names in CamelCase by fixed rules ([GO.md](GO.md) section 2). The generator applies three
+- **Naming.** C: `gk_`, `GK_OP_<OWNER>_<METHOD>`, `GK_ENUM_<TYPE>_<VARIANT>`. Go: package `gk`,
+  the Rust names in CamelCase by fixed rules ([GO.md](GO.md) section 2). The generator applies three
   more rules to every emitted name:
   1. *Keywords.* A name that is a keyword of the target language gets a trailing underscore
-     (`gk.switch_` for the kit's `Switch` constructor in Odin). The keyword list is part of
+     (`type_` for a parameter named `type`). The keyword list is part of
      each emitter, and the rename is recorded in the item's `names`.
   2. *Unnamed parameters.* A parameter upstream writes as `_` (or a pattern) is named
      `arg<N>` by its position among the method's own parameters, counted from 0
@@ -490,7 +486,7 @@ call site.
 **App state** lives in the app's language and Rust never sees it. This is gpui-fast's
 "untracked state" case, so the binding does the bookkeeping:
 
-- `gk.Model(T)` in Odin and `gk.Model[T]` in Go hold a value and the set of views that read
+- `gk.Model[T]` holds a value and the set of views that read
   it; `get` in a view build records the view, `set` or `update` marks those views dirty. No
   crossing. It is optional: small apps need only the automatic mark.
 - A view procedure that reads kit state through a handle (`gk.value(s.name, cx)` inside a view)
@@ -549,8 +545,6 @@ Every export except `gk_post` belongs to the UI thread, and the library enforces
 - **Go:** `gk.Post(func(cx *gk.Cx) { ... })` from any goroutine, or `gk.Go(cx, work, done)`
   as the convenience form. The package locks the main goroutine to the main OS thread in
   `init`, and `gk.Run` must be called from `main`.
-- **Odin:** `gk.post(proc(s: ^App, cx: ^gk.Cx, msg: Tick), tick)` from any thread. The message
-  is copied into the queue and passes the same type walk as handler data (section 14).
 - **Timers:** `cx->after(d, handler)` and `cx->every(d, handler)` are foreground tasks that fire
   as handlers; releasing the handle drops the task, which cancels it.
 - **Requests that answer later** (`prompt_for_paths`, `Window::prompt`, file dialogs, and
@@ -620,15 +614,14 @@ api/            the interface description, language-neutral: rustdoc/ (the extra
                 (append-only wire numbers), gk.api.json.gz (the classified API),
                 coverage.json, quarantine.json, clone.json, accesskit-role.json
 gen/            the generator: gkgen.py (classify, number, emit), rdj.py (rustdoc JSON
-                reader), gk_rust.py, gk_odin.py, gk_go.py and the family modules;
+                reader), gk_rust.py, gk_go.py and the family modules;
                 extract.sh (stage 1), check.sh and round.sh (the compile check)
 core/           the Rust library, package gk-capi, built as libgpuikit: src/ (the protocol
                 runtime by hand; src/gen/ generated), include/ (C headers), wire/ (the
                 runtime's own opcode table), meter/ (crate gk-meter: measuring and driving,
                 linked into the library and the references), tests/ (protocol tests)
-odin/gk/        the Odin package: rt_*.odin and kit_*.odin by hand, gen_*.odin generated
 go/             the Go module gpuikit.dev, package gk: rt_*.go by hand, gen_*.go generated
-examples/       example apps in both languages, and the misuse cases
+examples/       example apps in Go, and the misuse cases
 ref/            pure Rust reference apps for the gates (crate gk-ref)
 gates/          the checks; all.sh runs them and prints one summary table
 tools/          building the library, the download and the release; status.py
@@ -646,7 +639,7 @@ committed files.
    rustdoc records each item's cfg; the generator keeps the target part and writes
    `#[cfg(..)]` on decoders of platform-only types (the Wayland layer shell exists on Linux
    only). The doc comments go to `api/rustdoc/docs.json.gz`: `gen/gk_doc.py` writes them above
-   the Go functions and Odin procedures, so an editor shows GPUI-kit's documentation on hover.
+   the Go functions, so an editor shows GPUI-kit's documentation on hover.
    Intra-doc links become the binding's names, Rust examples are left out, and a sentence about
    Rust-only mechanics (`cx.notify()`, borrowing, `crate::` paths) is rewritten or left out;
    `gen/out/doc-rust-only.md` lists what was left out, so a new GPUI-kit version's additions
@@ -654,11 +647,10 @@ committed files.
 2. **Classify.** Rules plus `api/overrides.toml` plus `api/quarantine.json` give
    `gk.api.json`: every type, enum, record, element, state type, method, closure shape and
    bridge, with its class, the rule that bound it or the reason it is skipped, wire types,
-   names in C, Odin and Go, and an opcode from `opcodes.lock` (append-only: a removed item's
+   names in C and Go, and an opcode from `opcodes.lock` (append-only: a removed item's
    number is retired, never reused).
-3. **Emit.** `make gen` writes the Rust decoders into `core/src/gen/`, the Odin package into
-   `odin/gk/gen_*.odin`, the Go package into `go/gk/gen_*.go`, the opcode tables, a sample
-   program that calls every generated procedure, the coverage table, STATUS.md and the
+3. **Emit.** `make gen` writes the Rust decoders into `core/src/gen/`, the Go package into
+   `go/gk/gen_*.go`, the opcode tables, a sample program that calls every generated function, the coverage table, STATUS.md and the
    gallery's generated conformance pages. It takes about 2 seconds and needs no Rust.
 4. **Check.** rustc judges the result when the library is built. `gen/round.sh` runs the
    quarantine loop: `cargo check` with JSON diagnostics, every generated arm sits between
@@ -674,7 +666,7 @@ An item record in `gk.api.json`:
  "class": "HAND", "family": "closure", "resolution": "handler", "shape": "S017",
  "table": "element", "op": 1881,
  "args": [{"name": "handler", "wire": "handler", "event": "ClickEvent", "returns": "unit"}],
- "names": {"c": "GK_OP_BUTTON_ON_CLICK", "odin": "on_click", "go": "OnClick"},
+ "names": {"c": "GK_OP_BUTTON_ON_CLICK", "go": "OnClick"},
  "status": "bound"}
 ```
 
@@ -708,139 +700,20 @@ Checks at generation time (they fail before anything is built):
 - coverage falling against `gates/coverage-baseline.json` without `--accept`.
 
 A few parts are hand-written because no rule fits them: the bridges in `core/src/hand.rs` and
-`odin/gk/kit_bridges.odin` (a uniform list over rows kept in the library, and `gk.text`, a
+`go/gk/rt_source.go` (a uniform list over rows kept in the library, and `gk.text`, a
 string as an element), and the shims for the input, editor, select and rows families
-(`core/src/shim_*.rs`, `odin/gk/kit_*.odin`).
+(`core/src/shim_*.rs`, `go/gk/rt_*.go`).
 
 Compile cost is designed for:
 
 - Rust: the decoder is one module per upstream module, and styles are decoded once, not per
   type.
-- Go: no generics in the fluent API, so the package compiles once into Go's cache.
-- Odin: there is no build cache, so method tables are reachable only from each type's
-  constructor and style tokens are one enum. A gate caps the rebuild time after a one-line
-  edit.
-
-## 14. Odin API and safety
-
-The same screen as a Rust GPUI-kit app, in Odin. Method names are upstream's
-(`Button::new(..).primary().label(..).on_click(..)`, `InputState::placeholder`,
-`Column::new(..).width(..)`, `TableState::row_selectable`, `v_flex`, `scroll_to_row`,
-`set_value`). The snippet shows the shape of the API; the examples and the guides hold
-programs that are built and tested.
-
-```odin
-package people
-
-import "core:fmt"
-import gk "gpuikit:gk"
-
-Person :: struct { id: u64, name: string, score: f64 }
-
-App :: struct {
-	name:  gk.Input_State, // handles to kit entities that live in the library
-	table: gk.Table_State,
-	rows:  [dynamic]Person, // the app's own data, ordinary Odin memory
-	added: int,
-}
-
-init :: proc(s: ^App, cx: ^gk.Cx) { // once, when the window builds its root view
-	for i in 0 ..< 100_000 do append(&s.rows, Person{u64(i), fmt.aprintf("Person %d", i), f64(i % 977)})
-	s.name = gk.input_state(cx)->placeholder("Name")->build()
-	// ... the table state over a row source of s.rows
-}
-
-view :: proc(s: ^App, cx: ^gk.Cx) -> gk.Element { // runs only when this view is dirty
-	return gk.v_flex(.Size_Full, .Gap_3, .P_4)->
-		child(gk.h_flex(.Gap_2, .Items_Center)->
-			child(gk.div(.W_64)->child(gk.input(s.name)->cleanable(true)))->
-			child(gk.button("add")->primary()->label("Add row")->on_click(gk.on(add_row)))->
-			child(gk.label(fmt.tprintf("%d rows, %d added", len(s.rows), s.added))))->
-		child(gk.div(.Flex_1)->child(gk.data_table(s.table)->stripe(true)))
-}
-
-add_row :: proc(s: ^App, cx: ^gk.Cx) {
-	name := gk.value(s.name, cx) // gk.Temp_String, valid until this handler returns
-	if len(name) == 0 do return
-	append(&s.rows, Person{u64(len(s.rows)), gk.keep(name), 0}) // a Temp_String does not assign to a string
-	s.added += 1
-	gk.set_value(s.name, cx, "")
-} // the view that registered this handler is marked dirty on return
-
-main :: proc() {
-	app: App
-	gk.run(&app, proc(s: ^App, cx: ^gk.Cx) {
-		gk.open_window(cx, "People", {1024, 700}, gk.view(s, init, view))
-	})
-}
-```
-
-How the package is shaped:
-
-- Every element and builder is a small value `{using el: Element, using vt: ^Button_VT}`;
-  `x->f(a)` calls the procedure in field `f` with `x` first. A chain continued on the next line
-  ends its lines with `->`. A kit state or library object handle is `{using state: State}` with
-  plain procedures named after its type, `gk.input_state_value(s, cx)`, and a procedure group
-  per method name, `gk.value(s, cx)`, where that name is free in the package: a method table
-  would link the component family of every method of every handle a program could get
-  (section 16).
-- Styles: the no-argument `Styled` methods are members of one enum, `gk.Style_Flag`, written
-  with implicit selectors in constructors and `->style(..)`. Styled methods with arguments are
-  normal methods (`->bg(c)`, `->w(gk.px(120))`).
-- Constructors and free procedures are procedure groups, so `gk.button("add")` and
-  `gk.button(gk.id("row", i))` both exist. Every entry takes `loc := #caller_location`.
-- A handler is a procedure plus at most one value: `gk.on(add_row)`,
-  `gk.on(select_row, row_id)`, or with the event
-  `gk.on(proc(s: ^App, cx: ^gk.Cx, e: ^gk.Click_Event, id: Row_Id) {..}, id)`. The state type
-  is checked against the view's, and the event type against the builder's shape, when the
-  handler is registered, with the caller's location.
-- One `foreign import` block holds the seven functions; `#load_hash` of the opcode table makes
-  a stale generated package fail the build.
-
-**Safety.** The bug this design sets out to make impossible: a string made during a view is
-given to a handler, the handler stores it in app state, the memory is reused two views later,
-and the app quietly shows another row's content, with exit status 0 and the address sanitizer
-silent.
-
-1. **Handler data is owned by the package.** `gk.on(procedure, data)` copies `data` at
-   registration, after walking its type information once per type: plain fields are copied,
-   every `string` inside is copied; pointers, slices, maps and dynamic arrays are rejected with
-   a panic that names the type, the field and the caller's line, unless wrapped in
-   `gk.unchecked(..)`. The copy is freed with the handler table that holds it; the strings of a
-   value whose handler ran are kept, so a handler that stored one holds memory that is never
-   reused. `gk.post` applies the same walk, and a posted message belongs to the procedure: its
-   strings arrive in the app's allocator, to keep or delete. The package warns on stderr when
-   what it holds for the app passes 16 MB, and at every doubling.
-2. **Nothing lent by the package has type `string`.** Getter results and event text are
-   `gk.Temp_String :: distinct string`. Storing one in a `string` field does not compile;
-   `gk.keep(x)` clones it with the app's allocator. Passing one to a builder is fine, because
-   builders copy into the tape.
-3. **Turn memory dies visibly.** A turn's tapes are copied by `gk_reply` before the callback
-   returns, so nothing a view allocated is needed afterwards. `context.temp_allocator` during a
-   turn is a per-turn arena taken from a ring of reserved address ranges. In debug builds, and
-   in release builds with `-define:GK_GUARD=true`, retiring it makes the pages inaccessible
-   (`mprotect(PROT_NONE)` on Linux, a fresh mapping on macOS, decommit on Windows), so a stale
-   read (even through an explicit `string(x)` cast) faults on the line that reads, and the fault
-   handler prints which turn the memory belonged to.
-4. **Generation checks in every build.** An element used outside its build or attached twice, a
-   `Cx` kept past its turn, a released or wrong-kind handle: one integer compare and a panic
-   naming both source locations.
-5. **Thread check** on every entry except `gk.post`.
-6. **Paranoid mode** (`-define:GK_PARANOID=true`): every deferred op is sent at once, and each
-   view procedure runs twice per build with the tapes compared, which exposes a view that
-   depends on hidden state or stale memory.
-7. **Proof.** `examples/odin/negative*/`, run by `gates/misuse.sh`, hold the stored view string
-   and its variants (a temporary string as handler data, event text stored without `keep`, an
-   element kept across builds, a stored `Cx`, a UI call from another thread). Each must behave
-   correctly, fail to compile, or stop with the expected message. Exit 0 with wrong content
-   fails the suite.
-
-What stays the developer's job: the lifetime of app state, and pointers wrapped in
-`gk.unchecked`.
+- Go: no generics in the fluent API, so the package compiles once into Go's cache. A gate caps
+  the rebuild time after a one-line edit.
 
 ## 15. Go API
 
-The Go front end is described in [GO.md](GO.md). In short, compared with Odin:
+The Go front end is described in [GO.md](GO.md). In short:
 
 - Handlers are closures or method values; the garbage collector keeps captures alive, so there
   is no handler-data rule. Each handler builder takes the event:
@@ -871,40 +744,37 @@ this repository's own tests.
 
 | file | what |
 |---|---|
-| `lib/libgpuikit_static.a` | the library as a static archive, which apps link into themselves: on Linux built against glibc 2.28, so programs run on any Linux with glibc 2.28 or newer; universal (arm64 and x86_64, minimum macOS 11.0) on macOS; MinGW's format on Windows, for Go, beside `gpuikit_static.lib`, MSVC's format, for Odin |
+| `lib/libgpuikit_static.a` | the library as a static archive, which apps link into themselves: on Linux built against glibc 2.28, so programs run on any Linux with glibc 2.28 or newer; universal (arm64 and x86_64, minimum macOS 11.0) on macOS; MinGW's format on Windows |
 | `lib/libgpuikit_sys.so`, `libgpuikit_sys.a` | Linux: a linker script naming the system libraries the archive needs by their run-time names; Windows: the import library of the Windows API it links |
 | `windows/gpuikit.manifest`, `gpuikit.rc` | Windows: a program must embed or sit beside this manifest (per-monitor DPI v2, common controls 6), or it exits before `main` |
 | `include/` | the C headers |
-| `odin/gk/` | the Odin package |
 | `go/` | the Go module |
-| `examples/`, `docs/` | the example apps in both languages and the guides |
+| `examples/go/`, `docs/` | the example apps and the guides |
 | `VERSIONS`, `THIRD_PARTY.md`, licence texts | versions, hashes, what the library needs (glibc, minimum macOS, imported DLLs), and the licences of every crate linked in |
 
 A download is mostly the library: on Linux about 66 MB packed and 390 MB unpacked (the static
 archive keeps every component family; a program keeps only the ones it uses).
 
 Also on disk because of the developer's own toolchain: Go's build cache holds the compiled `gk`
-package; Odin has no cache. For comparison, a Rust developer of the same app holds a target
+package. For comparison, a Rust developer of the same app holds a target
 directory of about 2 GB per checkout, a registry of 0.5 to 1.5 GB and a toolchain.
 
-Tools the developer needs: Odin with its linker, or Go with a C compiler. Runtime libraries on
+Tools the developer needs: Go with a C compiler. Runtime libraries on
 Linux: libxkbcommon, libxkbcommon-x11, libxcb, libxcb-xkb, libXau, libgcc_s, libm, libc;
 Vulkan and Wayland are loaded at run time.
 
 Delivery:
 
-- Odin: unpack anywhere, build with `-collection:gpuikit=<dir>/odin`.
 - Go: the app's `go.mod` requires `gpuikit.dev` and replaces it with the download's `go/`
   folder.
-- Linking: the static library, into the program, in both languages. The library's dispatchers are
-  split by component family, and each generated procedure (Odin) or function (Go) links the family
+- Linking: the static library, into the program. The library's dispatchers are
+  split by component family, and each generated function links the family
   it uses (`gen/gk_fam.py`), so a program keeps only the families it calls into: one file, about
-  50 to 60 MB for a small app, where a program plus the shared library was 76 MB. Odin's package
-  carries the linker flags itself (`@(extra_linker_flags)` on its `foreign import`); Go can't, so a
-  Go build passes `-ldflags=-extldflags=-Wl,--gc-sections` (`-Wl,-dead_strip` on macOS; on
+  50 to 60 MB for a small app, where a program plus the shared library was 76 MB. Go can't carry
+  the linker flags in the package, so a Go build passes `-ldflags=-extldflags=-Wl,--gc-sections` (`-Wl,-dead_strip` on macOS; on
   Windows `-fuse-ld=lld -Wl,--gc-sections,-Xlink=-force:multipleres`, since GNU ld keeps every
   function with unwind data there; package `gk` embeds the manifest as a .syso). The shared library
-  is still built, for the repository's tests (`-define:GK_SHARED=true`, `-tags gkshared`), but not
+  is still built, for the repository's tests (`-tags gkshared`), but not
   shipped (GO.md section 8).
 
 How the libraries are built: CI (`.github/workflows/platforms.yml`) runs `tools/build-lib.sh` on
@@ -954,45 +824,43 @@ upstream GPUI (`editor_text.rs`). Read without it, 18 element types (`Div`, `Img
 
 From 0.10.0 to 0.11.0 (gpui-fast 0.1.16 to 0.1.19, gpui-pre 0.3.12 to 0.3.14) nothing bound was
 removed and every new function is bound or bridged. What needed a person: the date family moved
-from chrono to jiff (`civil::Date`, `Time`, `DateTime`, `Weekday`: the descriptor `civil`, Odin
-`gk.Civil_Date` and the rest, and the matcher parts read through a struct of the same fields,
+from chrono to jiff (`civil::Date`, `Time`, `DateTime`, `Weekday`: the descriptor `civil`, Go
+`gk.CivilDate` and the rest, and the matcher parts read through a struct of the same fields,
 core/src/values.rs); `base::Editor` became generic over a line-number renderer (instantiated at
 its default, `Editor<()>`); `api/clone.json` had to be scanned again (`tools/clone_scan.py`; it had
 been left at 0.9.1, which hid that `DiffTextPosition` is Clone); gpui-fast's `Transformation`
-gained an alpha and `TimedTransformation` is new (`gk.Timed_Transformation`); and gpui-fast's list
+gained an alpha and `TimedTransformation` is new (`gk.TimedTransformation`); and gpui-fast's list
 layer now keeps two viewports of rows drawn on each side and regrows them over several frames
 after a fresh paint, so the table shim binds rows two screens ahead (core/src/shim_rows.rs).
 The kit's styled `component::input::Editor` sits in a `#[doc(hidden)]` module and was missing from
-the extract since 0.10: `gkgen.py strip` grafts it from the hidden pass (`GRAFTS`), so `gk.editor`
-is now the kit's styled editor and the unstyled one is `gk.base_editor`.
+the extract since 0.10: `gkgen.py strip` grafts it from the hidden pass (`GRAFTS`), so `gk.Editor`
+is now the kit's styled editor and the unstyled one is `gk.BaseEditor`.
 
 ## 18. Verification and the frame-rate gate
 
 Correctness, all runnable without a display:
 
 1. **Codecs:** every wire type and record is encoded by the package, decoded in Rust, and
-   checked by the generated protocol tests (`core/tests/gen`: every handler shape fired once,
+   checked by the generated protocol tests (`core/tests/go/gen`: every handler shape fired once,
    every state type made, read, written, subscribed and released).
-2. **The sample:** `gates/gensample.sh` builds a program that calls every generated Odin
-   procedure and checks that the runtime accepts the tapes it writes.
+2. **The sample:** `gates/go-gensample.sh` builds a program that calls every generated Go
+   function and checks that the runtime accepts the tapes it writes.
 3. **Conformance by generation:** for every bound element type a generated page calls its
    builders with fixed arguments, natively in Rust (`ref/`) and through the package. The diag
    library renders both offscreen (`HeadlessAppContext`, the real wgpu renderer and text
    system) and the images must be byte-identical. Rendering is exact on one machine and driver
    but not across machines, so reference and candidate are always rendered in the same run.
-   The gallery (`gates/gallery.sh go`, and `gates/gallery.sh` for Odin while it remains) adds
-   hand-written pages; the Go app (`examples/go/gallery`) has every page the Odin app has, and
-   the ones that wait for a Go binding are listed in `gates/gallery-go-pending.txt` and
-   reported as pending. `gates/verified.json` records, per front end, which pages were
-   identical and which functions they show; the coverage table counts their union.
+   The gallery (`gates/gallery.sh`) adds hand-written pages (`examples/go/gallery`); the ones
+   that wait for a Go binding are listed in `gates/gallery-go-pending.txt` and reported as
+   pending. `gates/verified.json` records which pages were identical and which functions they
+   show.
 4. **Scripted interaction:** a script drives each example app and its Rust reference (click,
    press, type, drag); the pixels after each step must match (`gates/pixels.sh`).
-5. **Protocol tests and attacks:** `core/tests` runs the runtime's protocols, and attacks on the
+5. **Protocol tests and attacks:** `examples/go/proto` and `core/tests/go` run the runtime's protocols, and attacks on the
    C interface by a raw client (truncated, unknown and forged requests, stale handles, calls
    from another thread).
 6. **Misuse:** stale handles, stale `Cx`, elements used twice, wrong thread, a panic on each
-   side, a read of a leased entity, and the Odin and Go misuse cases (`gates/misuse.sh`,
-   `gates/go-misuse.sh`).
+   side, a read of a leased entity, and the Go misuse cases (`gates/go-misuse.sh`).
 
 **Frame rate.** Two builds that both keep up with the display both show its rate, so the pass
 mark is defined on cost (main-thread CPU per frame), with presented frames as a floor.
@@ -1005,7 +873,7 @@ mark is defined on cost (main-thread CPU per frame), with presented frames as a 
 - Windows are opened with `inactive_frame_interval: None`, because the default caps an
   unfocused window at 30 frames a second.
 - `gates/fps.sh [--hz N] SCENE ARGS` is the gate. Per scene it runs the Rust reference and the
-  Odin app (at `-o:minimal` and `-o:speed`), driven by the same Rust driver module (`gk-meter`,
+  Go app, driven by the same Rust driver module (`gk-meter`,
   linked into the library and into the reference), which injects input with
   `Window::dispatch_event`. It runs interleaved rounds, takes medians and p95, and runs the
   Rust reference a second time in every round to measure noise. A round whose two Rust runs
@@ -1020,18 +888,16 @@ mark is defined on cost (main-thread CPU per frame), with presented frames as a 
   (b) median and p95 main-thread CPU per frame at most 1.03 times Rust's, plus the
   Rust-against-Rust difference (or the standard error of its median, whichever is larger)
   measured in the same run;
-  (c) the build judged is the Odin app at `-o:speed`, which is what an app ships; the
-  `-o:minimal` build is measured and reported beside it;
+  (c) the build judged is the Go app;
   (d) 0 crossings on frames with no app-state change;
   (e) `views_built` per frame equal to the Rust reference's (diag build).
 - Scenes: 60 panels of 64 labels with 0 and with 2 changing per frame (the shape of upstream's
   `views_frames`); the counter with a click on every frame; a 100,000-row table scrolled every
-  frame. The Go front end is measured the same way (`make go-fps`).
+  frame (`make fps`, `make go-fps`).
 - Memory: `gates/memory.sh` checks over long offscreen runs that the app's resident memory
   grows no more than the Rust reference's (2 MB allowance), and proves with `--selftest` that a
   small leak per view build is caught.
-- Rebuild time: `gates/rebuild.sh` measures an Odin rebuild after a one-line edit, scaled
-  against a fixed baseline measured in the same run, so it can be judged on any machine.
+- Rebuild time: `gates/go-rebuild.sh` measures a Go rebuild after a one-line edit.
 
 ## 19. Limits and known risks
 
@@ -1056,7 +922,6 @@ Known risks and open points:
    with a 12.0 minimum, so drawing on macOS 11 is untested; Go 1.27 needs macOS 13 or newer.
 6. **High refresh rates** are measured under gamescope's headless output, not on a real panel.
    A run there sometimes receives no frame callback at all; the gates repeat such runs.
-7. **Odin rebuild time** grows with the generated package, because Odin has no build cache.
 
 What is bound, what is not yet, and why, is listed per component in [STATUS.md](STATUS.md) and
 `api/coverage.json`.
