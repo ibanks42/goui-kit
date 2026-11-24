@@ -98,7 +98,7 @@ All structs follow the platform C ABI with natural alignment. On 64-bit platform
 | 16 | 8 | `api_hash` | `uint64_t` | FNV-1a hash of `ops.txt` + `opcodes.lock`. Must match exactly. |
 | 24 | 4 | `features` | `uint32_t` | Bitmask of `GK_FEAT_*` flags. |
 | 28 | 4 | *(padding)* | - | Alignment padding for pointer. |
-| 32 | 8 | `versions` | `const char *` | Static UTF-8 build string (not NUL-terminated), e.g., `"gk 0.0.2; gpui-kit 0.11.0; gpui-fast 0.1.19"`. |
+| 32 | 8 | `versions` | `const char *` | Static UTF-8 build string (not NUL-terminated), e.g., `"gk 0.11.0; gpui-kit 0.11.0; gpui-fast 0.1.19"`. |
 | 40 | 8 | `versions_len` | `size_t` | Byte length of `versions`. |
 
 Total size on 64-bit platforms is 48 bytes. Front ends must always compute `sizeof(gk_info)` and `sizeof(gk_app)` from the target C struct layout rather than assuming 64-bit offsets on 32-bit architectures.

@@ -15,7 +15,7 @@ This guide takes you from an unpacked release archive (or a local checkout of th
 
 ## 2. Setting Up a Project
 
-A prebuilt download unpacks into a folder such as `goui-kit-0.0.2-linux-x86_64/` containing `lib/`, `go/`, `include/`, `examples/go/`, and `docs/`. If you are working directly inside a git checkout, run `make lib` first so `lib/ship/` exists.
+A prebuilt download unpacks into a folder such as `goui-kit-0.11.0-linux-x86_64/` containing `lib/`, `go/`, `include/`, `examples/go/`, and `docs/`. If you are working directly inside a git checkout, run `make lib` first so `lib/ship/` exists.
 
 ### Running the Bundled Examples
 
@@ -44,7 +44,7 @@ go 1.27
 
 require github.com/ibanks42/goui-kit v0.0.0
 
-replace github.com/ibanks42/goui-kit => ../goui-kit-0.0.2-linux-x86_64/go
+replace github.com/ibanks42/goui-kit => ../goui-kit-0.11.0-linux-x86_64/go
 ```
 
 Then run `go mod tidy` and `go build`.
